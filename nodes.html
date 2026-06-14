@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Community nodes - ircuitry</title>
+  <meta name="description" content="Browse drop-in community nodes for ircuitry. Copy one and paste it straight into the app.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
+      <div class="links">
+        <a href="index.html">Home</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/community-nodes">Submit a node</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="gallery-head">
+    <div class="wrap">
+      <h1 class="section-title" style="text-align:left;">Community nodes</h1>
+      <p class="section-sub" style="text-align:left;margin-left:0;">
+        Ready-made blocks for ircuitry. Hit <b>Copy</b>, then paste the node straight into the app.
+        Want to add your own? <a href="https://github.com/ircuitry/community-nodes">Open a PR.</a>
+      </p>
+
+      <div class="note">
+        <b>Install a copied node:</b>
+        <ol>
+          <li>In ircuitry, open the <b>Node Library</b> and click <b>Install from clipboard</b> (or press <code>Ctrl+Shift+V</code>).</li>
+          <li>Review the node in the confirm dialog, then click <b>Install</b>. It appears in your Node Library right away.</li>
+        </ol>
+        Prefer files? Use <b>Download</b> and drag the <code>.ircnode</code> onto the canvas, or drop it into <code>~/ircuitry/nodes/</code>.
+        Scripted nodes run code on your machine, so review one before installing.
+      </div>
+
+      <div class="toolbar">
+        <input class="search" id="search" type="search" placeholder="Search nodes by name, id or tag...">
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="count" id="count"></div>
+    </div>
+  </header>
+
+  <section style="padding-top:0;">
+    <div class="wrap">
+      <div class="state" id="state">Loading nodes...</div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>© ircuitry contributors</span>
+      <span>
+        <a href="index.html">Home</a> ·
+        <a href="https://github.com/ircuitry/community-nodes">Submit a node</a> ·
+        <a href="https://github.com/ircuitry/ircuitry">App</a>
+      </span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

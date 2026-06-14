@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ircuitry - build IRC bots by dragging blocks</title>
+  <meta name="description" content="ircuitry is a cozy desktop app for building IRCv3 bots on a visual node-graph canvas. Free, open source, self-contained. Download for Windows, macOS and Linux.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <meta property="og:title" content="ircuitry - build IRC bots by dragging blocks">
+  <meta property="og:description" content="A cozy desktop app for building IRCv3 bots on a visual node-graph canvas. Free and open source.">
+  <meta property="og:image" content="assets/screenshot.png">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
+      <div class="links">
+        <a href="nodes.html">Community nodes</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/ircuitry/releases/latest">Download</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <h1>Build IRC bots by <span class="leaf">dragging blocks</span>.</h1>
+      <p class="lead">
+        ircuitry is a cozy desktop app for building real <b>IRCv3</b> bots on a visual node-graph
+        canvas. Wire up triggers, filters and actions, point it at a server, and press RUN. No code
+        required, but there is a Code node for when you want it.
+      </p>
+      <div class="btn-row" id="download">
+        <a class="btn primary" href="https://github.com/ircuitry/ircuitry/releases/latest">Download</a>
+        <a class="btn ghost" href="https://github.com/ircuitry/ircuitry">View on GitHub</a>
+      </div>
+      <p class="altlinks" id="dl-extra">Free and open source (GPLv3). Self-contained, no install needed.</p>
+
+      <div class="shot"><img src="assets/screenshot.png" alt="ircuitry editor showing a node graph"></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <h2 class="section-title">Everything in one little app</h2>
+      <p class="section-sub">A from-scratch IRCv3 client, a visual editor, and a runtime, drawn entirely by hand.</p>
+      <div class="features">
+        <div class="feature"><div class="ic c-leaf">🧩</div><h3>Visual node graph</h3><p>Drag trigger, filter and action nodes onto the canvas and wire them together. Exec flow plus typed data pins.</p></div>
+        <div class="feature"><div class="ic c-blue">💬</div><h3>Real IRCv3</h3><p>TLS, CAP negotiation, SASL, message tags, reactions and threaded replies. A genuine client, not a wrapper.</p></div>
+        <div class="feature"><div class="ic c-pink">🤖</div><h3>AI nodes</h3><p>Ask AI, tools and memory speak the OpenAI-compatible protocol, so point them at any endpoint, hosted or local.</p></div>
+        <div class="feature"><div class="ic c-yellow">⚡</div><h3>Run many bots</h3><p>Each tab is its own bot, connection and runtime. Auto-reconnect, rate limiting and a full run history.</p></div>
+        <div class="feature"><div class="ic c-lilac">📦</div><h3>Community nodes</h3><p>Drop-in nodes you can paste straight into the app. Browse the gallery and add new powers in seconds.</p></div>
+        <div class="feature"><div class="ic c-leaf">🔌</div><h3>MCP built in</h3><p>An AI assistant can introspect, build, validate and dry-run your bots through a standard MCP server.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="text-align:center;">
+      <h2 class="section-title">Add powers from the community</h2>
+      <p class="section-sub" style="margin-bottom:26px;">
+        The community nodes gallery is full of ready-made blocks: weather, dice, hashes, web lookups and more.
+        Copy one and paste it directly into ircuitry.
+      </p>
+      <a class="btn primary" href="nodes.html">Browse community nodes</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>© ircuitry contributors · <a href="https://github.com/ircuitry/ircuitry/blob/main/LICENSE">GPL-3.0</a></span>
+      <span>
+        <a href="https://github.com/ircuitry/ircuitry">App</a> ·
+        <a href="https://github.com/ircuitry/community-nodes">Community nodes</a> ·
+        <a href="nodes.html">Gallery</a>
+      </span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
