@@ -3,22 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Community nodes - ircuitry</title>
-  <meta name="description" content="Browse drop-in community nodes for ircuitry. Copy one and paste it straight into the app.">
+  <title>Community workflows - ircuitry</title>
+  <meta name="description" content="Browse shareable bot workflows for ircuitry. Copy one and paste it straight into the app.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
 </head>
-<body data-gallery="nodes">
+<body data-gallery="workflows">
   <nav class="nav">
     <div class="wrap">
       <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
       <div class="links">
         <a href="nodes.html">Nodes</a>
         <a href="workflows.html">Workflows</a>
-        <a class="hide-sm" href="https://github.com/ircuitry/community-nodes">Submit</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/community-workflows">Submit</a>
         <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
       </div>
     </div>
@@ -26,24 +26,24 @@
 
   <header class="gallery-head">
     <div class="wrap">
-      <h1 class="section-title" style="text-align:left;">Community nodes</h1>
+      <h1 class="section-title" style="text-align:left;">Community workflows</h1>
       <p class="section-sub" style="text-align:left;margin-left:0;">
-        Ready-made blocks for ircuitry. Hit <b>Copy</b>, then paste the node straight into the app.
-        Want to add your own? <a href="https://github.com/ircuitry/community-nodes">Open a PR.</a>
+        Whole bots, ready to run: games, reminders, quizzes and more. Hit <b>Copy</b>, then paste the
+        workflow straight into ircuitry. Built one? <a href="https://github.com/ircuitry/community-workflows">Open a PR.</a>
       </p>
 
       <div class="note">
-        <b>Install a copied node:</b>
+        <b>Import a copied workflow:</b>
         <ol>
-          <li>In ircuitry, open the <b>Node Library</b> and click <b>Install from clipboard</b> (or press <code>Ctrl+Shift+V</code>).</li>
-          <li>Review the node in the confirm dialog, then click <b>Install</b>. It appears in your Node Library right away.</li>
+          <li>In ircuitry, click an empty spot on the canvas and press <code>Ctrl+V</code> to drop the workflow's nodes in.</li>
+          <li>Or use <b>Download</b> and click <b>IMPORT</b> in ircuitry to open it as a new bot tab (you can also drag the <code>.ircbot</code> onto the canvas).</li>
         </ol>
-        Prefer files? Use <b>Download</b> and drag the <code>.ircnode</code> onto the canvas, or drop it into <code>~/ircuitry/nodes/</code>.
-        Scripted nodes run code on your machine, so review one before installing.
+        Then open the Inspector, fill in your server, nick and channels, and press <b>RUN BOT</b>.
+        Workflows can include Code nodes that run on your machine, so review one before running it.
       </div>
 
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="Search nodes by name, id or tag...">
+        <input class="search" id="search" type="search" placeholder="Search workflows by name or tag...">
         <div class="chips" id="chips"></div>
       </div>
       <div class="count" id="count"></div>
@@ -52,7 +52,7 @@
 
   <section style="padding-top:0;">
     <div class="wrap">
-      <div class="state" id="state">Loading nodes...</div>
+      <div class="state" id="state">Loading workflows...</div>
       <div class="grid" id="grid"></div>
     </div>
   </section>
@@ -62,7 +62,7 @@
       <span>© ircuitry contributors</span>
       <span>
         <a href="index.html">Home</a> ·
-        <a href="https://github.com/ircuitry/community-nodes">Submit a node</a> ·
+        <a href="https://github.com/ircuitry/community-workflows">Submit a workflow</a> ·
         <a href="https://github.com/ircuitry/ircuitry">App</a>
       </span>
     </div>
