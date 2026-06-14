@@ -4,8 +4,12 @@
   var REPO = "ircuitry/ircuitry";
   var NODES = "ircuitry/community-nodes";
   var WORKFLOWS = "ircuitry/community-workflows";
-  var NODES_INDEX = "https://raw.githubusercontent.com/" + NODES + "/main/index.json";
-  var WF_INDEX = "https://raw.githubusercontent.com/" + WORKFLOWS + "/main/index.json";
+  var NODES_RAW = "https://raw.githubusercontent.com/" + NODES + "/main/";
+  var WF_RAW = "https://raw.githubusercontent.com/" + WORKFLOWS + "/main/";
+  var NODES_INDEX = NODES_RAW + "index.json";
+  var WF_INDEX = WF_RAW + "index.json";
+  function rawUrl(base, file) { return base + file.split("/").map(encodeURIComponent).join("/"); }
+  function installHref(action, raw) { return "ircuitry://" + action + "?url=" + encodeURIComponent(raw); }
   var RELEASE_API = "https://api.github.com/repos/" + REPO + "/releases/latest";
 
   // ---------- helpers ----------
@@ -98,7 +102,8 @@
       '<div class="name">' + esc(n.title || n.typeId) + '</div><div class="meta">' + esc(n.typeId) + " · " + author + "</div></div></div>" +
       '<div class="cat">' + esc(n.category || "Action") + ' <span class="lang-tag">' + esc(lang) + "</span></div>" +
       '<div class="desc">' + esc(n.description || "") + "</div>" +
-      '<div class="actions"><button class="btn primary" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
+      '<div class="actions"><a class="btn primary" href="' + installHref("install-node", rawUrl(NODES_RAW, n.file)) + '">Install in app</a>' +
+      '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
   }
   function workflowCard(w, i) {
     var author = w.author && w.author !== "ircuitry" ? "by " + esc(w.author) : "community";
@@ -107,7 +112,8 @@
       '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires · " + author + "</div></div></div>" +
       '<div class="cat">workflow ' + tags + "</div>" +
       '<div class="desc">' + esc(w.description || "") + "</div>" +
-      '<div class="actions"><button class="btn primary" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
+      '<div class="actions"><a class="btn primary" href="' + installHref("install-bot", rawUrl(WF_RAW, w.file)) + '">Install in app</a>' +
+      '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
   }
 
   function startGallery(opts) {
