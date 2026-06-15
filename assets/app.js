@@ -58,6 +58,11 @@
     if (/Mac|iPhone|iPad|iPod/i.test(s)) return "mac";
     return "unknown";
   }
+  // Many apt-based distros name themselves in the browser UA (Firefox especially). When we can tell, we
+  // recommend the .deb; otherwise we fall back to the universal AppImage but still offer the .deb up front.
+  function debFamily() {
+    return /ubuntu|debian|linux ?mint|\bmint\b|zorin|pop!?_? ?os|elementary|kubuntu|xubuntu|lubuntu|raspbian|deepin|\bkali\b|mx linux|\bneon\b|pureos|tuxedo/i.test(navigator.userAgent || "");
+  }
   var OS_LABEL = { windows: "Windows", linux: "Linux", mac: "macOS", android: "your device", unknown: "your computer" };
   function byName(rel, name) { var a = (rel.assets || []).filter(function (x) { return x.name === name; })[0]; return a ? a.browser_download_url : null; }
   function bySuffix(rel, suf) { var a = (rel.assets || []).filter(function (x) { return x.name.slice(-suf.length) === suf; })[0]; return a ? a.browser_download_url : null; }
@@ -70,7 +75,10 @@
     var win1 = winexe || win;   // prefer the single-file .exe
     var primaryUrl, primarySub, others = [];
     if (os === "windows") { primaryUrl = win1; primarySub = winexe ? ".exe · just run it" : ".zip · unzip and run Ircuitry.exe"; others = [link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS")]; }
-    else if (os === "linux") { primaryUrl = appimg || lzip; primarySub = "AppImage · chmod +x and run"; others = [link(deb, ".deb (apt)"), link(lzip, "portable zip"), link(win1, "Windows"), link(marm, "macOS")]; }
+    else if (os === "linux") {
+      if (deb && debFamily()) { primaryUrl = deb; primarySub = "Debian / Ubuntu · sudo apt install ./*.deb"; others = [link(appimg, "AppImage (any distro)"), link(lzip, "portable zip"), link(win1, "Windows"), link(marm, "macOS")]; }
+      else { primaryUrl = appimg || lzip; primarySub = "AppImage · runs on any distro"; others = [link(deb, "Debian/Ubuntu .deb"), link(lzip, "portable zip"), link(win1, "Windows"), link(marm, "macOS")]; }
+    }
     else if (os === "mac") { primaryUrl = marm; primarySub = "Apple Silicon · unzip and open"; others = [link(mint, "macOS Intel"), link(win1, "Windows"), link(appimg, "Linux AppImage")]; }
     else { primaryUrl = null; others = [link(win1, "Windows"), link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS Apple Silicon"), link(mint, "macOS Intel")]; }
 
