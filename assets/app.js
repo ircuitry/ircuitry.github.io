@@ -119,78 +119,85 @@
     var author = n.author && n.author !== "ircuitry" ? "by " + esc(n.author) : "community";
     return '<div class="node"><div class="top"><div class="badge">' + safeIcon(n) + '</div><div>' +
       '<div class="name">' + esc(n.title || n.typeId) + '</div><div class="meta">' + esc(n.typeId) + " · " + author + "</div></div></div>" +
-      '<div class="cat">' + esc(n.category || "Action") + ' <span class="lang-tag">' + esc(lang) + "</span></div>" +
       '<div class="desc">' + esc(n.description || "") + "</div>" +
+      '<div class="cat"><span class="lang-tag">' + esc(lang) + "</span></div>" +
       '<div class="actions"><a class="btn primary" href="' + installHref("install-node", rawUrl(NODES_RAW, n.file)) + '">Install in app</a>' +
       '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
   }
   function workflowCard(w, i) {
     var author = w.author && w.author !== "ircuitry" ? "by " + esc(w.author) : "community";
-    var tags = (w.tags || []).map(function (t) { return '<span class="lang-tag">' + esc(t) + "</span>"; }).join(" ");
+    var tags = (w.tags || []).slice(0, 3).map(function (t) { return '<span class="lang-tag">' + esc(t) + "</span>"; }).join(" ");
     return '<div class="node"><div class="top"><div class="badge">🤖</div><div>' +
       '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires · " + author + "</div></div></div>" +
-      '<div class="cat">' + esc(w.category || "workflow") + " " + tags + "</div>" +
       '<div class="desc">' + esc(w.description || "") + "</div>" +
+      '<div class="cat">' + tags + "</div>" +
       '<div class="actions"><a class="btn primary" href="' + installHref("install-bot", rawUrl(WF_RAW, w.file)) + '">Install in app</a>' +
       '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
   }
 
   function startGallery(opts) {
-    var grid = el("grid");
+    var grid = el("grid"), rail = el("chips");
     if (!grid) return;
-    var all = [], activeFacet = "all", query = "";
+    var all = [], query = "", io = null;
 
     function primary(it) { var fs = opts.facets(it); return (fs && fs[0]) || "Other"; }
     function catRank(c) { var i = (opts.order || []).indexOf(c); return i < 0 ? 99 : i; }
+    function secId(c) { return "cat-" + c.replace(/[^A-Za-z0-9]+/g, "-"); }
+    function icon(c) { return (opts.icons && opts.icons[c]) || "📦"; }
+    function blurb(c) { return (opts.blurbs && opts.blurbs[c]) || ""; }
+    function ordered(b) { return Object.keys(b).sort(function (a, c) { return catRank(a) - catRank(c) || a.localeCompare(c); }); }
 
     function render() {
       var q = query.trim().toLowerCase();
-      var list = all.filter(function (it) {
-        if (activeFacet !== "all" && opts.facets(it).indexOf(activeFacet) < 0) return false;
-        if (!q) return true;
-        return opts.haystack(it).toLowerCase().indexOf(q) >= 0;
-      });
-      el("count").textContent = list.length + " of " + all.length + " " + opts.noun;
+      var list = all.filter(function (it) { return !q || opts.haystack(it).toLowerCase().indexOf(q) >= 0; });
+      el("count").textContent = q ? (list.length + " of " + all.length + " " + opts.noun) : (all.length + " " + opts.noun);
+      var b = {}; list.forEach(function (it) { var k = primary(it); (b[k] = b[k] || []).push(it); });
+      var cats = ordered(b);
+      var emptyEl = el("empty"); if (emptyEl) emptyEl.hidden = list.length > 0;
 
-      var html;
-      if (activeFacet === "all" && !q) {
-        // default view: grouped into tidy sections by category instead of one big wall
-        var buckets = {};
-        list.forEach(function (it) { var k = primary(it); (buckets[k] = buckets[k] || []).push(it); });
-        var cats = Object.keys(buckets).sort(function (a, b) { return catRank(a) - catRank(b) || a.localeCompare(b); });
-        html = cats.map(function (c) {
-          return '<h3 class="section-head">' + esc(c) + ' <span class="n">' + buckets[c].length + "</span></h3>" +
-            buckets[c].map(function (it) { return opts.card(it, all.indexOf(it)); }).join("");
-        }).join("");
-      } else {
-        html = list.map(function (it) { return opts.card(it, all.indexOf(it)); }).join("");
-      }
-      grid.innerHTML = html;
-      grid.querySelectorAll("[data-copy]").forEach(function (b) {
-        b.addEventListener("click", function () { var it = all[+b.getAttribute("data-copy")]; copyText(opts.copyData(it), opts.copyMsg(it)); });
+      grid.innerHTML = cats.map(function (c) {
+        return '<section class="cat-section" id="' + secId(c) + '">' +
+          '<div class="section-head"><div class="ic">' + esc(icon(c)) + '</div>' +
+          '<div class="h"><h3>' + esc(c) + ' <span class="pill">' + b[c].length + "</span></h3>" +
+          (blurb(c) ? '<div class="blurb">' + esc(blurb(c)) + "</div>" : "") + "</div></div>" +
+          '<div class="grid">' + b[c].map(function (it) { return opts.card(it, all.indexOf(it)); }).join("") + "</div></section>";
+      }).join("");
+
+      grid.querySelectorAll("[data-copy]").forEach(function (btn) {
+        btn.addEventListener("click", function () { var it = all[+btn.getAttribute("data-copy")]; copyText(opts.copyData(it), opts.copyMsg(it)); });
       });
-      grid.querySelectorAll("[data-dl]").forEach(function (b) {
-        b.addEventListener("click", function () { var it = all[+b.getAttribute("data-dl")]; downloadFile(opts.copyData(it), opts.dlName(it)); });
+      grid.querySelectorAll("[data-dl]").forEach(function (btn) {
+        btn.addEventListener("click", function () { var it = all[+btn.getAttribute("data-dl")]; downloadFile(opts.copyData(it), opts.dlName(it)); });
+      });
+      buildRail(b, cats);
+      observe();
+    }
+
+    function buildRail(b, cats) {
+      if (!rail) return;
+      rail.innerHTML = cats.map(function (c) {
+        return '<button class="chip" data-cat="' + esc(secId(c)) + '"><span class="ic">' + esc(icon(c)) + "</span>" + esc(c) + '<span class="n">' + b[c].length + "</span></button>";
+      }).join("");
+      rail.querySelectorAll("[data-cat]").forEach(function (btn) {
+        btn.addEventListener("click", function () { var s = document.getElementById(btn.getAttribute("data-cat")); if (s) s.scrollIntoView({ behavior: "smooth", block: "start" }); });
       });
     }
-    function buildChips() {
-      var box = el("chips"); if (!box) return;
-      var set = {};
-      all.forEach(function (it) { opts.facets(it).forEach(function (f) { set[f] = 1; }); });
-      var facets = ["all"].concat(Object.keys(set).sort(function (a, b) { return catRank(a) - catRank(b) || a.localeCompare(b); }));
-      box.innerHTML = facets.map(function (c) { return '<button class="chip' + (c === activeFacet ? " active" : "") + '" data-f="' + esc(c) + '">' + esc(c) + "</button>"; }).join("");
-      box.querySelectorAll("[data-f]").forEach(function (b) {
-        b.addEventListener("click", function () {
-          activeFacet = b.getAttribute("data-f");
-          box.querySelectorAll(".chip").forEach(function (x) { x.classList.remove("active"); });
-          b.classList.add("active"); render();
+
+    function observe() {
+      if (!rail || !("IntersectionObserver" in window)) return;
+      if (io) io.disconnect();
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          rail.querySelectorAll(".chip").forEach(function (x) { x.classList.toggle("active", x.getAttribute("data-cat") === e.target.id); });
         });
-      });
+      }, { rootMargin: "-12% 0px -78% 0px", threshold: 0 });
+      grid.querySelectorAll(".cat-section").forEach(function (s) { io.observe(s); });
     }
+
     fetch(opts.url, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (data) {
       all = (data[opts.listKey] || []).sort(function (a, b) { return opts.sortKey(a).localeCompare(opts.sortKey(b)); });
       el("state").style.display = "none";
-      buildChips();
       var s = el("search"); if (s) s.addEventListener("input", function () { query = s.value; render(); });
       render();
     }).catch(function () {
@@ -206,6 +213,8 @@
       startGallery({
         url: NODES_INDEX, repo: NODES, listKey: "nodes", noun: "nodes",
         order: ["Event", "Filter", "Logic", "Data", "Ai", "Ircv3", "Storage", "Action"],
+        icons: { Event: "⚡", Filter: "🔍", Logic: "🧠", Data: "🔢", Ai: "🤖", Ircv3: "🛰️", Storage: "💾", Action: "📤" },
+        blurbs: { Event: "Triggers that start a flow", Filter: "Branch on a condition", Logic: "Control flow and state", Data: "Transform and compute values", Ai: "Language-model helpers", Ircv3: "Modern IRC niceties", Storage: "Files, databases and calendars", Action: "Do something out in the world" },
         facets: function (n) { return [n.category || "Action"]; },
         haystack: function (n) { return n.title + " " + n.typeId + " " + n.description + " " + (n.tags || []).join(" "); },
         sortKey: function (n) { return n.title || n.typeId || ""; },
@@ -218,6 +227,8 @@
       startGallery({
         url: WF_INDEX, repo: WORKFLOWS, listKey: "workflows", noun: "workflows",
         order: ["AI", "Games", "Moderation", "Community", "Utility", "Reminders"],
+        icons: { AI: "🤖", Games: "🎮", Moderation: "🛡️", Community: "💬", Utility: "🔧", Reminders: "⏰" },
+        blurbs: { AI: "Bots powered by language models", Games: "Play right in your channel", Moderation: "Keep the channel tidy", Community: "Social and onboarding helpers", Utility: "Look things up and fetch data", Reminders: "Timed and scheduled posts" },
         facets: function (w) { return [w.category || "Utility"]; },
         haystack: function (w) { return w.name + " " + w.description + " " + (w.category || "") + " " + (w.tags || []).join(" ") + " " + (w.nodeTypes || []).join(" "); },
         sortKey: function (w) { return w.name || ""; },

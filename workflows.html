@@ -43,17 +43,23 @@
       </div>
 
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="Search workflows by name or tag...">
-        <div class="chips" id="chips"></div>
+        <input class="search" id="search" type="search" placeholder="Search workflows by name, tag or category...">
+        <span class="count" id="count"></span>
       </div>
-      <div class="count" id="count"></div>
     </div>
   </header>
 
-  <section style="padding-top:0;">
-    <div class="wrap">
-      <div class="state" id="state">Loading workflows...</div>
-      <div class="grid" id="grid"></div>
+  <section class="gallery-body">
+    <div class="wrap gallery-layout">
+      <aside class="cat-rail">
+        <div class="rail-title">Browse</div>
+        <nav class="chips" id="chips"></nav>
+      </aside>
+      <div class="gallery-main">
+        <div class="state" id="state">Loading workflows...</div>
+        <div id="grid"></div>
+        <div class="empty" id="empty" hidden>No matches - try a different search.</div>
+      </div>
     </div>
   </section>
 
@@ -69,6 +75,6 @@
   </footer>
 
   <div class="toast" id="toast"></div>
-  <script src="assets/app.js?v=5"></script>
+  <script src="assets/app.js?v=6"></script>
 </body>
 </html>
