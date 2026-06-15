@@ -122,6 +122,12 @@ footer a { color: var(--ink-soft); font-weight: 700; }
 .count { color: var(--ink-faint); font-size: 14px; margin: 6px 2px 18px; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.section-head {
+  grid-column: 1 / -1; margin: 14px 2px 0; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  font-family: var(--font-head); font-weight: 800; font-size: 20px; display: flex; align-items: baseline; gap: 10px;
+}
+.section-head:first-child { margin-top: 0; }
+.section-head .n { font-family: var(--font-body); font-weight: 600; font-size: 13px; color: var(--ink-soft); }
 .node {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 18px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 10px;

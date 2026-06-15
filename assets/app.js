@@ -119,7 +119,7 @@
     var tags = (w.tags || []).map(function (t) { return '<span class="lang-tag">' + esc(t) + "</span>"; }).join(" ");
     return '<div class="node"><div class="top"><div class="badge">🤖</div><div>' +
       '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires · " + author + "</div></div></div>" +
-      '<div class="cat">workflow ' + tags + "</div>" +
+      '<div class="cat">' + esc(w.category || "workflow") + " " + tags + "</div>" +
       '<div class="desc">' + esc(w.description || "") + "</div>" +
       '<div class="actions"><a class="btn primary" href="' + installHref("install-bot", rawUrl(WF_RAW, w.file)) + '">Install in app</a>' +
       '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
@@ -130,6 +130,9 @@
     if (!grid) return;
     var all = [], activeFacet = "all", query = "";
 
+    function primary(it) { var fs = opts.facets(it); return (fs && fs[0]) || "Other"; }
+    function catRank(c) { var i = (opts.order || []).indexOf(c); return i < 0 ? 99 : i; }
+
     function render() {
       var q = query.trim().toLowerCase();
       var list = all.filter(function (it) {
@@ -138,7 +141,21 @@
         return opts.haystack(it).toLowerCase().indexOf(q) >= 0;
       });
       el("count").textContent = list.length + " of " + all.length + " " + opts.noun;
-      grid.innerHTML = list.map(function (it) { return opts.card(it, all.indexOf(it)); }).join("");
+
+      var html;
+      if (activeFacet === "all" && !q) {
+        // default view: grouped into tidy sections by category instead of one big wall
+        var buckets = {};
+        list.forEach(function (it) { var k = primary(it); (buckets[k] = buckets[k] || []).push(it); });
+        var cats = Object.keys(buckets).sort(function (a, b) { return catRank(a) - catRank(b) || a.localeCompare(b); });
+        html = cats.map(function (c) {
+          return '<h3 class="section-head">' + esc(c) + ' <span class="n">' + buckets[c].length + "</span></h3>" +
+            buckets[c].map(function (it) { return opts.card(it, all.indexOf(it)); }).join("");
+        }).join("");
+      } else {
+        html = list.map(function (it) { return opts.card(it, all.indexOf(it)); }).join("");
+      }
+      grid.innerHTML = html;
       grid.querySelectorAll("[data-copy]").forEach(function (b) {
         b.addEventListener("click", function () { var it = all[+b.getAttribute("data-copy")]; copyText(opts.copyData(it), opts.copyMsg(it)); });
       });
@@ -150,7 +167,7 @@
       var box = el("chips"); if (!box) return;
       var set = {};
       all.forEach(function (it) { opts.facets(it).forEach(function (f) { set[f] = 1; }); });
-      var facets = ["all"].concat(Object.keys(set).sort());
+      var facets = ["all"].concat(Object.keys(set).sort(function (a, b) { return catRank(a) - catRank(b) || a.localeCompare(b); }));
       box.innerHTML = facets.map(function (c) { return '<button class="chip' + (c === activeFacet ? " active" : "") + '" data-f="' + esc(c) + '">' + esc(c) + "</button>"; }).join("");
       box.querySelectorAll("[data-f]").forEach(function (b) {
         b.addEventListener("click", function () {
@@ -178,6 +195,7 @@
     if (gallery === "nodes") {
       startGallery({
         url: NODES_INDEX, repo: NODES, listKey: "nodes", noun: "nodes",
+        order: ["Event", "Filter", "Logic", "Data", "Ai", "Ircv3", "Storage", "Action"],
         facets: function (n) { return [n.category || "Action"]; },
         haystack: function (n) { return n.title + " " + n.typeId + " " + n.description + " " + (n.tags || []).join(" "); },
         sortKey: function (n) { return n.title || n.typeId || ""; },
@@ -189,8 +207,9 @@
     } else if (gallery === "workflows") {
       startGallery({
         url: WF_INDEX, repo: WORKFLOWS, listKey: "workflows", noun: "workflows",
-        facets: function (w) { return (w.tags || []).length ? w.tags : ["other"]; },
-        haystack: function (w) { return w.name + " " + w.description + " " + (w.tags || []).join(" ") + " " + (w.nodeTypes || []).join(" "); },
+        order: ["AI", "Games", "Moderation", "Community", "Utility", "Reminders"],
+        facets: function (w) { return [w.category || "Utility"]; },
+        haystack: function (w) { return w.name + " " + w.description + " " + (w.category || "") + " " + (w.tags || []).join(" ") + " " + (w.nodeTypes || []).join(" "); },
         sortKey: function (w) { return w.name || ""; },
         card: workflowCard,
         copyData: function (w) { return JSON.stringify(w.workflow, null, 2); },
