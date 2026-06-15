@@ -65,13 +65,14 @@
 
   function renderDownloads(host, rel) {
     var os = detectOS(), ver = rel.tag_name || "";
-    var win = byName(rel, "ircuitry-win-x64.zip"), appimg = bySuffix(rel, ".AppImage"), deb = bySuffix(rel, ".deb");
+    var winexe = byName(rel, "ircuitry-win-x64.exe"), win = byName(rel, "ircuitry-win-x64.zip"), appimg = bySuffix(rel, ".AppImage"), deb = bySuffix(rel, ".deb");
     var lzip = byName(rel, "ircuitry-linux-x64.zip"), marm = byName(rel, "ircuitry-osx-arm64.zip"), mint = byName(rel, "ircuitry-osx-x64.zip");
+    var win1 = winexe || win;   // prefer the single-file .exe
     var primaryUrl, primarySub, others = [];
-    if (os === "windows") { primaryUrl = win; primarySub = ".zip · unzip and run Ircuitry.exe"; others = [link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS")]; }
-    else if (os === "linux") { primaryUrl = appimg || lzip; primarySub = "AppImage · chmod +x and run"; others = [link(deb, ".deb (apt)"), link(lzip, "portable zip"), link(win, "Windows"), link(marm, "macOS")]; }
-    else if (os === "mac") { primaryUrl = marm; primarySub = "Apple Silicon · unzip and open"; others = [link(mint, "macOS Intel"), link(win, "Windows"), link(appimg, "Linux AppImage")]; }
-    else { primaryUrl = null; others = [link(win, "Windows"), link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS Apple Silicon"), link(mint, "macOS Intel")]; }
+    if (os === "windows") { primaryUrl = win1; primarySub = winexe ? ".exe · just run it" : ".zip · unzip and run Ircuitry.exe"; others = [link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS")]; }
+    else if (os === "linux") { primaryUrl = appimg || lzip; primarySub = "AppImage · chmod +x and run"; others = [link(deb, ".deb (apt)"), link(lzip, "portable zip"), link(win1, "Windows"), link(marm, "macOS")]; }
+    else if (os === "mac") { primaryUrl = marm; primarySub = "Apple Silicon · unzip and open"; others = [link(mint, "macOS Intel"), link(win1, "Windows"), link(appimg, "Linux AppImage")]; }
+    else { primaryUrl = null; others = [link(win1, "Windows"), link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS Apple Silicon"), link(mint, "macOS Intel")]; }
 
     var html = "";
     if (primaryUrl) html += '<a class="btn primary" href="' + primaryUrl + '"><span>⬇︎&nbsp; Download for ' + esc(OS_LABEL[os]) + "</span>" + (primarySub ? '<span class="sub">' + esc(primarySub) + "</span>" : "") + "</a>";
