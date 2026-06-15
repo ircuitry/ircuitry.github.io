@@ -58,10 +58,11 @@
     if (/Mac|iPhone|iPad|iPod/i.test(s)) return "mac";
     return "unknown";
   }
-  // Many apt-based distros name themselves in the browser UA (Firefox especially). When we can tell, we
-  // recommend the .deb; otherwise we fall back to the universal AppImage but still offer the .deb up front.
-  function debFamily() {
-    return /ubuntu|debian|linux ?mint|\bmint\b|zorin|pop!?_? ?os|elementary|kubuntu|xubuntu|lubuntu|raspbian|deepin|\bkali\b|mx linux|\bneon\b|pureos|tuxedo/i.test(navigator.userAgent || "");
+  // Default Linux to the .deb; only switch to AppImage if the UA clearly indicates an rpm/arch-family
+  // distro. (Browsers rarely expose the distro at all - notably Chrome and Zorin - so guessing "is this
+  // Debian-family?" failed; assuming .deb unless told otherwise is the reliable choice.)
+  function rpmFamily() {
+    return /fedora|red ?hat|\brhel\b|centos|\brocky\b|alma|\bsuse\b|opensuse|mageia|\barch\b|manjaro|endeavour|garuda|nobara|gentoo|\bvoid\b|alpine|nixos/i.test(navigator.userAgent || "");
   }
   var OS_LABEL = { windows: "Windows", linux: "Linux", mac: "macOS", android: "your device", unknown: "your computer" };
   function byName(rel, name) { var a = (rel.assets || []).filter(function (x) { return x.name === name; })[0]; return a ? a.browser_download_url : null; }
@@ -76,8 +77,17 @@
     var primaryUrl, primarySub, others = [];
     if (os === "windows") { primaryUrl = win1; primarySub = winexe ? ".exe · just run it" : ".zip · unzip and run Ircuitry.exe"; others = [link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS")]; }
     else if (os === "linux") {
-      if (deb && debFamily()) { primaryUrl = deb; primarySub = "Debian / Ubuntu · sudo apt install ./*.deb"; others = [link(appimg, "AppImage (any distro)"), link(lzip, "portable zip"), link(win1, "Windows"), link(marm, "macOS")]; }
-      else { primaryUrl = appimg || lzip; primarySub = "AppImage · runs on any distro"; others = [link(deb, "Debian/Ubuntu .deb"), link(lzip, "portable zip"), link(win1, "Windows"), link(marm, "macOS")]; }
+      // Browsers don't reliably expose the distro, so default to the .deb (Debian/Ubuntu/Mint/Zorin/Pop -
+      // the bulk of desktop Linux) and only flip to the universal AppImage when the UA clearly shows an
+      // rpm/arch-family distro. AppImage is always offered as the first alternative.
+      if (appimg && rpmFamily()) {
+        primaryUrl = appimg; primarySub = "AppImage · runs on any distro";
+        others = [link(deb, "Debian/Ubuntu .deb"), link(lzip, "portable zip"), link(win1, "Windows"), link(marm, "macOS")];
+      } else {
+        primaryUrl = deb || appimg || lzip;
+        primarySub = deb ? "Debian / Ubuntu / Mint / Zorin · sudo apt install ./*.deb" : "AppImage · runs on any distro";
+        others = [link(appimg, "AppImage (any distro)"), link(lzip, "portable zip"), link(win1, "Windows"), link(marm, "macOS")];
+      }
     }
     else if (os === "mac") { primaryUrl = marm; primarySub = "Apple Silicon · unzip and open"; others = [link(mint, "macOS Intel"), link(win1, "Windows"), link(appimg, "Linux AppImage")]; }
     else { primaryUrl = null; others = [link(win1, "Windows"), link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS Apple Silicon"), link(mint, "macOS Intel")]; }
