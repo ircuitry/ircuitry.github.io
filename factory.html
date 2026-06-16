@@ -47,13 +47,13 @@
     .oven .win { position: absolute; left: 30px; right: 30px; top: 56px; bottom: 26px; border-radius: 12px;
       background: radial-gradient(circle at 50% 60%, #ffd789, #f4b24a); border: 2px solid #e0a64a; animation: glow 1.1s ease-in-out infinite; }
     @keyframes glow { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.18); } }
-    .clockfx { position: absolute; left: 132px; top: 70px; width: 52px; height: 52px; border-radius: 50%;
-      background: #fffdf8; border: 3px solid #79cdd0; animation: orbit 2.4s linear infinite; }
+    .clockfx { position: absolute; left: 40px; top: 84px; width: 52px; height: 52px; border-radius: 50%;
+      background: #fffdf8; border: 3px solid #79cdd0; animation: shake .4s ease-in-out infinite; }
     .clockfx .hand { position: absolute; left: 50%; top: 50%; transform-origin: bottom center; background: #56463a; border-radius: 2px; }
     .clockfx .h { width: 3px; height: 13px; margin-left: -1.5px; margin-top: -13px; animation: spin 3s linear infinite; }
     .clockfx .m { width: 2.5px; height: 18px; margin-left: -1.25px; margin-top: -18px; animation: spin 1.1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes orbit { 0% { transform: translate(0,0); } 25% { transform: translate(36px,18px); } 50% { transform: translate(0,30px); } 75% { transform: translate(-36px,18px); } 100% { transform: translate(0,0); } }
+    @keyframes shake { 0%,100% { transform: translate(0,0) rotate(-2.5deg); } 25% { transform: translate(2px,-1px) rotate(2deg); } 50% { transform: translate(-1px,2px) rotate(-2deg); } 75% { transform: translate(1px,1px) rotate(2.5deg); } }
     .bakebot { position: absolute; left: 50%; top: 150px; width: 120px; margin-left: -60px; image-rendering: pixelated;
       opacity: 0; transform: scale(.2) translateY(30px); animation: pop .8s cubic-bezier(.2,1.4,.4,1) 2s forwards; }
     @keyframes pop { to { opacity: 1; transform: scale(1) translateY(-58px); } }
