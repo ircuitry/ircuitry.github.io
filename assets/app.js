@@ -47,6 +47,143 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
+  // ---------- app capability detection (loopback probe + dependency-aware buttons) ----------
+  // The desktop app serves a read-only loopback endpoint; we probe it ONLY after the user has clicked an
+  // install (their cue that they have the app), then tailor each card: 'Upgrade to use this' when their build
+  // is missing a node, community-node prerequisites with a confirm, and updates for nodes they already have.
+  var BUILTINS_URL = "builtins.json";                                   // same-origin: latest built-in node types
+  var CAP_PORTS = [48457, 48458, 48459];                                // app's loopback capability endpoint
+  var RELEASES_URL = "https://github.com/ircuitry/ircuitry/releases/latest";
+  var CAPS = null;          // {version, builtins:{type:1}, community:{typeId:manifest}} once the app answers
+  var LATEST = null;        // {version, builtins:{type:1}} from builtins.json (newest available)
+  var NODE_BY_TYPE = {};    // community-node typeId -> gallery index entry (for prerequisites + update diffs)
+  var GALLERIES = [];       // gallery render() fns to refresh when detection data arrives
+  var PROBING = false;
+
+  function deepEq(a, b) {
+    if (a === b) return true;
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return a === b;
+    if (Array.isArray(a) !== Array.isArray(b)) return false;
+    if (Array.isArray(a)) { if (a.length !== b.length) return false; for (var i = 0; i < a.length; i++) if (!deepEq(a[i], b[i])) return false; return true; }
+    var ka = Object.keys(a), kb = Object.keys(b);
+    if (ka.length !== kb.length) return false;
+    for (var j = 0; j < ka.length; j++) { if (!Object.prototype.hasOwnProperty.call(b, ka[j]) || !deepEq(a[ka[j]], b[ka[j]])) return false; }
+    return true;
+  }
+  function refreshGalleries() { GALLERIES.forEach(function (f) { try { f(); } catch (e) {} }); renderUpgradePanel(); }
+  // fire a custom-scheme (ircuitry://) deep link via a real anchor click - far more reliable across
+  // browsers than reassigning window.location.href repeatedly (which can drop all-but-the-first launch)
+  function fireDeepLink(href) {
+    var a = document.createElement("a"); a.href = href; a.rel = "noopener"; a.style.display = "none";
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { try { document.body.removeChild(a); } catch (e) {} }, 60);
+  }
+
+  function setCaps(j) {
+    var bi = {}; (j.builtins || []).forEach(function (t) { bi[t] = 1; });
+    var cm = {}; (j.community || []).forEach(function (m) { if (m && m.typeId) cm[m.typeId] = m; });
+    CAPS = { version: j.version || "", builtins: bi, community: cm };
+  }
+  function tryAllPorts(i) {
+    i = i || 0;
+    if (i >= CAP_PORTS.length) return Promise.resolve(null);
+    return fetch("http://127.0.0.1:" + CAP_PORTS[i] + "/capabilities", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { return (j && j.app === "ircuitry") ? j : tryAllPorts(i + 1); })
+      .catch(function () { return tryAllPorts(i + 1); });
+  }
+  // probe, retrying a few times so a just-launched app (still binding its port) is still detected
+  function probeApp() {
+    if (CAPS) return Promise.resolve(CAPS);
+    if (PROBING) return Promise.resolve(null);
+    PROBING = true;
+    var round = 0;
+    function attempt() {
+      return tryAllPorts().then(function (j) {
+        if (j) { setCaps(j); PROBING = false; refreshGalleries(); return CAPS; }
+        if (++round >= 4) { PROBING = false; return null; }                 // app not running - leave plain buttons
+        return new Promise(function (res) { setTimeout(function () { res(attempt()); }, 1500); });
+      });
+    }
+    return attempt();
+  }
+
+  function loadDetectionData() {
+    fetch(BUILTINS_URL, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (j && j.builtins) { var s = {}; j.builtins.forEach(function (t) { s[t] = 1; }); LATEST = { version: j.version || "", builtins: s }; refreshGalleries(); }
+    }).catch(function () {});
+    fetch(NODES_INDEX, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (j && j.nodes) { j.nodes.forEach(function (n) { NODE_BY_TYPE[n.typeId] = n; }); refreshGalleries(); }
+    }).catch(function () {});
+  }
+
+  function reqTypes(item, kind) {
+    if (kind === "workflows") return item.nodeTypes || [];
+    var m = item.manifest || {}, t = [];                                  // a community NODE needs its subgraph's types
+    if (m.subgraph && Array.isArray(m.subgraph.nodes)) m.subgraph.nodes.forEach(function (n) { if (n && n.type) t.push(n.type); });
+    return t;
+  }
+  function statusFor(item, kind) {
+    if (!CAPS) return { state: "install" };                               // not probed yet -> plain install
+    var missing = reqTypes(item, kind).filter(function (t) { return !CAPS.builtins[t] && !CAPS.community[t]; });
+    var upgrade = false, prereqs = [];
+    missing.forEach(function (t) {
+      if (LATEST && LATEST.builtins[t]) upgrade = true;                    // a built-in the newest app has, theirs lacks
+      else if (NODE_BY_TYPE[t]) prereqs.push(NODE_BY_TYPE[t]);             // a community-node prerequisite
+      else upgrade = true;                                                 // unknown -> safest to suggest upgrade
+    });
+    var update = (kind === "nodes" && CAPS.community[item.typeId]) ? !deepEq(CAPS.community[item.typeId], item.manifest) : false;
+    if (upgrade) return { state: "upgrade" };
+    if (prereqs.length) return { state: "prereq", prereqs: prereqs };
+    if (update) return { state: "update" };
+    return { state: "install" };
+  }
+
+  function actionsHtml(item, i, kind, action, raw) {
+    var st = statusFor(item, kind), main;
+    if (st.state === "upgrade")
+      main = '<a class="btn upgrade" href="' + RELEASES_URL + '" target="_blank" rel="noopener" title="Your ircuitry is missing a node this needs - update to the latest">⤴ Upgrade to use this</a>';
+    else if (st.state === "prereq")
+      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" title="Needs community node(s) you don\'t have yet">Install + ' + st.prereqs.length + ' node' + (st.prereqs.length > 1 ? "s" : "") + "</button>";
+    else if (st.state === "update")
+      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '">↻ Update to latest</a>';
+    else
+      main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '">Install in app</a>';
+    return '<div class="actions">' + main +
+      '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div>';
+  }
+
+  function handlePrereq(item, kind) {
+    var st = statusFor(item, kind);
+    if (st.state !== "prereq") { probeApp(); return; }
+    var names = st.prereqs.map(function (p) { return "  • " + (p.title || p.typeId); }).join("\n");
+    var label = item.name || item.title || item.typeId;
+    if (!window.confirm('"' + label + '" needs ' + st.prereqs.length + ' community node' + (st.prereqs.length > 1 ? "s" : "") + " you don't have yet:\n\n" + names + "\n\nInstall " + (st.prereqs.length > 1 ? "them" : "it") + " first, then " + label + "? (ircuitry will confirm each one.)")) return;
+    var steps = st.prereqs.map(function (p) { return installHref("install-node", rawUrl(NODES_RAW, p.file)); });
+    steps.push(kind === "workflows" ? installHref("install-bot", rawUrl(WF_RAW, item.file)) : installHref("install-node", rawUrl(NODES_RAW, item.file)));
+    var k = 0;
+    (function next() { if (k >= steps.length) { setTimeout(probeApp, 1500); return; } fireDeepLink(steps[k++]); setTimeout(next, 1300); })();
+  }
+
+  function renderUpgradePanel() {
+    var grid = el("grid"); if (!grid) return;
+    var host = el("upgradePanel");
+    if (!host) { host = document.createElement("div"); host.id = "upgradePanel"; grid.parentNode.insertBefore(host, grid); }
+    if (!CAPS) { host.innerHTML = ""; return; }
+    var ups = [];
+    Object.keys(CAPS.community).forEach(function (tid) {
+      var idx = NODE_BY_TYPE[tid];
+      if (idx && idx.manifest && !deepEq(CAPS.community[tid], idx.manifest)) ups.push(idx);
+    });
+    if (!ups.length) { host.innerHTML = ""; return; }
+    host.className = "upgrade-panel";
+    host.innerHTML = '<div class="up-head">↻ ' + ups.length + " node update" + (ups.length > 1 ? "s" : "") + " available <span>for community nodes you have installed</span></div>" +
+      '<div class="up-list">' + ups.map(function (n) {
+        return '<div class="up-item"><span class="up-name">' + safeIcon(n) + " " + esc(n.title || n.typeId) + "</span>" +
+          '<a class="btn update" href="' + installHref("install-node", rawUrl(NODES_RAW, n.file)) + '">Update</a></div>';
+      }).join("") + "</div>";
+  }
+
   // ---------- OS detection + downloads ----------
   function detectOS() {
     var ua = navigator.userAgent || "";
@@ -121,8 +258,7 @@
       '<div class="name">' + esc(n.title || n.typeId) + '</div><div class="meta">' + esc(n.typeId) + " · " + author + "</div></div></div>" +
       '<div class="desc">' + esc(n.description || "") + "</div>" +
       '<div class="cat"><span class="lang-tag">' + esc(lang) + "</span></div>" +
-      '<div class="actions"><a class="btn primary" href="' + installHref("install-node", rawUrl(NODES_RAW, n.file)) + '">Install in app</a>' +
-      '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
+      actionsHtml(n, i, "nodes", "install-node", rawUrl(NODES_RAW, n.file)) + "</div>";
   }
   function workflowCard(w, i) {
     var author = w.author && w.author !== "ircuitry" ? "by " + esc(w.author) : "community";
@@ -131,8 +267,7 @@
       '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires · " + author + "</div></div></div>" +
       '<div class="desc">' + esc(w.description || "") + "</div>" +
       '<div class="cat">' + tags + "</div>" +
-      '<div class="actions"><a class="btn primary" href="' + installHref("install-bot", rawUrl(WF_RAW, w.file)) + '">Install in app</a>' +
-      '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div></div>';
+      actionsHtml(w, i, "workflows", "install-bot", rawUrl(WF_RAW, w.file)) + "</div>";
   }
 
   function startGallery(opts) {
@@ -169,9 +304,15 @@
       grid.querySelectorAll("[data-dl]").forEach(function (btn) {
         btn.addEventListener("click", function () { var it = all[+btn.getAttribute("data-dl")]; downloadFile(opts.copyData(it), opts.dlName(it)); });
       });
+      // the moment the user installs anything, probe their app and re-tailor every card
+      grid.querySelectorAll(".install-link").forEach(function (a) { a.addEventListener("click", function () { probeApp(); }); });
+      grid.querySelectorAll("[data-prereq]").forEach(function (btn) {
+        btn.addEventListener("click", function () { handlePrereq(all[+btn.getAttribute("data-prereq")], btn.getAttribute("data-kind")); });
+      });
       buildRail(b, cats);
       observe();
     }
+    GALLERIES.push(render);   // let detection-data arrival re-render this gallery
 
     function buildRail(b, cats) {
       if (!rail) return;
@@ -209,6 +350,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     loadDownloads();
     var gallery = document.body.getAttribute("data-gallery");
+    if (gallery === "nodes" || gallery === "workflows") loadDetectionData();
     if (gallery === "nodes") {
       startGallery({
         url: NODES_INDEX, repo: NODES, listKey: "nodes", noun: "nodes",
