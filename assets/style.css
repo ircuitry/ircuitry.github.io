@@ -191,6 +191,32 @@ footer a { color: var(--ink-soft); font-weight: 700; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* graph viewer ("Inspect") modal */
+.gv-backdrop {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 24px;
+  background: rgba(67, 57, 42, .44); opacity: 0; pointer-events: none; transition: opacity .2s ease;
+}
+.gv-backdrop.show { opacity: 1; pointer-events: auto; }
+.gv-modal {
+  display: flex; flex-direction: column; width: min(1100px, 94vw); height: min(820px, 90vh);
+  background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+  transform: translateY(12px) scale(.985); transition: transform .2s ease; overflow: hidden;
+}
+.gv-backdrop.show .gv-modal { transform: none; }
+.gv-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.gv-title { font-family: var(--font-head); font-weight: 800; font-size: 19px; color: var(--ink); flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gv-title .gv-sub { font-family: var(--font); font-weight: 600; font-size: 13px; color: var(--ink-faint); }
+.gv-close { padding: 6px 14px; font-size: 15px; }
+.gv-body { flex: 1; min-height: 0; background: #E9F2D8; position: relative; }
+.gv-svg { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+.gv-empty { display: grid; place-items: center; height: 100%; color: var(--ink-soft); font-weight: 700; }
+.gv-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 10px 18px; border-top: 1px solid var(--line); }
+.gv-hint { font-size: 12.5px; color: var(--ink-faint); }
+.gv-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-left: auto; }
+.gv-leg { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-soft); font-weight: 600; }
+.gv-leg i { width: 11px; height: 11px; border-radius: 4px; display: inline-block; }
+
 @media (max-width: 880px) {
   .gallery-layout { grid-template-columns: 1fr; gap: 10px; }
   .cat-rail { position: sticky; top: 0; z-index: 6; margin: 0 -4px; padding: 8px 4px; background: var(--paper); border-bottom: 1px solid var(--line); }

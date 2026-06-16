@@ -59,6 +59,8 @@
   var NODE_BY_TYPE = {};    // community-node typeId -> gallery index entry (for prerequisites + update diffs)
   var GALLERIES = [];       // gallery render() fns to refresh when detection data arrives
   var PROBING = false;
+  var NODETYPES_URL = "nodetypes.json";   // same-origin: built-in node-type pin/category/icon schema (for the viewer)
+  var TYPE_INFO = {};       // typeId -> {t:title, c:category, i:icon, g:trigger, in:[[name,kind]], out:[[name,kind]]}
 
   function deepEq(a, b) {
     if (a === b) return true;
@@ -115,6 +117,9 @@
     fetch(NODES_INDEX, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
       if (j && j.nodes) { j.nodes.forEach(function (n) { NODE_BY_TYPE[n.typeId] = n; }); refreshGalleries(); }
     }).catch(function () {});
+    fetch(NODETYPES_URL, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (j && j.types) TYPE_INFO = j.types;   // built-in node-type schema for the graph viewer
+    }).catch(function () {});
   }
 
   function reqTypes(item, kind) {
@@ -150,6 +155,7 @@
     else
       main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '">Install in app</a>';
     return '<div class="actions">' + main +
+      '<button class="btn" data-inspect="' + i + '" data-kind="' + kind + '" title="See the node graph underneath">👁 Inspect</button>' +
       '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div>';
   }
 
@@ -246,6 +252,189 @@
       });
   }
 
+  // ---------- visual graph viewer ("Inspect") ----------
+  // Draws the node graph under a community node (manifest.subgraph) or workflow (item.workflow) as an SVG
+  // in the app's own cozy style: 196-wide cards, pastel category headers, kind-coloured pins + bezier wires.
+  var GV_CAT = { Event: "#56C0D2", Filter: "#F2AE46", Logic: "#B09EE2", Action: "#8CC454", Data: "#F08A9E", Ai: "#C68ED6", Storage: "#74AEE0", Code: "#7C8AD2", Ircv3: "#4EC4B2" };
+  var GV_PIN = { Exec: "#7ED6E4", Text: "#F2AE46", User: "#F08A9E", Channel: "#B09EE2", Number: "#8CC454", Bool: "#7EC45C", Tool: "#F08A9E" };
+  var GV_IDLE = "#B0A284", GV_PINDEF = "#8C7A5C";
+  var GV_W = 196, GV_HEAD = 34, GV_ROW = 24, GV_PAD = 12, GV_RAD = 13, GV_PR = 5.5, GV_GAP = 84;
+  function gvCat(c) { return GV_CAT[c] || GV_IDLE; }
+  function gvPinCol(k) { return GV_PIN[k] || GV_PINDEF; }
+  function gvHx(n) { n = Math.max(0, Math.min(255, Math.round(n))); return (n < 16 ? "0" : "") + n.toString(16); }
+  function gvMix(a, b, t) {
+    var ar = parseInt(a.slice(1, 3), 16), ag = parseInt(a.slice(3, 5), 16), ab = parseInt(a.slice(5, 7), 16);
+    var br = parseInt(b.slice(1, 3), 16), bg = parseInt(b.slice(3, 5), 16), bb = parseInt(b.slice(5, 7), 16);
+    return "#" + gvHx(ar + (br - ar) * t) + gvHx(ag + (bg - ag) * t) + gvHx(ab + (bb - ab) * t);
+  }
+  function gvClip(s, max) { s = String(s == null ? "" : s); return s.length > max ? s.slice(0, max - 1) + "…" : s; }
+  // resolve a node type to {title, cat, icon, trig, ins:[{n,k}], outs:[{n,k}]} - built-in schema first, then a community node, else null
+  function gvType(type) {
+    var b = TYPE_INFO[type];
+    if (b) return { title: b.t || type, cat: b.c || "", icon: b.i || "●", trig: !!b.g,
+      ins: (b.in || []).map(function (p) { return { n: p[0], k: p[1] }; }),
+      outs: (b.out || []).map(function (p) { return { n: p[0], k: p[1] }; }) };
+    var c = NODE_BY_TYPE[type];
+    if (c) return { title: c.title || type, cat: c.category || "", icon: c.icon || "🧩", trig: false,
+      ins: (c.inputs || []).map(function (p) { return { n: p.name, k: p.kind }; }),
+      outs: (c.outputs || []).map(function (p) { return { n: p.name, k: p.kind }; }) };
+    return null;
+  }
+  // build a layout model from {nodes, connections}; rows account for dynamic pins implied by connection indices
+  function gvBuild(graph) {
+    var nodes = (graph.nodes || []).map(function (n) {
+      return { id: n.id, type: n.type, title: n.title, muted: !!n.muted, x: +n.x || 0, y: +n.y || 0, info: gvType(n.type), cin: {}, cout: {}, maxIn: 0, maxOut: 0 };
+    });
+    var byId = {}; nodes.forEach(function (n) { byId[n.id] = n; n.maxIn = n.info ? n.info.ins.length : 0; n.maxOut = n.info ? n.info.outs.length : 0; });
+    // pins come from untrusted community JSON - coerce to non-negative integers (like x/y above) so a
+    // missing/odd pin can never produce a NaN wire coordinate or an "undefined" connectivity key
+    var conns = (graph.connections || []).filter(function (c) { return byId[c.from] && byId[c.to]; })
+      .map(function (c) { return { from: c.from, to: c.to, fromPin: Math.max(0, Math.floor(+c.fromPin || 0)), toPin: Math.max(0, Math.floor(+c.toPin || 0)) }; });
+    conns.forEach(function (c) {
+      var f = byId[c.from], t = byId[c.to];
+      f.cout[c.fromPin] = 1; t.cin[c.toPin] = 1;
+      if (c.fromPin + 1 > f.maxOut) f.maxOut = c.fromPin + 1;
+      if (c.toPin + 1 > t.maxIn) t.maxIn = c.toPin + 1;
+    });
+    nodes.forEach(function (n) { n.rows = Math.max(1, n.maxIn, n.maxOut); n.h = GV_HEAD + n.rows * GV_ROW + GV_PAD; });
+    return { nodes: nodes, byId: byId, conns: conns };
+  }
+  // when nodes carry no real coordinates (all stacked at one point), lay them out left-to-right by flow depth
+  function gvAutoLayout(model) {
+    var ns = model.nodes, layer = {};
+    ns.forEach(function (n) { layer[n.id] = 0; });
+    for (var it = 0; it < ns.length; it++) {
+      var changed = false;
+      model.conns.forEach(function (c) { if (layer[c.to] < layer[c.from] + 1) { layer[c.to] = layer[c.from] + 1; changed = true; } });
+      if (!changed) break;
+    }
+    var cols = {}; ns.forEach(function (n) { (cols[layer[n.id]] = cols[layer[n.id]] || []).push(n); });
+    Object.keys(cols).forEach(function (L) { var y = 0; cols[L].forEach(function (n) { n.x = (+L) * (GV_W + GV_GAP); n.y = y; y += n.h + 30; }); });
+  }
+  function gvLayout(model) {
+    var ns = model.nodes; if (!ns.length) return;
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    ns.forEach(function (n) { minX = Math.min(minX, n.x); minY = Math.min(minY, n.y); maxX = Math.max(maxX, n.x); maxY = Math.max(maxY, n.y); });
+    if (ns.length > 1 && maxX - minX < 1 && maxY - minY < 1) gvAutoLayout(model);   // all on one spot -> auto
+  }
+  function gvPinShape(cx, cy, kind, connected) {
+    var col = gvPinCol(kind), r = GV_PR, fill = connected ? col : "#EEE5D0";
+    if (kind === "Exec") { var s = r * 2; return '<rect x="' + (cx - r) + '" y="' + (cy - r) + '" width="' + s + '" height="' + s + '" rx="' + (r * 0.4) + '" fill="' + fill + '" stroke="' + col + '" stroke-width="1.4"/>'; }
+    return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fill + '" stroke="' + col + '" stroke-width="1.4"/>';
+  }
+  function gvLabel(x, y, text, anchor) {
+    return '<text x="' + x + '" y="' + y + '" dominant-baseline="central" text-anchor="' + anchor + '" font-family="var(--font)" font-size="10.5" fill="#8C7A5C">' + esc(text) + "</text>";
+  }
+  function gvHeaderPath(w, h, r) { return "M" + r + " 0 H" + (w - r) + " A" + r + " " + r + " 0 0 1 " + w + " " + r + " V" + h + " H0 V" + r + " A" + r + " " + r + " 0 0 1 " + r + " 0 Z"; }
+  function gvNodeSvg(n) {
+    var info = n.info, accent = gvCat(info ? info.cat : "");
+    var body = gvMix("#FCF7EB", accent, 0.05), head = gvMix("#FFFCF4", accent, 0.30);
+    var title = n.title || (info && info.title) || n.type, icon = info ? info.icon : "🧩";
+    var g = '<g transform="translate(' + n.x + "," + n.y + ')"' + (n.muted ? ' opacity="0.5"' : "") + ">";
+    g += '<rect x="0" y="0" width="' + GV_W + '" height="' + n.h + '" rx="' + GV_RAD + '" fill="' + body + '" stroke="' + (info ? "#C9B690" : "#D8553F") + '" stroke-width="1.5" filter="url(#gvsh)"/>';
+    g += '<path d="' + gvHeaderPath(GV_W, GV_HEAD, GV_RAD) + '" fill="' + head + '"/>';
+    g += '<line x1="2" y1="' + GV_HEAD + '" x2="' + (GV_W - 2) + '" y2="' + GV_HEAD + '" stroke="' + accent + '" stroke-opacity="0.55" stroke-width="1.5"/>';
+    g += '<text x="11" y="' + (GV_HEAD / 2 + 1) + '" dominant-baseline="central" font-size="15">' + esc(icon) + "</text>";
+    g += '<text x="34" y="' + (GV_HEAD / 2 + 1) + '" dominant-baseline="central" font-family="var(--font-head)" font-size="13.5" font-weight="700" fill="#564630">' + esc(gvClip(title, 17)) + "</text>";
+    for (var i = 0; i < n.rows; i++) {
+      var cy = GV_HEAD + GV_ROW * (i + 0.5);
+      if (i < n.maxIn) { var ip = info && info.ins[i] ? info.ins[i] : { n: "", k: "Exec" }; g += gvPinShape(0, cy, ip.k, !!n.cin[i]); if (ip.n) g += gvLabel(11, cy, gvClip(ip.n, 11), "start"); }
+      if (i < n.maxOut) { var op = info && info.outs[i] ? info.outs[i] : { n: "", k: "Exec" }; g += gvPinShape(GV_W, cy, op.k, !!n.cout[i]); if (op.n) g += gvLabel(GV_W - 11, cy, gvClip(op.n, 11), "end"); }
+    }
+    return g + "</g>";
+  }
+  function gvSvg(model) {
+    var ns = model.nodes, minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    ns.forEach(function (n) { minX = Math.min(minX, n.x); minY = Math.min(minY, n.y); maxX = Math.max(maxX, n.x + GV_W); maxY = Math.max(maxY, n.y + n.h); });
+    if (!isFinite(minX)) { minX = 0; minY = 0; maxX = GV_W; maxY = GV_HEAD; }
+    var pad = 56; minX -= pad; minY -= pad; maxX += pad; maxY += pad;
+    var W = maxX - minX, H = maxY - minY;
+    var wires = model.conns.map(function (c) {
+      var f = model.byId[c.from], t = model.byId[c.to];
+      var ax = f.x + GV_W, ay = f.y + GV_HEAD + GV_ROW * (c.fromPin + 0.5);
+      var bx = t.x, by = t.y + GV_HEAD + GV_ROW * (c.toPin + 0.5);
+      var col = f.info && f.info.outs[c.fromPin] ? gvPinCol(f.info.outs[c.fromPin].k) : "#7ED6E4";
+      var dx = Math.max(40, Math.abs(bx - ax) * 0.5), dim = f.muted || t.muted ? ' opacity="0.3"' : "";
+      return '<path d="M' + ax + " " + ay + " C" + (ax + dx) + " " + ay + " " + (bx - dx) + " " + by + " " + bx + " " + by + '" fill="none" stroke="' + col + '" stroke-width="2.4" stroke-linecap="round"' + dim + "/>" +
+        '<circle cx="' + ax + '" cy="' + ay + '" r="2.6" fill="' + col + '"' + dim + "/><circle cx=\"" + bx + '" cy="' + by + '" r="2.6" fill="' + col + '"' + dim + "/>";
+    }).join("");
+    return '<svg class="gv-svg" xmlns="http://www.w3.org/2000/svg" viewBox="' + minX + " " + minY + " " + W + " " + H + '" preserveAspectRatio="xMidYMid meet">' +
+      '<defs><filter id="gvsh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="5" stdDeviation="3" flood-color="#000000" flood-opacity="0.13"/></filter>' +
+      '<pattern id="gvgrid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#DCE7C6" stroke-width="1"/></pattern></defs>' +
+      '<rect x="' + minX + '" y="' + minY + '" width="' + W + '" height="' + H + '" fill="#E9F2D8"/>' +
+      '<rect x="' + minX + '" y="' + minY + '" width="' + W + '" height="' + H + '" fill="url(#gvgrid)"/>' +
+      '<g>' + wires + "</g><g>" + ns.map(gvNodeSvg).join("") + "</g></svg>";
+  }
+  function gvLegendHtml(model) {
+    var kinds = {}; model.nodes.forEach(function (n) {
+      if (!n.info) return;
+      n.info.ins.concat(n.info.outs).forEach(function (p) { if (p.k) kinds[p.k] = 1; });
+    });
+    return Object.keys(kinds).map(function (k) { return '<span class="gv-leg"><i style="background:' + gvPinCol(k) + '"></i>' + esc(k) + "</span>"; }).join("");
+  }
+  var GV_ESC_HANDLER = null;
+  function gvEnsureModal() {
+    var m = el("gview"); if (m) return m;
+    m = document.createElement("div"); m.className = "gv-backdrop"; m.id = "gview"; m.hidden = true;
+    m.innerHTML = '<div class="gv-modal" role="dialog" aria-modal="true" aria-label="Node graph preview">' +
+      '<div class="gv-head"><div class="gv-title"></div><button class="btn ghost gv-close" type="button" aria-label="Close">✕</button></div>' +
+      '<div class="gv-body"></div>' +
+      '<div class="gv-foot"><span class="gv-hint">drag to pan · scroll to zoom · this is exactly what installs</span><span class="gv-legend"></span></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener("click", function (e) { if (e.target === m) gvHide(); });
+    m.querySelector(".gv-close").addEventListener("click", gvHide);
+    return m;
+  }
+  function gvHide() {
+    var m = el("gview"); if (!m) return;
+    m.classList.remove("show");
+    if (GV_ESC_HANDLER) { document.removeEventListener("keydown", GV_ESC_HANDLER); GV_ESC_HANDLER = null; }
+    document.body.style.overflow = "";
+    setTimeout(function () { if (!m.classList.contains("show")) m.hidden = true; }, 200);
+  }
+  function openInspect(item, kind) {
+    var graph, title, sub;
+    if (kind === "workflows" || (item && item.workflow)) { graph = item.workflow; title = item.name || "Workflow"; sub = (item.nodeCount != null ? item.nodeCount + " nodes · " + item.connectionCount + " wires" : "workflow"); }
+    else { graph = item && item.manifest && item.manifest.subgraph; title = (item && (item.title || item.typeId)) || "Node"; sub = "node graph"; }
+    var m = gvEnsureModal();
+    m.querySelector(".gv-title").innerHTML = esc(title) + ' <span class="gv-sub">' + esc(sub) + "</span>";
+    var body = m.querySelector(".gv-body");
+    if (!graph || !graph.nodes || !graph.nodes.length) {
+      // a single code/leaf node with no sub-graph: show the node itself (its own pins) plus a note
+      if (item && item.typeId && (TYPE_INFO[item.typeId] || NODE_BY_TYPE[item.typeId])) graph = { nodes: [{ id: "self", type: item.typeId, title: item.title || item.typeId, x: 0, y: 0 }], connections: [] };
+      else { body.innerHTML = '<div class="gv-empty">This item has no sub-graph to preview.</div>'; m.querySelector(".gv-legend").innerHTML = ""; gvOpen(m); return; }
+    }
+    var model = gvBuild(graph); gvLayout(model);
+    body.innerHTML = gvSvg(model);
+    m.querySelector(".gv-legend").innerHTML = gvLegendHtml(model);
+    gvPanZoom(body.querySelector("svg"));
+    gvOpen(m);
+  }
+  function gvOpen(m) {
+    m.hidden = false; document.body.style.overflow = "hidden";
+    requestAnimationFrame(function () { m.classList.add("show"); });
+    GV_ESC_HANDLER = function (e) { if (e.key === "Escape") gvHide(); };
+    document.addEventListener("keydown", GV_ESC_HANDLER);
+  }
+  function gvPanZoom(svg) {
+    if (!svg) return;
+    var vb = svg.getAttribute("viewBox").split(/\s+/).map(Number), st = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
+    function apply() { svg.setAttribute("viewBox", st.x + " " + st.y + " " + st.w + " " + st.h); }
+    svg.addEventListener("mousedown", function (e) {
+      e.preventDefault(); svg.style.cursor = "grabbing";
+      var sx = e.clientX, sy = e.clientY, ox = st.x, oy = st.y, r = svg.getBoundingClientRect();
+      function mv(ev) { st.x = ox - (ev.clientX - sx) * (st.w / r.width); st.y = oy - (ev.clientY - sy) * (st.h / r.height); apply(); }
+      function up() { svg.style.cursor = ""; document.removeEventListener("mousemove", mv); document.removeEventListener("mouseup", up); }
+      document.addEventListener("mousemove", mv); document.addEventListener("mouseup", up);
+    });
+    svg.addEventListener("wheel", function (e) {
+      e.preventDefault(); var r = svg.getBoundingClientRect();
+      var fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height, f = e.deltaY < 0 ? 0.86 : 1.16;
+      var nw = Math.max(140, Math.min(9000, st.w * f)), nh = Math.max(140, Math.min(9000, st.h * f));
+      st.x += (st.w - nw) * fx; st.y += (st.h - nh) * fy; st.w = nw; st.h = nh; apply();
+    }, { passive: false });
+  }
+
   // ---------- generic gallery ----------
   function safeIcon(it) {
     if (it.iconImage && /^[A-Za-z0-9+/=\s]+$/.test(it.iconImage)) return '<img alt="" src="data:image/png;base64,' + it.iconImage.replace(/\s+/g, "") + '">';
@@ -253,7 +442,7 @@
   }
   function nodeCard(n, i) {
     var lang = n.language === "subgraph" ? "subflow" : (n.language || "python");
-    var author = n.author && n.author !== "ircuitry" ? "by " + esc(n.author) : "community";
+    var author = "by " + esc(n.author || "community");
     return '<div class="node"><div class="top"><div class="badge">' + safeIcon(n) + '</div><div>' +
       '<div class="name">' + esc(n.title || n.typeId) + '</div><div class="meta">' + esc(n.typeId) + " · " + author + "</div></div></div>" +
       '<div class="desc">' + esc(n.description || "") + "</div>" +
@@ -261,7 +450,7 @@
       actionsHtml(n, i, "nodes", "install-node", rawUrl(NODES_RAW, n.file)) + "</div>";
   }
   function workflowCard(w, i) {
-    var author = w.author && w.author !== "ircuitry" ? "by " + esc(w.author) : "community";
+    var author = "by " + esc(w.author || "community");
     var tags = (w.tags || []).slice(0, 3).map(function (t) { return '<span class="lang-tag">' + esc(t) + "</span>"; }).join(" ");
     return '<div class="node"><div class="top"><div class="badge">🤖</div><div>' +
       '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires · " + author + "</div></div></div>" +
@@ -308,6 +497,9 @@
       grid.querySelectorAll(".install-link").forEach(function (a) { a.addEventListener("click", function () { probeApp(); }); });
       grid.querySelectorAll("[data-prereq]").forEach(function (btn) {
         btn.addEventListener("click", function () { handlePrereq(all[+btn.getAttribute("data-prereq")], btn.getAttribute("data-kind")); });
+      });
+      grid.querySelectorAll("[data-inspect]").forEach(function (btn) {
+        btn.addEventListener("click", function () { openInspect(all[+btn.getAttribute("data-inspect")], btn.getAttribute("data-kind")); });
       });
       buildRail(b, cats);
       observe();
