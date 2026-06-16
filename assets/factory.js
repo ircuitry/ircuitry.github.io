@@ -160,12 +160,12 @@
     el("bakeCap").textContent = "Baking your bot…";
     el("bakefx").classList.add("show");
     // mirror the app: oven + clock ~2s, then the bot pops, ~2.8s total
-    setTimeout(function () { el("bakeCap").textContent = MERGED.name + " is ready!"; }, 2050);
+    setTimeout(function () { el("bakeCap").textContent = MERGED.name + " is ready!"; }, 2150);
     setTimeout(function () {
       el("bakefx").classList.remove("show");
       el("resultSub").textContent = MERGED.name + " · " + MERGED.nodes.length + " nodes · " + MERGED.connections.length + " wires";
       el("resultScrim").classList.add("show");
-    }, 2850);
+    }, 3950);
   }
 
   function download(text, name) {
