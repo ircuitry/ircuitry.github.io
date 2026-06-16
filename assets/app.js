@@ -147,16 +147,17 @@
   function actionsHtml(item, i, kind, action, raw) {
     var st = statusFor(item, kind), main;
     if (st.state === "upgrade")
-      main = '<a class="btn upgrade" href="' + RELEASES_URL + '" target="_blank" rel="noopener" title="Your ircuitry is missing a node this needs - update to the latest">⤴ Upgrade to use this</a>';
+      main = '<a class="btn upgrade" href="' + RELEASES_URL + '" target="_blank" rel="noopener" data-tip="Your ircuitry is missing a node this needs - update to the latest">⤴ Upgrade to use this</a>';
     else if (st.state === "prereq")
-      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" title="Needs community node(s) you don\'t have yet">Install + ' + st.prereqs.length + ' node' + (st.prereqs.length > 1 ? "s" : "") + "</button>";
+      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" data-tip="Needs community node(s) you don\'t have yet">Install + ' + st.prereqs.length + ' node' + (st.prereqs.length > 1 ? "s" : "") + "</button>";
     else if (st.state === "update")
-      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '">↻ Update to latest</a>';
+      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '" data-tip="Update to the latest version">↻ Update to latest</a>';
     else
-      main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '">Install in app</a>';
+      main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '" data-tip="Hands the file straight to your running ircuitry">📥 One-click install</a>';
     return '<div class="actions">' + main +
-      '<button class="btn" data-inspect="' + i + '" data-kind="' + kind + '" title="See the node graph underneath">👁 Inspect</button>' +
-      '<button class="btn" data-copy="' + i + '">Copy</button><button class="btn" data-dl="' + i + '">Download</button></div>';
+      '<button class="btn icon" data-inspect="' + i + '" data-kind="' + kind + '" data-tip="Inspect graph">🔍</button>' +
+      '<button class="btn icon" data-copy="' + i + '" data-tip="Copy JSON">📋</button>' +
+      '<button class="btn icon" data-dl="' + i + '" data-tip="Download ' + (kind === "workflows" ? ".ircbot" : ".ircnode") + '">⬇</button></div>';
   }
 
   function handlePrereq(item, kind) {
@@ -283,7 +284,7 @@
   // build a layout model from {nodes, connections}; rows account for dynamic pins implied by connection indices
   function gvBuild(graph) {
     var nodes = (graph.nodes || []).map(function (n) {
-      return { id: n.id, type: n.type, title: n.title, muted: !!n.muted, x: +n.x || 0, y: +n.y || 0, info: gvType(n.type), cin: {}, cout: {}, maxIn: 0, maxOut: 0 };
+      return { id: n.id, type: n.type, title: n.title, params: n.params || {}, muted: !!n.muted, x: +n.x || 0, y: +n.y || 0, info: gvType(n.type), cin: {}, cout: {}, maxIn: 0, maxOut: 0 };
     });
     var byId = {}; nodes.forEach(function (n) { byId[n.id] = n; n.maxIn = n.info ? n.info.ins.length : 0; n.maxOut = n.info ? n.info.outs.length : 0; });
     // pins come from untrusted community JSON - coerce to non-negative integers (like x/y above) so a
@@ -330,8 +331,8 @@
     var info = n.info, accent = gvCat(info ? info.cat : "");
     var body = gvMix("#FCF7EB", accent, 0.05), head = gvMix("#FFFCF4", accent, 0.30);
     var title = n.title || (info && info.title) || n.type, icon = info ? info.icon : "🧩";
-    var g = '<g transform="translate(' + n.x + "," + n.y + ')"' + (n.muted ? ' opacity="0.5"' : "") + ">";
-    g += '<rect x="0" y="0" width="' + GV_W + '" height="' + n.h + '" rx="' + GV_RAD + '" fill="' + body + '" stroke="' + (info ? "#C9B690" : "#D8553F") + '" stroke-width="1.5" filter="url(#gvsh)"/>';
+    var g = '<g class="gv-node" data-nid="' + esc(n.id) + '" transform="translate(' + n.x + "," + n.y + ')"' + (n.muted ? ' opacity="0.5"' : "") + ">";
+    g += '<rect class="gv-nbody" x="0" y="0" width="' + GV_W + '" height="' + n.h + '" rx="' + GV_RAD + '" fill="' + body + '" stroke="' + (info ? "#C9B690" : "#D8553F") + '" stroke-width="1.5" filter="url(#gvsh)"/>';
     g += '<path d="' + gvHeaderPath(GV_W, GV_HEAD, GV_RAD) + '" fill="' + head + '"/>';
     g += '<line x1="2" y1="' + GV_HEAD + '" x2="' + (GV_W - 2) + '" y2="' + GV_HEAD + '" stroke="' + accent + '" stroke-opacity="0.55" stroke-width="1.5"/>';
     g += '<text x="11" y="' + (GV_HEAD / 2 + 1) + '" dominant-baseline="central" font-size="15">' + esc(icon) + "</text>";
@@ -378,8 +379,8 @@
     m = document.createElement("div"); m.className = "gv-backdrop"; m.id = "gview"; m.hidden = true;
     m.innerHTML = '<div class="gv-modal" role="dialog" aria-modal="true" aria-label="Node graph preview">' +
       '<div class="gv-head"><div class="gv-title"></div><button class="btn ghost gv-close" type="button" aria-label="Close">✕</button></div>' +
-      '<div class="gv-body"></div>' +
-      '<div class="gv-foot"><span class="gv-hint">drag to pan · scroll to zoom · this is exactly what installs</span><span class="gv-legend"></span></div></div>';
+      '<div class="gv-body"><div class="gv-stage"></div><div class="gv-detail"></div></div>' +
+      '<div class="gv-foot"><span class="gv-hint">click a node for details · drag to pan · scroll to zoom · this is exactly what installs</span><span class="gv-legend"></span></div></div>';
     document.body.appendChild(m);
     m.addEventListener("click", function (e) { if (e.target === m) gvHide(); });
     m.querySelector(".gv-close").addEventListener("click", gvHide);
@@ -398,17 +399,56 @@
     else { graph = item && item.manifest && item.manifest.subgraph; title = (item && (item.title || item.typeId)) || "Node"; sub = "node graph"; }
     var m = gvEnsureModal();
     m.querySelector(".gv-title").innerHTML = esc(title) + ' <span class="gv-sub">' + esc(sub) + "</span>";
-    var body = m.querySelector(".gv-body");
+    var stage = m.querySelector(".gv-stage"), detail = m.querySelector(".gv-detail");
+    detail.classList.remove("show"); detail.innerHTML = "";
     if (!graph || !graph.nodes || !graph.nodes.length) {
       // a single code/leaf node with no sub-graph: show the node itself (its own pins) plus a note
       if (item && item.typeId && (TYPE_INFO[item.typeId] || NODE_BY_TYPE[item.typeId])) graph = { nodes: [{ id: "self", type: item.typeId, title: item.title || item.typeId, x: 0, y: 0 }], connections: [] };
-      else { body.innerHTML = '<div class="gv-empty">This item has no sub-graph to preview.</div>'; m.querySelector(".gv-legend").innerHTML = ""; gvOpen(m); return; }
+      else { stage.innerHTML = '<div class="gv-empty">This item has no sub-graph to preview.</div>'; m.querySelector(".gv-legend").innerHTML = ""; gvOpen(m); return; }
     }
     var model = gvBuild(graph); gvLayout(model);
-    body.innerHTML = gvSvg(model);
+    stage.innerHTML = gvSvg(model);
     m.querySelector(".gv-legend").innerHTML = gvLegendHtml(model);
-    gvPanZoom(body.querySelector("svg"));
+    var svg = stage.querySelector("svg");
+    gvPanZoom(svg);
+    gvWireSelect(svg, stage, detail, model);
     gvOpen(m);
+  }
+  // click a node -> highlight it and show its type, pins and configured params (like the app inspector)
+  function gvWireSelect(svg, stage, detail, model) {
+    svg.addEventListener("click", function (e) {
+      if (svg.__dragged) return;                                  // ignore the click that ends a pan-drag
+      var g = e.target.closest ? e.target.closest("[data-nid]") : null;
+      stage.querySelectorAll(".gv-node.sel").forEach(function (n) { n.classList.remove("sel"); });
+      if (!g) { detail.classList.remove("show"); return; }        // clicked empty space -> deselect
+      g.classList.add("sel");
+      detail.innerHTML = gvDetailHtml(model.byId[g.getAttribute("data-nid")]);
+      detail.classList.add("show");
+      var c = detail.querySelector(".gv-dclose");
+      if (c) c.addEventListener("click", function () { detail.classList.remove("show"); g.classList.remove("sel"); });
+    });
+  }
+  function gvDetailHtml(node) {
+    if (!node) return "";
+    var info = node.info, accent = gvCat(info ? info.cat : ""), name = node.title || (info && info.title) || node.type;
+    var icon = info ? info.icon : "🧩", desc = (NODE_BY_TYPE[node.type] && NODE_BY_TYPE[node.type].description) || "";
+    function pins(list) {
+      if (!list || !list.length) return '<div class="gv-d-empty">none</div>';
+      return list.map(function (p) { return '<div class="gv-d-pin"><i style="background:' + gvPinCol(p.k) + '"></i><span class="gv-d-pn">' + esc(p.n || "(exec)") + '</span><span class="gv-d-pk">' + esc(p.k) + "</span></div>"; }).join("");
+    }
+    var keys = Object.keys(node.params || {});
+    var params = keys.length ? keys.map(function (k) {
+      var v = node.params[k]; if (v && typeof v === "object") v = JSON.stringify(v);
+      v = String(v == null ? "" : v); if (v.length > 140) v = v.slice(0, 139) + "…";
+      return '<div class="gv-d-row"><span class="gv-d-k">' + esc(k) + '</span><span class="gv-d-v">' + (v === "" ? "—" : esc(v)) + "</span></div>";
+    }).join("") : '<div class="gv-d-empty">no parameters set</div>';
+    return '<button class="gv-dclose" type="button" aria-label="Close details">✕</button>' +
+      '<div class="gv-d-head"><span class="gv-d-ic" style="background:' + gvMix("#ffffff", accent, 0.22) + '">' + esc(icon) + "</span>" +
+      '<div><div class="gv-d-name">' + esc(name) + '</div><div class="gv-d-type" style="color:' + accent + '">' + esc(node.type) + (info && info.trig ? " · trigger" : "") + "</div></div></div>" +
+      (desc ? '<div class="gv-d-desc">' + esc(desc) + "</div>" : "") +
+      '<div class="gv-d-sec">Inputs</div>' + pins(info ? info.ins : []) +
+      '<div class="gv-d-sec">Outputs</div>' + pins(info ? info.outs : []) +
+      '<div class="gv-d-sec">Parameters</div>' + params;
   }
   function gvOpen(m) {
     m.hidden = false; document.body.style.overflow = "hidden";
@@ -421,9 +461,12 @@
     var vb = svg.getAttribute("viewBox").split(/\s+/).map(Number), st = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
     function apply() { svg.setAttribute("viewBox", st.x + " " + st.y + " " + st.w + " " + st.h); }
     svg.addEventListener("mousedown", function (e) {
-      e.preventDefault(); svg.style.cursor = "grabbing";
+      e.preventDefault(); svg.style.cursor = "grabbing"; svg.__dragged = false;
       var sx = e.clientX, sy = e.clientY, ox = st.x, oy = st.y, r = svg.getBoundingClientRect();
-      function mv(ev) { st.x = ox - (ev.clientX - sx) * (st.w / r.width); st.y = oy - (ev.clientY - sy) * (st.h / r.height); apply(); }
+      function mv(ev) {
+        if (Math.abs(ev.clientX - sx) + Math.abs(ev.clientY - sy) > 4) svg.__dragged = true;
+        st.x = ox - (ev.clientX - sx) * (st.w / r.width); st.y = oy - (ev.clientY - sy) * (st.h / r.height); apply();
+      }
       function up() { svg.style.cursor = ""; document.removeEventListener("mousemove", mv); document.removeEventListener("mouseup", up); }
       document.addEventListener("mousemove", mv); document.addEventListener("mouseup", up);
     });
