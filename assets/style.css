@@ -66,6 +66,10 @@ a:hover { text-decoration: underline; }
 /* icon-only action buttons (round, glyph-centred) */
 .btn.icon { padding: 13px 0; width: 46px; justify-content: center; gap: 0; font-size: 18px; }
 .node .actions .btn.icon { width: 42px; padding: 9px 0; font-size: 17px; }
+/* inline line-icons (currentColor) */
+.ic-svg { width: 1.1em; height: 1.1em; flex: none; vertical-align: -0.18em; }
+.btn .ic-svg { width: 18px; height: 18px; }
+.btn.icon .ic-svg { width: 19px; height: 19px; }
 /* styled hover popover for any [data-tip] (icon buttons + install states) */
 [data-tip] { position: relative; }
 [data-tip]::after {
@@ -160,13 +164,16 @@ footer a { color: var(--ink-soft); font-weight: 700; }
 }
 .chip:hover { background: var(--leaf-bg); color: var(--ink); }
 .chip.active { background: var(--leaf-bg); color: var(--leaf-deep); border-color: #d7e7c6; }
-.chip .ic { font-size: 18px; width: 22px; text-align: center; flex: none; }
+.chip .ic { width: 22px; display: inline-flex; align-items: center; justify-content: center; flex: none; color: var(--leaf-deep); }
+.chip .ic .ic-svg { width: 16px; height: 16px; }
+.chip.active .ic, .chip:hover .ic { color: var(--leaf-deep); }
 .chip .n { margin-left: auto; font-size: 12px; font-weight: 800; color: var(--ink-faint); background: var(--paper-2); padding: 1px 9px; border-radius: 999px; }
 .chip.active .n { background: var(--leaf); color: #1f3314; }
 
 .cat-section { scroll-margin-top: 16px; margin-bottom: 36px; }
 .section-head { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; }
-.section-head .ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-size: 25px; background: var(--leaf-bg); flex: none; }
+.section-head .ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--leaf-bg); color: var(--leaf-deep); flex: none; }
+.section-head .ic .ic-svg { width: 25px; height: 25px; }
 .section-head .h { display: flex; flex-direction: column; gap: 1px; }
 .section-head h3 { font-family: var(--font-head); font-weight: 800; font-size: 22px; line-height: 1.1; }
 .section-head .blurb { font-size: 13.5px; color: var(--ink-faint); }

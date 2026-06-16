@@ -12,6 +12,39 @@
   function installHref(action, raw) { return "ircuitry://" + action + "?url=" + encodeURIComponent(raw); }
   var RELEASE_API = "https://api.github.com/repos/" + REPO + "/releases/latest";
 
+  // ---------- inline SVG icon set (clean line icons, currentColor - no emoji in the UI chrome) ----------
+  var ICONS = {
+    download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    inspect: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+    install: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+    update: '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/>',
+    upgrade: '<circle cx="12" cy="12" r="9"/><path d="m8 12 4-4 4 4"/><path d="M12 16V8"/>',
+    x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+    filter: '<path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>',
+    logic: '<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+    hash: '<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>',
+    sparkles: '<path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5 10.1 7.6 12 3z"/><path d="M19 13l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z"/>',
+    radio: '<circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49m10.97-2.73a10 10 0 0 1 0 13.94M5.27 18.73a10 10 0 0 1 0-13.94"/>',
+    database: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
+    send: '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/>',
+    code: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+    gamepad: '<line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>'
+  };
+  function svg(name, cls) {
+    return '<svg class="ic-svg' + (cls ? " " + cls : "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS.box) + "</svg>";
+  }
+  var CAT_ICON = { Event: "zap", Filter: "filter", Logic: "logic", Data: "hash", Ai: "sparkles", Ircv3: "radio",
+    Storage: "database", Action: "send", Code: "code", AI: "sparkles", Games: "gamepad", Moderation: "shield",
+    Community: "users", Utility: "wrench", Reminders: "clock" };
+
   // ---------- helpers ----------
   function el(id) { return document.getElementById(id); }
   function esc(s) {
@@ -147,17 +180,17 @@
   function actionsHtml(item, i, kind, action, raw) {
     var st = statusFor(item, kind), main;
     if (st.state === "upgrade")
-      main = '<a class="btn upgrade" href="' + RELEASES_URL + '" target="_blank" rel="noopener" data-tip="Your ircuitry is missing a node this needs - update to the latest">⤴ Upgrade to use this</a>';
+      main = '<a class="btn upgrade" href="' + RELEASES_URL + '" target="_blank" rel="noopener" data-tip="Your ircuitry is missing a node this needs - update to the latest">' + svg("upgrade") + " Upgrade to use this</a>";
     else if (st.state === "prereq")
-      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" data-tip="Needs community node(s) you don\'t have yet">Install + ' + st.prereqs.length + ' node' + (st.prereqs.length > 1 ? "s" : "") + "</button>";
+      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" data-tip="Needs community node(s) you don\'t have yet">' + svg("install") + " Install + " + st.prereqs.length + " node" + (st.prereqs.length > 1 ? "s" : "") + "</button>";
     else if (st.state === "update")
-      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '" data-tip="Update to the latest version">↻ Update to latest</a>';
+      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '" data-tip="Update to the latest version">' + svg("update") + " Update to latest</a>";
     else
-      main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '" data-tip="Hands the file straight to your running ircuitry">📥 One-click install</a>';
+      main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '" data-tip="Hands the file straight to your running ircuitry">' + svg("install") + " One-click install</a>";
     return '<div class="actions">' + main +
-      '<button class="btn icon" data-inspect="' + i + '" data-kind="' + kind + '" data-tip="Inspect graph">🔍</button>' +
-      '<button class="btn icon" data-copy="' + i + '" data-tip="Copy JSON">📋</button>' +
-      '<button class="btn icon" data-dl="' + i + '" data-tip="Download ' + (kind === "workflows" ? ".ircbot" : ".ircnode") + '">⬇</button></div>';
+      '<button class="btn icon" data-inspect="' + i + '" data-kind="' + kind + '" data-tip="Inspect graph">' + svg("inspect") + "</button>" +
+      '<button class="btn icon" data-copy="' + i + '" data-tip="Copy JSON">' + svg("copy") + "</button>" +
+      '<button class="btn icon" data-dl="' + i + '" data-tip="Download ' + (kind === "workflows" ? ".ircbot" : ".ircnode") + '">' + svg("download") + "</button></div>";
   }
 
   function handlePrereq(item, kind) {
@@ -184,7 +217,7 @@
     });
     if (!ups.length) { host.innerHTML = ""; return; }
     host.className = "upgrade-panel";
-    host.innerHTML = '<div class="up-head">↻ ' + ups.length + " node update" + (ups.length > 1 ? "s" : "") + " available <span>for community nodes you have installed</span></div>" +
+    host.innerHTML = '<div class="up-head">' + svg("update") + " " + ups.length + " node update" + (ups.length > 1 ? "s" : "") + " available <span>for community nodes you have installed</span></div>" +
       '<div class="up-list">' + ups.map(function (n) {
         return '<div class="up-item"><span class="up-name">' + safeIcon(n) + " " + esc(n.title || n.typeId) + "</span>" +
           '<a class="btn update" href="' + installHref("install-node", rawUrl(NODES_RAW, n.file)) + '">Update</a></div>';
@@ -237,7 +270,7 @@
     else { primaryUrl = null; others = [link(win1, "Windows"), link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS Apple Silicon"), link(mint, "macOS Intel")]; }
 
     var html = "";
-    if (primaryUrl) html += '<a class="btn primary" href="' + primaryUrl + '"><span>⬇︎&nbsp; Download for ' + esc(OS_LABEL[os]) + "</span>" + (primarySub ? '<span class="sub">' + esc(primarySub) + "</span>" : "") + "</a>";
+    if (primaryUrl) html += '<a class="btn primary" href="' + primaryUrl + '">' + svg("download") + "<span>&nbsp;Download for " + esc(OS_LABEL[os]) + "</span>" + (primarySub ? '<span class="sub">' + esc(primarySub) + "</span>" : "") + "</a>";
     html += '<a class="btn ghost" href="https://github.com/' + REPO + '">View on GitHub</a>';
     var ex = el("dl-extra");
     if (ex) ex.innerHTML = (ver ? "Latest: <b>" + esc(ver) + "</b> &nbsp;·&nbsp; " : "") + "Other platforms: " + others.filter(Boolean).join(" &nbsp;·&nbsp; ") + ' &nbsp;·&nbsp; <a href="https://github.com/' + REPO + '/releases/latest">all downloads</a>';
@@ -378,7 +411,7 @@
     var m = el("gview"); if (m) return m;
     m = document.createElement("div"); m.className = "gv-backdrop"; m.id = "gview"; m.hidden = true;
     m.innerHTML = '<div class="gv-modal" role="dialog" aria-modal="true" aria-label="Node graph preview">' +
-      '<div class="gv-head"><div class="gv-title"></div><button class="btn ghost gv-close" type="button" aria-label="Close">✕</button></div>' +
+      '<div class="gv-head"><div class="gv-title"></div><button class="btn ghost gv-close icon" type="button" aria-label="Close">' + svg("x") + "</button></div>" +
       '<div class="gv-body"><div class="gv-stage"></div><div class="gv-detail"></div></div>' +
       '<div class="gv-foot"><span class="gv-hint">click a node for details · drag to pan · scroll to zoom · this is exactly what installs</span><span class="gv-legend"></span></div></div>';
     document.body.appendChild(m);
@@ -442,7 +475,7 @@
       v = String(v == null ? "" : v); if (v.length > 140) v = v.slice(0, 139) + "…";
       return '<div class="gv-d-row"><span class="gv-d-k">' + esc(k) + '</span><span class="gv-d-v">' + (v === "" ? "—" : esc(v)) + "</span></div>";
     }).join("") : '<div class="gv-d-empty">no parameters set</div>';
-    return '<button class="gv-dclose" type="button" aria-label="Close details">✕</button>' +
+    return '<button class="gv-dclose" type="button" aria-label="Close details">' + svg("x") + "</button>" +
       '<div class="gv-d-head"><span class="gv-d-ic" style="background:' + gvMix("#ffffff", accent, 0.22) + '">' + esc(icon) + "</span>" +
       '<div><div class="gv-d-name">' + esc(name) + '</div><div class="gv-d-type" style="color:' + accent + '">' + esc(node.type) + (info && info.trig ? " · trigger" : "") + "</div></div></div>" +
       (desc ? '<div class="gv-d-desc">' + esc(desc) + "</div>" : "") +
@@ -510,7 +543,7 @@
     function primary(it) { var fs = opts.facets(it); return (fs && fs[0]) || "Other"; }
     function catRank(c) { var i = (opts.order || []).indexOf(c); return i < 0 ? 99 : i; }
     function secId(c) { return "cat-" + c.replace(/[^A-Za-z0-9]+/g, "-"); }
-    function icon(c) { return (opts.icons && opts.icons[c]) || "📦"; }
+    function icon(c) { return svg(CAT_ICON[c] || "box"); }   // proper line icon per category (not emoji)
     function blurb(c) { return (opts.blurbs && opts.blurbs[c]) || ""; }
     function ordered(b) { return Object.keys(b).sort(function (a, c) { return catRank(a) - catRank(c) || a.localeCompare(c); }); }
 
@@ -524,7 +557,7 @@
 
       grid.innerHTML = cats.map(function (c) {
         return '<section class="cat-section" id="' + secId(c) + '">' +
-          '<div class="section-head"><div class="ic">' + esc(icon(c)) + '</div>' +
+          '<div class="section-head"><div class="ic">' + icon(c) + '</div>' +
           '<div class="h"><h3>' + esc(c) + ' <span class="pill">' + b[c].length + "</span></h3>" +
           (blurb(c) ? '<div class="blurb">' + esc(blurb(c)) + "</div>" : "") + "</div></div>" +
           '<div class="grid">' + b[c].map(function (it) { return opts.card(it, all.indexOf(it)); }).join("") + "</div></section>";
@@ -552,7 +585,7 @@
     function buildRail(b, cats) {
       if (!rail) return;
       rail.innerHTML = cats.map(function (c) {
-        return '<button class="chip" data-cat="' + esc(secId(c)) + '"><span class="ic">' + esc(icon(c)) + "</span>" + esc(c) + '<span class="n">' + b[c].length + "</span></button>";
+        return '<button class="chip" data-cat="' + esc(secId(c)) + '"><span class="ic">' + icon(c) + "</span>" + esc(c) + '<span class="n">' + b[c].length + "</span></button>";
       }).join("");
       rail.querySelectorAll("[data-cat]").forEach(function (btn) {
         btn.addEventListener("click", function () { var s = document.getElementById(btn.getAttribute("data-cat")); if (s) s.scrollIntoView({ behavior: "smooth", block: "start" }); });
@@ -590,7 +623,6 @@
       startGallery({
         url: NODES_INDEX, repo: NODES, listKey: "nodes", noun: "nodes",
         order: ["Event", "Filter", "Logic", "Data", "Ai", "Ircv3", "Storage", "Action"],
-        icons: { Event: "⚡", Filter: "🔍", Logic: "🧠", Data: "🔢", Ai: "🤖", Ircv3: "🛰️", Storage: "💾", Action: "📤" },
         blurbs: { Event: "Triggers that start a flow", Filter: "Branch on a condition", Logic: "Control flow and state", Data: "Transform and compute values", Ai: "Language-model helpers", Ircv3: "Modern IRC niceties", Storage: "Files, databases and calendars", Action: "Do something out in the world" },
         facets: function (n) { return [n.category || "Action"]; },
         haystack: function (n) { return n.title + " " + n.typeId + " " + n.description + " " + (n.tags || []).join(" "); },
@@ -604,7 +636,6 @@
       startGallery({
         url: WF_INDEX, repo: WORKFLOWS, listKey: "workflows", noun: "workflows",
         order: ["AI", "Games", "Moderation", "Community", "Utility", "Reminders"],
-        icons: { AI: "🤖", Games: "🎮", Moderation: "🛡️", Community: "💬", Utility: "🔧", Reminders: "⏰" },
         blurbs: { AI: "Bots powered by language models", Games: "Play right in your channel", Moderation: "Keep the channel tidy", Community: "Social and onboarding helpers", Utility: "Look things up and fetch data", Reminders: "Timed and scheduled posts" },
         facets: function (w) { return [w.category || "Utility"]; },
         haystack: function (w) { return w.name + " " + w.description + " " + (w.category || "") + " " + (w.tags || []).join(" ") + " " + (w.nodeTypes || []).join(" "); },
