@@ -16,7 +16,7 @@
   function phi(name, cls) { return '<i class="ph ph-' + name + (cls ? " " + cls : "") + '" aria-hidden="true"></i>'; }
   var CAT_ICON = { Event: "lightning", Filter: "funnel", Logic: "git-branch", Data: "hash", Ai: "sparkle",
     Ircv3: "broadcast", Storage: "database", Action: "paper-plane-tilt", Code: "code", AI: "sparkle",
-    Games: "game-controller", Moderation: "shield", Community: "users-three", Utility: "wrench", Reminders: "alarm" };
+    Games: "game-controller", Moderation: "shield", Community: "users-three", Utility: "wrench", Reminders: "alarm", Testing: "test-tube" };
   // name -> glyph char, for drawing node icons inside the SVG graph viewer (where <i> classes can't go)
   var PH_GLYPH = {};
   fetch("assets/phosphor-codepoints.json", { cache: "force-cache" }).then(function (r) { return r.ok ? r.json() : null; })
@@ -613,8 +613,8 @@
     } else if (gallery === "workflows") {
       startGallery({
         url: WF_INDEX, repo: WORKFLOWS, listKey: "workflows", noun: "workflows",
-        order: ["AI", "Games", "Moderation", "Community", "Utility", "Reminders"],
-        blurbs: { AI: "Bots powered by language models", Games: "Play right in your channel", Moderation: "Keep the channel tidy", Community: "Social and onboarding helpers", Utility: "Look things up and fetch data", Reminders: "Timed and scheduled posts" },
+        order: ["Testing", "AI", "Games", "Moderation", "Community", "Utility", "Reminders"],
+        blurbs: { Testing: "Drive one command to verify an IRCv3 feature", AI: "Bots powered by language models", Games: "Play right in your channel", Moderation: "Keep the channel tidy", Community: "Social and onboarding helpers", Utility: "Look things up and fetch data", Reminders: "Timed and scheduled posts" },
         facets: function (w) { return [w.category || "Utility"]; },
         haystack: function (w) { return w.name + " " + w.description + " " + (w.category || "") + " " + (w.tags || []).join(" ") + " " + (w.nodeTypes || []).join(" "); },
         sortKey: function (w) { return w.name || ""; },
