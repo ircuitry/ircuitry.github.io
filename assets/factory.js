@@ -78,8 +78,8 @@
   function card(w, i) {
     var sel = SEL.indexOf(i) >= 0;
     return '<div class="node pick' + (sel ? " sel" : "") + '" data-i="' + i + '">' +
-      '<div class="tick">' + (sel ? "✓" : "") + '</div>' +
-      '<div class="top"><div class="badge">🤖</div><div>' +
+      '<div class="tick">' + (sel ? '<i class="ph ph-check"></i>' : "") + '</div>' +
+      '<div class="top"><div class="badge"><i class="ph ph-robot"></i></div><div>' +
       '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires</div></div></div>" +
       '<div class="desc">' + esc(w.description || "") + "</div></div>";
   }
@@ -110,7 +110,7 @@
     el("trayChips").innerHTML = SEL.map(function (i) { return '<span class="pillbot">' + esc(nameOf(i)) + "</span>"; }).join("");
     var btn = el("mergeBtn");
     btn.disabled = SEL.length < 2;
-    btn.textContent = SEL.length < 2 ? "🧁 Pick 2+ to merge" : ("🧁 Merge " + SEL.length + " bots");
+    btn.innerHTML = SEL.length < 2 ? '<i class="ph ph-cake"></i> Pick 2+ to merge' : ('<i class="ph ph-cake"></i> Merge ' + SEL.length + " bots");
   }
 
   // ---------------- wizard ----------------
@@ -120,7 +120,7 @@
     CONFLICTS = detect(bots);
     el("mergeName").value = SEL.slice(0, 3).map(nameOf).join(" + ") + (SEL.length > 3 ? " +" : "");
     el("clashes").innerHTML = CONFLICTS.length === 0
-      ? '<div class="clash" style="background:#eef9ed;border-color:#cfead0;">✓ No command clashes - these bots merge cleanly.</div>'
+      ? '<div class="clash" style="background:#eef9ed;border-color:#cfead0;"><i class="ph ph-check"></i> No command clashes - these bots merge cleanly.</div>'
       : CONFLICTS.map(function (c, ci) {
         var who = c.bots.map(function (b) { return esc(nameOf(SEL[b])); }).join(", ");
         var opts = c.bots.map(function (b) { return '<button class="opt" data-c="' + ci + '" data-r="keep" data-b="' + b + '">keep ' + esc(nameOf(SEL[b])) + "</button>"; }).join("");

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/phosphor.css">
   <link rel="stylesheet" href="assets/style.css">
   <style>
     /* ---- selectable cards + tray ---- */
@@ -105,7 +106,7 @@
 
   <header class="gallery-head">
     <div class="wrap">
-      <h1 class="section-title" style="text-align:left;">🏭 Bot Factory</h1>
+      <h1 class="section-title" style="text-align:left;"><i class="ph ph-factory"></i> Bot Factory</h1>
       <p class="section-sub" style="text-align:left;margin-left:0;">
         Pick <b>two or more</b> community bots and merge them into one. When two bots share a command
         (say both have <code>!help</code>) you decide how to resolve it - then bake. Download the result or
@@ -128,7 +129,7 @@
         <div class="inner">
           <strong>Merging:</strong>
           <div class="chips2" id="trayChips"></div>
-          <button class="btn primary" id="mergeBtn" disabled>🧁 Merge selected</button>
+          <button class="btn primary" id="mergeBtn" disabled><i class="ph ph-cake"></i> Merge selected</button>
         </div>
       </div>
     </div>
@@ -137,14 +138,14 @@
   <!-- merge wizard -->
   <div class="scrim" id="scrim">
     <div class="wizard">
-      <h2>🧁 Bake a merged bot</h2>
+      <h2><i class="ph ph-cake"></i> Bake a merged bot</h2>
       <p class="section-sub" style="text-align:left;margin:0 0 6px;">Resolve any command clashes, name it, and bake.</p>
       <div id="clashes"></div>
       <label class="lbl">New bot name</label>
       <input class="field" id="mergeName" placeholder="Merged Bot">
       <div class="row-end">
         <button class="btn" id="cancelMerge">Cancel</button>
-        <button class="btn primary" id="bakeBtn">🧁 Bake!</button>
+        <button class="btn primary" id="bakeBtn"><i class="ph ph-cake"></i> Bake!</button>
       </div>
     </div>
   </div>
@@ -166,7 +167,7 @@
   <!-- result -->
   <div class="scrim" id="resultScrim">
     <div class="wizard" style="text-align:center;">
-      <h2 id="resultTitle">🎉 Your bot is ready!</h2>
+      <h2 id="resultTitle"><i class="ph ph-confetti"></i> Your bot is ready!</h2>
       <p class="section-sub" style="margin:6px 0 14px;" id="resultSub"></p>
       <div class="row-end" style="justify-content:center;">
         <button class="btn primary" id="dlBtn">Download .ircbot</button>

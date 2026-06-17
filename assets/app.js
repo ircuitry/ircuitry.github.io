@@ -12,38 +12,16 @@
   function installHref(action, raw) { return "ircuitry://" + action + "?url=" + encodeURIComponent(raw); }
   var RELEASE_API = "https://api.github.com/repos/" + REPO + "/releases/latest";
 
-  // ---------- inline SVG icon set (clean line icons, currentColor - no emoji in the UI chrome) ----------
-  var ICONS = {
-    download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
-    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
-    inspect: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
-    install: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
-    update: '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/>',
-    upgrade: '<circle cx="12" cy="12" r="9"/><path d="m8 12 4-4 4 4"/><path d="M12 16V8"/>',
-    x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
-    zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
-    filter: '<path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>',
-    logic: '<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
-    hash: '<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>',
-    sparkles: '<path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5 10.1 7.6 12 3z"/><path d="M19 13l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z"/>',
-    radio: '<circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49m10.97-2.73a10 10 0 0 1 0 13.94M5.27 18.73a10 10 0 0 1 0-13.94"/>',
-    database: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
-    send: '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/>',
-    code: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
-    gamepad: '<line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/>',
-    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
-    wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
-    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-    box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>'
-  };
-  function svg(name, cls) {
-    return '<svg class="ic-svg' + (cls ? " " + cls : "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
-      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS.box) + "</svg>";
-  }
-  var CAT_ICON = { Event: "zap", Filter: "filter", Logic: "logic", Data: "hash", Ai: "sparkles", Ircv3: "radio",
-    Storage: "database", Action: "send", Code: "code", AI: "sparkles", Games: "gamepad", Moderation: "shield",
-    Community: "users", Utility: "wrench", Reminders: "clock" };
+  // ---------- Phosphor icons (web font; no emoji in the UI) ----------
+  function phi(name, cls) { return '<i class="ph ph-' + name + (cls ? " " + cls : "") + '" aria-hidden="true"></i>'; }
+  var CAT_ICON = { Event: "lightning", Filter: "funnel", Logic: "git-branch", Data: "hash", Ai: "sparkle",
+    Ircv3: "broadcast", Storage: "database", Action: "paper-plane-tilt", Code: "code", AI: "sparkle",
+    Games: "game-controller", Moderation: "shield", Community: "users-three", Utility: "wrench", Reminders: "alarm" };
+  // name -> glyph char, for drawing node icons inside the SVG graph viewer (where <i> classes can't go)
+  var PH_GLYPH = {};
+  fetch("assets/phosphor-codepoints.json", { cache: "force-cache" }).then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { if (j) Object.keys(j).forEach(function (k) { PH_GLYPH[k] = String.fromCharCode(parseInt(j[k], 16)); }); }).catch(function () {});
+  function phGlyph(name) { return PH_GLYPH[name] || ""; }
 
   // ---------- helpers ----------
   function el(id) { return document.getElementById(id); }
@@ -180,17 +158,17 @@
   function actionsHtml(item, i, kind, action, raw) {
     var st = statusFor(item, kind), main;
     if (st.state === "upgrade")
-      main = '<a class="btn upgrade" href="' + RELEASES_URL + '" target="_blank" rel="noopener" data-tip="Your ircuitry is missing a node this needs - update to the latest">' + svg("upgrade") + " Upgrade to use this</a>";
+      main = '<a class="btn upgrade" href="' + RELEASES_URL + '" target="_blank" rel="noopener" data-tip="Your ircuitry is missing a node this needs - update to the latest">' + phi("arrow-circle-up") + " Upgrade to use this</a>";
     else if (st.state === "prereq")
-      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" data-tip="Needs community node(s) you don\'t have yet">' + svg("install") + " Install + " + st.prereqs.length + " node" + (st.prereqs.length > 1 ? "s" : "") + "</button>";
+      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" data-tip="Needs community node(s) you don\'t have yet">' + phi("package") + " Install + " + st.prereqs.length + " node" + (st.prereqs.length > 1 ? "s" : "") + "</button>";
     else if (st.state === "update")
-      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '" data-tip="Update to the latest version">' + svg("update") + " Update to latest</a>";
+      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '" data-tip="Update to the latest version">' + phi("arrows-clockwise") + " Update to latest</a>";
     else
-      main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '" data-tip="Hands the file straight to your running ircuitry">' + svg("install") + " One-click install</a>";
+      main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '" data-tip="Hands the file straight to your running ircuitry">' + phi("package") + " One-click install</a>";
     return '<div class="actions">' + main +
-      '<button class="btn icon" data-inspect="' + i + '" data-kind="' + kind + '" data-tip="Inspect graph">' + svg("inspect") + "</button>" +
-      '<button class="btn icon" data-copy="' + i + '" data-tip="Copy JSON">' + svg("copy") + "</button>" +
-      '<button class="btn icon" data-dl="' + i + '" data-tip="Download ' + (kind === "workflows" ? ".ircbot" : ".ircnode") + '">' + svg("download") + "</button></div>";
+      '<button class="btn icon" data-inspect="' + i + '" data-kind="' + kind + '" data-tip="Inspect graph">' + phi("magnifying-glass") + "</button>" +
+      '<button class="btn icon" data-copy="' + i + '" data-tip="Copy JSON">' + phi("copy") + "</button>" +
+      '<button class="btn icon" data-dl="' + i + '" data-tip="Download ' + (kind === "workflows" ? ".ircbot" : ".ircnode") + '">' + phi("download-simple") + "</button></div>";
   }
 
   function handlePrereq(item, kind) {
@@ -217,7 +195,7 @@
     });
     if (!ups.length) { host.innerHTML = ""; return; }
     host.className = "upgrade-panel";
-    host.innerHTML = '<div class="up-head">' + svg("update") + " " + ups.length + " node update" + (ups.length > 1 ? "s" : "") + " available <span>for community nodes you have installed</span></div>" +
+    host.innerHTML = '<div class="up-head">' + phi("arrows-clockwise") + " " + ups.length + " node update" + (ups.length > 1 ? "s" : "") + " available <span>for community nodes you have installed</span></div>" +
       '<div class="up-list">' + ups.map(function (n) {
         return '<div class="up-item"><span class="up-name">' + safeIcon(n) + " " + esc(n.title || n.typeId) + "</span>" +
           '<a class="btn update" href="' + installHref("install-node", rawUrl(NODES_RAW, n.file)) + '">Update</a></div>';
@@ -270,7 +248,7 @@
     else { primaryUrl = null; others = [link(win1, "Windows"), link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS Apple Silicon"), link(mint, "macOS Intel")]; }
 
     var html = "";
-    if (primaryUrl) html += '<a class="btn primary" href="' + primaryUrl + '">' + svg("download") + "<span>&nbsp;Download for " + esc(OS_LABEL[os]) + "</span>" + (primarySub ? '<span class="sub">' + esc(primarySub) + "</span>" : "") + "</a>";
+    if (primaryUrl) html += '<a class="btn primary" href="' + primaryUrl + '">' + phi("download-simple") + "<span>&nbsp;Download for " + esc(OS_LABEL[os]) + "</span>" + (primarySub ? '<span class="sub">' + esc(primarySub) + "</span>" : "") + "</a>";
     html += '<a class="btn ghost" href="https://github.com/' + REPO + '">View on GitHub</a>';
     var ex = el("dl-extra");
     if (ex) ex.innerHTML = (ver ? "Latest: <b>" + esc(ver) + "</b> &nbsp;·&nbsp; " : "") + "Other platforms: " + others.filter(Boolean).join(" &nbsp;·&nbsp; ") + ' &nbsp;·&nbsp; <a href="https://github.com/' + REPO + '/releases/latest">all downloads</a>';
@@ -305,11 +283,11 @@
   // resolve a node type to {title, cat, icon, trig, ins:[{n,k}], outs:[{n,k}]} - built-in schema first, then a community node, else null
   function gvType(type) {
     var b = TYPE_INFO[type];
-    if (b) return { title: b.t || type, cat: b.c || "", icon: b.i || "●", trig: !!b.g,
+    if (b) return { title: b.t || type, cat: b.c || "", icon: b.i || "circle", trig: !!b.g,
       ins: (b.in || []).map(function (p) { return { n: p[0], k: p[1] }; }),
       outs: (b.out || []).map(function (p) { return { n: p[0], k: p[1] }; }) };
     var c = NODE_BY_TYPE[type];
-    if (c) return { title: c.title || type, cat: c.category || "", icon: c.icon || "🧩", trig: false,
+    if (c) return { title: c.title || type, cat: c.category || "", icon: c.icon || "puzzle-piece", trig: false,
       ins: (c.inputs || []).map(function (p) { return { n: p.name, k: p.kind }; }),
       outs: (c.outputs || []).map(function (p) { return { n: p.name, k: p.kind }; }) };
     return null;
@@ -363,12 +341,12 @@
   function gvNodeSvg(n) {
     var info = n.info, accent = gvCat(info ? info.cat : "");
     var body = gvMix("#FCF7EB", accent, 0.05), head = gvMix("#FFFCF4", accent, 0.30);
-    var title = n.title || (info && info.title) || n.type, icon = info ? info.icon : "🧩";
+    var title = n.title || (info && info.title) || n.type, icon = info ? info.icon : "puzzle-piece";
     var g = '<g class="gv-node" data-nid="' + esc(n.id) + '" transform="translate(' + n.x + "," + n.y + ')"' + (n.muted ? ' opacity="0.5"' : "") + ">";
     g += '<rect class="gv-nbody" x="0" y="0" width="' + GV_W + '" height="' + n.h + '" rx="' + GV_RAD + '" fill="' + body + '" stroke="' + (info ? "#C9B690" : "#D8553F") + '" stroke-width="1.5" filter="url(#gvsh)"/>';
     g += '<path d="' + gvHeaderPath(GV_W, GV_HEAD, GV_RAD) + '" fill="' + head + '"/>';
     g += '<line x1="2" y1="' + GV_HEAD + '" x2="' + (GV_W - 2) + '" y2="' + GV_HEAD + '" stroke="' + accent + '" stroke-opacity="0.55" stroke-width="1.5"/>';
-    g += '<text x="11" y="' + (GV_HEAD / 2 + 1) + '" dominant-baseline="central" font-size="15">' + esc(icon) + "</text>";
+    g += '<text x="11" y="' + (GV_HEAD / 2 + 1) + '" dominant-baseline="central" font-family="Phosphor" font-size="16">' + esc(phGlyph(icon)) + "</text>";
     g += '<text x="34" y="' + (GV_HEAD / 2 + 1) + '" dominant-baseline="central" font-family="var(--font-head)" font-size="13.5" font-weight="700" fill="#564630">' + esc(gvClip(title, 17)) + "</text>";
     for (var i = 0; i < n.rows; i++) {
       var cy = GV_HEAD + GV_ROW * (i + 0.5);
@@ -411,7 +389,7 @@
     var m = el("gview"); if (m) return m;
     m = document.createElement("div"); m.className = "gv-backdrop"; m.id = "gview"; m.hidden = true;
     m.innerHTML = '<div class="gv-modal" role="dialog" aria-modal="true" aria-label="Node graph preview">' +
-      '<div class="gv-head"><div class="gv-title"></div><button class="btn ghost gv-close icon" type="button" aria-label="Close">' + svg("x") + "</button></div>" +
+      '<div class="gv-head"><div class="gv-title"></div><button class="btn ghost gv-close icon" type="button" aria-label="Close">' + phi("x") + "</button></div>" +
       '<div class="gv-body"><div class="gv-stage"></div><div class="gv-detail"></div></div>' +
       '<div class="gv-foot"><span class="gv-hint">click a node for details · drag to pan · scroll to zoom · this is exactly what installs</span><span class="gv-legend"></span></div></div>';
     document.body.appendChild(m);
@@ -464,7 +442,7 @@
   function gvDetailHtml(node) {
     if (!node) return "";
     var info = node.info, accent = gvCat(info ? info.cat : ""), name = node.title || (info && info.title) || node.type;
-    var icon = info ? info.icon : "🧩", desc = (NODE_BY_TYPE[node.type] && NODE_BY_TYPE[node.type].description) || "";
+    var icon = info ? info.icon : "puzzle-piece", desc = (NODE_BY_TYPE[node.type] && NODE_BY_TYPE[node.type].description) || "";
     function pins(list) {
       if (!list || !list.length) return '<div class="gv-d-empty">none</div>';
       return list.map(function (p) { return '<div class="gv-d-pin"><i style="background:' + gvPinCol(p.k) + '"></i><span class="gv-d-pn">' + esc(p.n || "(exec)") + '</span><span class="gv-d-pk">' + esc(p.k) + "</span></div>"; }).join("");
@@ -475,8 +453,8 @@
       v = String(v == null ? "" : v); if (v.length > 140) v = v.slice(0, 139) + "…";
       return '<div class="gv-d-row"><span class="gv-d-k">' + esc(k) + '</span><span class="gv-d-v">' + (v === "" ? "—" : esc(v)) + "</span></div>";
     }).join("") : '<div class="gv-d-empty">no parameters set</div>';
-    return '<button class="gv-dclose" type="button" aria-label="Close details">' + svg("x") + "</button>" +
-      '<div class="gv-d-head"><span class="gv-d-ic" style="background:' + gvMix("#ffffff", accent, 0.22) + '">' + esc(icon) + "</span>" +
+    return '<button class="gv-dclose" type="button" aria-label="Close details">' + phi("x") + "</button>" +
+      '<div class="gv-d-head"><span class="gv-d-ic" style="background:' + gvMix("#ffffff", accent, 0.22) + '">' + phi(icon) + "</span>" +
       '<div><div class="gv-d-name">' + esc(name) + '</div><div class="gv-d-type" style="color:' + accent + '">' + esc(node.type) + (info && info.trig ? " · trigger" : "") + "</div></div></div>" +
       (desc ? '<div class="gv-d-desc">' + esc(desc) + "</div>" : "") +
       '<div class="gv-d-sec">Inputs</div>' + pins(info ? info.ins : []) +
@@ -514,7 +492,7 @@
   // ---------- generic gallery ----------
   function safeIcon(it) {
     if (it.iconImage && /^[A-Za-z0-9+/=\s]+$/.test(it.iconImage)) return '<img alt="" src="data:image/png;base64,' + it.iconImage.replace(/\s+/g, "") + '">';
-    return esc(it.icon || "🧩");
+    return phi(it.icon || "puzzle-piece");
   }
   function nodeCard(n, i) {
     var lang = n.language === "subgraph" ? "subflow" : (n.language || "python");
@@ -528,7 +506,7 @@
   function workflowCard(w, i) {
     var author = "by " + esc(w.author || "community");
     var tags = (w.tags || []).slice(0, 3).map(function (t) { return '<span class="lang-tag">' + esc(t) + "</span>"; }).join(" ");
-    return '<div class="node"><div class="top"><div class="badge">🤖</div><div>' +
+    return '<div class="node"><div class="top"><div class="badge">' + phi("robot") + '</div><div>' +
       '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires · " + author + "</div></div></div>" +
       '<div class="desc">' + esc(w.description || "") + "</div>" +
       '<div class="cat">' + tags + "</div>" +
@@ -543,7 +521,7 @@
     function primary(it) { var fs = opts.facets(it); return (fs && fs[0]) || "Other"; }
     function catRank(c) { var i = (opts.order || []).indexOf(c); return i < 0 ? 99 : i; }
     function secId(c) { return "cat-" + c.replace(/[^A-Za-z0-9]+/g, "-"); }
-    function icon(c) { return svg(CAT_ICON[c] || "box"); }   // proper line icon per category (not emoji)
+    function icon(c) { return phi(CAT_ICON[c] || "package"); }   // Phosphor icon per category
     function blurb(c) { return (opts.blurbs && opts.blurbs[c]) || ""; }
     function ordered(b) { return Object.keys(b).sort(function (a, c) { return catRank(a) - catRank(c) || a.localeCompare(c); }); }
 
