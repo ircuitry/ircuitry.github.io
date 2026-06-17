@@ -489,6 +489,205 @@
     }, { passive: false });
   }
 
+  // ---------- bot merge (the old Bot Factory, folded into the workflows gallery) ----------
+  var WF_ITEMS = [];        // the loaded workflow index entries (set by the workflows gallery)
+  var MSEL = [];            // indices into WF_ITEMS the user has picked to merge
+  var MCONFLICTS = [], MERGED = null;
+  var MAX_CHIPS = 5;        // the Merging tray caps shown bots at 5 (+N more)
+
+  function mIsCommand(n) { return n.type === "event.command"; }
+  function mIsTrigger(n) { return (n.type || "").indexOf("event.") === 0; }
+  function mCmdKey(n) { var p = (n.params && n.params.prefix) || ""; var c = ((n.params && n.params.command) || "").trim(); return (p + c).toLowerCase(); }
+  function mBotOf(w) { return (w && w.workflow) || { nodes: [], connections: [] }; }
+  function mName(i) { return WF_ITEMS[i] ? WF_ITEMS[i].name : "bot"; }
+  function mFirstSentence(s) { s = String(s == null ? "" : s).trim(); var m = s.split(/(?<=\.)\s/)[0] || s; return m.length > 80 ? m.slice(0, 79) + "…" : m; }
+
+  function mDetect(bots) {
+    var map = {};
+    bots.forEach(function (b, bi) {
+      (b.nodes || []).filter(mIsCommand).forEach(function (n) {
+        var cmd = ((n.params && n.params.command) || "").trim(); if (!cmd) return;
+        var k = mCmdKey(n); (map[k] = map[k] || { prefix: (n.params && n.params.prefix) || "", command: cmd, bots: [], resolution: "rename", keepBot: bi });
+        if (map[k].bots.indexOf(bi) < 0) map[k].bots.push(bi);
+      });
+    });
+    return Object.keys(map).map(function (k) { return map[k]; }).filter(function (c) { return c.bots.length > 1; })
+      .sort(function (a, b) { return (a.prefix + a.command).localeCompare(b.prefix + b.command); });
+  }
+  function mPrune(nodes, conns) {
+    if (!nodes.some(mIsTrigger)) return { nodes: nodes, conns: conns };
+    var adj = {}; nodes.forEach(function (n) { adj[n.id] = []; });
+    conns.forEach(function (c) { if (adj[c.from] && adj[c.to]) { adj[c.from].push(c.to); adj[c.to].push(c.from); } });
+    var live = {}, stack = [];
+    nodes.forEach(function (n) { if (mIsTrigger(n) && !live[n.id]) { live[n.id] = 1; stack.push(n.id); } });
+    while (stack.length) { var id = stack.pop(); adj[id].forEach(function (nb) { if (!live[nb]) { live[nb] = 1; stack.push(nb); } }); }
+    return { nodes: nodes.filter(function (n) { return live[n.id]; }), conns: conns.filter(function (c) { return live[c.from] && live[c.to]; }) };
+  }
+  function mMerge(bots, conflicts, genHelp, botMeta) {
+    var nodes = [], conns = [], botTrig = [], uid = 0;
+    bots.forEach(function (b, bi) {
+      var idmap = {}, off = bi * 680;
+      (b.nodes || []).forEach(function (n) {
+        var nid = "m" + (uid++) + "x" + bi;
+        idmap[n.id] = nid;
+        nodes.push({ id: nid, type: n.type, x: (n.x || 0), y: (n.y || 0) + off, muted: !!n.muted, title: n.title || "", params: Object.assign({}, n.params || {}), __bi: bi });
+      });
+      (b.connections || []).forEach(function (c) { if (idmap[c.from] && idmap[c.to]) conns.push({ from: idmap[c.from], fromPin: c.fromPin, to: idmap[c.to], toPin: c.toPin }); });
+      var trg = {}; (b.nodes || []).filter(mIsCommand).forEach(function (n) { var cmd = ((n.params && n.params.command) || "").trim(); if (cmd) trg[mCmdKey(n)] = idmap[n.id]; });
+      botTrig.push(trg);
+    });
+    function byId(id) { return nodes.filter(function (n) { return n.id === id; })[0]; }
+    function removeNode(id) { nodes = nodes.filter(function (n) { return n.id !== id; }); conns = conns.filter(function (c) { return c.from !== id && c.to !== id; }); }
+    conflicts.forEach(function (c) {
+      var key = (c.prefix + c.command).toLowerCase();
+      var trigs = c.bots.filter(function (b) { return botTrig[b] && botTrig[b][key]; }).map(function (b) { return { bot: b, id: botTrig[b][key] }; });
+      if (trigs.length < 2 || c.resolution === "runAll") return;
+      if (c.resolution === "keep") trigs.forEach(function (t) { if (t.bot !== c.keepBot) removeNode(t.id); });
+      else if (c.resolution === "rename") { var n = 2; trigs.slice().sort(function (a, b) { return a.bot - b.bot; }).forEach(function (t, i) { if (i === 0) return; var nn = byId(t.id); if (nn) nn.params.command = c.command + (n++); }); }
+      else if (c.resolution === "combine") {
+        var keeper = trigs.slice().sort(function (a, b) { return a.bot - b.bot; })[0].id;
+        trigs.forEach(function (t) { if (t.id === keeper) return; conns.forEach(function (w) { if (w.from === t.id) w.from = keeper; }); removeNode(t.id); });
+      }
+    });
+    var pr = mPrune(nodes, conns); nodes = pr.nodes; conns = pr.conns;
+
+    if (genHelp) {
+      // drop any existing !help, then bundle ONE that lists every merged command
+      nodes.filter(function (n) { return mIsCommand(n) && ((n.params.command || "").trim().toLowerCase() === "help"); })
+        .map(function (n) { return n.id; }).forEach(removeNode);
+      var seen = {}, parts = [];
+      nodes.filter(mIsCommand).forEach(function (n) {
+        var c = (n.params.command || "").trim(); if (!c) return;
+        var full = ((n.params.prefix || "!") + c); if (seen[full]) return; seen[full] = 1;
+        var m = botMeta[n.__bi] || {};
+        parts.push(full + (m.desc ? " - " + mFirstSentence(m.desc) : (m.name ? " (" + m.name + ")" : "")));
+      });
+      var helpMsg = parts.length ? "Commands: " + parts.join("  |  ") : "This bot has no commands yet.";
+      var hc = "mhelpc", hr = "mhelpr";
+      nodes.push({ id: hc, type: "event.command", x: -360, y: -260, muted: false, title: "!help", params: { prefix: "!", command: "help", contexts: "public, private, pm" } });
+      nodes.push({ id: hr, type: "action.reply", x: -40, y: -260, muted: false, title: "help", params: { message: helpMsg } });
+      conns.push({ from: hc, fromPin: 0, to: hr, toPin: 0 });
+      var pr2 = mPrune(nodes, conns); nodes = pr2.nodes; conns = pr2.conns;
+    }
+    nodes.forEach(function (n) { delete n.__bi; });
+    return { format: "ircuitry.workflow.v1", name: "", nodes: nodes, connections: conns };
+  }
+
+  function mEnsureUi() {
+    if (el("mtray")) return;
+    var wrap = document.createElement("div");
+    wrap.innerHTML =
+      '<div class="mtray" id="mtray"><div class="mtray-in"><strong>Merging</strong>' +
+      '<div class="mtray-chips" id="mtrayChips"></div>' +
+      '<button class="btn" id="mtrayClear" type="button">Clear</button>' +
+      '<button class="btn primary" id="mtrayMerge" type="button" disabled>' + phi("cake") + ' Merge</button></div></div>' +
+      '<div class="scrim" id="mwiz"><div class="wizard"><h2>' + phi("cake") + ' Bake a merged bot</h2>' +
+      '<p class="section-sub" style="text-align:left;margin:0 0 6px;">Resolve any command clashes, name it, then bake.</p>' +
+      '<div id="mclashes"></div><label class="lbl">New bot name</label><input class="field" id="mname" placeholder="Merged Bot">' +
+      '<label class="mhelp"><input type="checkbox" id="mhelpchk" checked><span><span class="t">Auto-generate a combined !help</span><br>' +
+      '<span class="s">Bundles one !help that lists every command from the merged bots</span></span></label>' +
+      '<div class="row-end"><button class="btn" id="mcancel" type="button">Cancel</button>' +
+      '<button class="btn primary" id="mbake" type="button">' + phi("cake") + ' Bake!</button></div></div></div>' +
+      '<div class="bakefx" id="bakefx"></div>';
+    document.body.appendChild(wrap);
+    el("mtrayClear").addEventListener("click", mClear);
+    el("mtrayMerge").addEventListener("click", mOpenWizard);
+    el("mcancel").addEventListener("click", function () { el("mwiz").classList.remove("show"); });
+    el("mbake").addEventListener("click", mBake);
+    el("mwiz").addEventListener("click", function (e) { if (e.target === el("mwiz")) el("mwiz").classList.remove("show"); });
+  }
+  function mStageHtml() {
+    return '<div class="stage">' +
+      '<div class="oven"><div class="strip"><i style="left:14px"></i><i style="left:40px"></i><i style="left:66px"></i></div><div class="win"></div></div>' +
+      '<div class="orbit"><div class="clockfx"><div class="hand h"></div><div class="hand m"></div></div></div>' +
+      '<div class="ripburst"></div><div class="ripglint"></div>' +
+      '<div class="ripring a"></div><div class="ripring b"></div><div class="ripring c"></div><div class="ripring d"></div>' +
+      '<img class="bakebot" src="assets/icon-256.png" alt="">' +
+      '<div class="cap" id="bakeCap">Baking your bot…</div>' +
+      '<div class="barfx"><i></i></div>' +
+      '<div class="bakeactions" id="bakeActions"></div>' +
+      '<div class="bakedone" id="bakeDone"></div></div>';
+  }
+  function mToggle(i) {
+    var k = MSEL.indexOf(i);
+    if (k >= 0) MSEL.splice(k, 1); else MSEL.push(i);
+    refreshGalleries(); mRenderTray();
+  }
+  function mClear() { MSEL = []; refreshGalleries(); mRenderTray(); }
+  function mRenderTray() {
+    mEnsureUi();
+    var tray = el("mtray"); tray.classList.toggle("show", MSEL.length > 0);
+    var shown = MSEL.slice(0, MAX_CHIPS).map(function (i) { return '<span class="mtray-chip">' + esc(mName(i)) + "</span>"; });
+    if (MSEL.length > MAX_CHIPS) shown.push('<span class="mtray-chip more">+' + (MSEL.length - MAX_CHIPS) + " more</span>");
+    el("mtrayChips").innerHTML = shown.join("");
+    var btn = el("mtrayMerge"); btn.disabled = MSEL.length < 2;
+    btn.innerHTML = phi("cake") + (MSEL.length < 2 ? " Pick 2+ to merge" : " Merge " + MSEL.length + " bots");
+  }
+  function mOpenWizard() {
+    if (MSEL.length < 2) return;
+    var bots = MSEL.map(function (i) { return mBotOf(WF_ITEMS[i]); });
+    MCONFLICTS = mDetect(bots);
+    el("mname").value = MSEL.slice(0, 3).map(mName).join(" + ") + (MSEL.length > 3 ? " +" : "");
+    el("mclashes").innerHTML = MCONFLICTS.length === 0
+      ? '<div class="clash" style="background:#eef9ed;border-color:#cfead0;">' + phi("check") + " No command clashes - these bots merge cleanly.</div>"
+      : MCONFLICTS.map(function (c, ci) {
+        var who = c.bots.map(function (b) { return esc(mName(MSEL[b])); }).join(", ");
+        var opts = c.bots.map(function (b) { return '<button class="opt" data-c="' + ci + '" data-r="keep" data-b="' + b + '">keep ' + esc(mName(MSEL[b])) + "</button>"; }).join("");
+        opts += '<button class="opt" data-c="' + ci + '" data-r="runAll">run both</button><button class="opt" data-c="' + ci + '" data-r="rename">keep both</button><button class="opt" data-c="' + ci + '" data-r="combine">combine</button>';
+        return '<div class="clash"><span class="cmd">' + esc((c.prefix || "") + c.command) + '</span> <span style="color:#9b8c70;font-size:13px;">in ' + who + '</span><div class="opts" id="mopts' + ci + '">' + opts + "</div></div>";
+      }).join("");
+    mSyncOpts();
+    el("mclashes").querySelectorAll(".opt").forEach(function (o) {
+      o.addEventListener("click", function () {
+        var c = MCONFLICTS[+o.getAttribute("data-c")]; c.resolution = o.getAttribute("data-r");
+        if (c.resolution === "keep") c.keepBot = +o.getAttribute("data-b"); mSyncOpts();
+      });
+    });
+    el("mwiz").classList.add("show");
+  }
+  function mSyncOpts() {
+    MCONFLICTS.forEach(function (c, ci) {
+      var box = el("mopts" + ci); if (!box) return;
+      box.querySelectorAll(".opt").forEach(function (o) {
+        var r = o.getAttribute("data-r");
+        o.classList.toggle("on", r === c.resolution && (r !== "keep" || +o.getAttribute("data-b") === c.keepBot));
+      });
+    });
+  }
+  function mInstallHref() {
+    try {
+      var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(MERGED))));
+      var href = "ircuitry://install-bot?data=" + encodeURIComponent(b64);
+      return href.length > 8000 ? null : href;   // too big for a safe deep link - fall back to Copy/Download
+    } catch (e) { return null; }
+  }
+  function mBake() {
+    var bots = MSEL.map(function (i) { return mBotOf(WF_ITEMS[i]); });
+    var botMeta = MSEL.map(function (i) { return { name: WF_ITEMS[i].name, desc: WF_ITEMS[i].description }; });
+    var genHelp = el("mhelpchk").checked;
+    MERGED = mMerge(bots, MCONFLICTS, genHelp, botMeta);
+    MERGED.name = (el("mname").value || "Merged Bot").trim() || "Merged Bot";
+    el("mwiz").classList.remove("show");
+    var fx = el("bakefx"); fx.innerHTML = mStageHtml(); fx.classList.add("show");   // fresh markup restarts the animation
+    setTimeout(function () { var c = el("bakeCap"); if (c) c.textContent = MERGED.name + " is ready!"; }, 2150);
+    setTimeout(function () {
+      var json = JSON.stringify(MERGED, null, 2), safe = MERGED.name.replace(/[^a-zA-Z0-9 ._-]/g, "") || "merged-bot";
+      var href = mInstallHref();
+      var install = href
+        ? '<a class="btn primary install-link" href="' + href + '" data-tip="Hands the merged bot straight to your running ircuitry">' + phi("package") + " One-click install</a>"
+        : '<button class="btn primary" data-tip="Too big to one-click - use Copy or Download" disabled>' + phi("package") + " One-click install</button>";
+      el("bakeActions").innerHTML = install +
+        '<button class="btn icon" id="bakeCopy" data-tip="Copy JSON">' + phi("copy") + "</button>" +
+        '<button class="btn icon" id="bakeDl" data-tip="Download .ircbot">' + phi("download-simple") + "</button>";
+      el("bakeDone").innerHTML = '<span style="color:#7a6a52;font-size:13.5px;">' + esc(MERGED.name) + " · " + MERGED.nodes.length + " nodes · " + MERGED.connections.length + ' wires</span><br><a id="bakeClose">Done</a>';
+      el("bakeActions").classList.add("show"); el("bakeDone").classList.add("show");
+      var inst = el("bakeActions").querySelector(".install-link"); if (inst) inst.addEventListener("click", function () { setTimeout(probeApp, 1500); });
+      el("bakeCopy").addEventListener("click", function () { copyText(json, "Copied - press Ctrl+V in ircuitry"); });
+      el("bakeDl").addEventListener("click", function () { downloadFile(json, safe + ".ircbot"); });
+      el("bakeClose").addEventListener("click", function () { fx.classList.remove("show"); mClear(); });
+    }, 2900);
+  }
+
   // ---------- generic gallery ----------
   function safeIcon(it) {
     if (it.iconImage && /^[A-Za-z0-9+/=\s]+$/.test(it.iconImage)) return '<img alt="" src="data:image/png;base64,' + it.iconImage.replace(/\s+/g, "") + '">';
@@ -506,7 +705,10 @@
   function workflowCard(w, i) {
     var author = "by " + esc(w.author || "community");
     var tags = (w.tags || []).slice(0, 3).map(function (t) { return '<span class="lang-tag">' + esc(t) + "</span>"; }).join(" ");
-    return '<div class="node"><div class="top"><div class="badge">' + phi("robot") + '</div><div>' +
+    var sel = MSEL.indexOf(i) >= 0;
+    return '<div class="node' + (sel ? " msel" : "") + '">' +
+      '<button class="mpick" data-mpick="' + i + '" data-tip="Pick to merge" type="button">' + phi("check") + "</button>" +
+      '<div class="top"><div class="badge">' + phi("robot") + '</div><div>' +
       '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires · " + author + "</div></div></div>" +
       '<div class="desc">' + esc(w.description || "") + "</div>" +
       '<div class="cat">' + tags + "</div>" +
@@ -555,6 +757,9 @@
       grid.querySelectorAll("[data-inspect]").forEach(function (btn) {
         btn.addEventListener("click", function () { openInspect(all[+btn.getAttribute("data-inspect")], btn.getAttribute("data-kind")); });
       });
+      grid.querySelectorAll("[data-mpick]").forEach(function (btn) {   // pick a workflow to merge (workflows gallery only)
+        btn.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); mToggle(+btn.getAttribute("data-mpick")); });
+      });
       buildRail(b, cats);
       observe();
     }
@@ -584,6 +789,7 @@
 
     fetch(opts.url, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (data) {
       all = (data[opts.listKey] || []).sort(function (a, b) { return opts.sortKey(a).localeCompare(opts.sortKey(b)); });
+      if (document.body.getAttribute("data-gallery") === "workflows") { WF_ITEMS = all; mEnsureUi(); mRenderTray(); }
       el("state").style.display = "none";
       var s = el("search"); if (s) s.addEventListener("input", function () { query = s.value; render(); });
       render();

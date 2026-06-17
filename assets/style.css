@@ -356,3 +356,115 @@ footer a { color: var(--ink-soft); font-weight: 700; }
   .nr-pins { grid-template-columns: 1fr; gap: 4px; }
   .nr-pk { min-width: 100px; }
 }
+
+/* ===================== bot merge (from the old Factory) ===================== */
+
+    /* ---- selectable cards + tray ---- */
+    .pick { cursor: pointer; position: relative; transition: transform .08s ease, box-shadow .12s ease; }
+    .pick.sel { outline: 3px solid var(--berry, #c68ed6); box-shadow: 0 8px 22px rgba(198,142,214,.28); }
+    .pick .tick { position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; border-radius: 7px;
+      border: 2px solid #d9c9ee; background: #fff; display: grid; place-items: center; color: #fff; font-weight: 800; }
+    .pick.sel .tick { background: #b06fce; border-color: #b06fce; }
+    .traybar { position: sticky; bottom: 0; z-index: 30; margin-top: 18px; }
+    .traybar .inner { display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      background: #fff7ef; border: 2px solid #e7d8c4; border-radius: 16px; padding: 12px 16px; box-shadow: 0 -6px 24px rgba(0,0,0,.06); }
+    .traybar .chips2 { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+    .traybar .pillbot { background: #f1e6fb; border: 1px solid #d9c2ef; border-radius: 999px; padding: 5px 12px; font-weight: 700; font-size: 14px; }
+    /* ---- merge wizard ---- */
+    .scrim { position: fixed; inset: 0; background: rgba(40,30,20,.45); display: none; place-items: center; z-index: 60; padding: 20px; }
+    .scrim.show { display: grid; }
+    .wizard { width: min(680px, 96vw); max-height: 88vh; overflow: auto; background: #fffdf8; border: 2px solid #e7d8c4;
+      border-radius: 20px; padding: 22px 24px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .wizard h2 { margin: 0 0 4px; }
+    .clash { border: 1px solid #eadcc8; border-radius: 12px; padding: 12px 14px; margin: 10px 0; background: #fcf7ef; }
+    .clash .cmd { font-family: ui-monospace, monospace; font-weight: 800; color: #a05fc0; }
+    .opts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .opt { border: 1.5px solid #ddd0bd; background: #fff; border-radius: 999px; padding: 6px 13px; font-weight: 700; font-size: 13.5px; cursor: pointer; }
+    .opt.on { background: #b06fce; border-color: #b06fce; color: #fff; }
+    .field { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1.5px solid #ddd0bd; border-radius: 10px; font: inherit; margin-top: 6px; }
+    .lbl { font-weight: 800; font-size: 12px; letter-spacing: .03em; color: #9b8c70; text-transform: uppercase; margin-top: 14px; display: block; }
+    .row-end { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 18px; }
+    /* ---- bake animation: oven rumbles then zooms/fades, clock orbits then bubble-pops, golden hatch ripple ---- */
+    .bakefx { position: fixed; inset: 0; background: #f4ecd8; display: none; place-items: center; z-index: 80; overflow: hidden; }
+    .bakefx.show { display: grid; }
+    .stage { position: relative; width: 320px; height: 320px; }
+
+    .oven { position: absolute; left: 70px; top: 120px; width: 180px; height: 150px; border-radius: 18px;
+      background: linear-gradient(#fff6e6, #f6e6cf); border: 2px solid #d9c39a; box-shadow: 0 8px 20px rgba(0,0,0,.08);
+      animation: rumble .12s linear 0s 16, ovenout .7s ease-in 2s forwards; }
+    @keyframes rumble { 0%,100% { transform: translate(0,0); } 25% { transform: translate(1.6px,-1.2px); } 50% { transform: translate(-1.4px,1.4px); } 75% { transform: translate(1.2px,1.2px); } }
+    @keyframes ovenout { to { transform: scale(1.5); opacity: 0; } }
+    .oven .strip { position: absolute; left: 14px; top: 12px; right: 14px; height: 20px; border-radius: 8px; background: #efe2cd; }
+    .oven .strip i { position: absolute; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 1px solid #d8c6a6; }
+    .oven .win { position: absolute; left: 30px; right: 30px; top: 56px; bottom: 26px; border-radius: 12px;
+      background: radial-gradient(circle at 50% 60%, #ffd789, #f4b24a); border: 2px solid #e0a64a; animation: glow 1.1s ease-in-out infinite; }
+    @keyframes glow { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.18); } }
+
+    .orbit { position: absolute; left: 160px; top: 188px; width: 0; height: 0; z-index: 1; animation: orbitspin 1.8s linear infinite; }
+    @keyframes orbitspin { to { transform: rotate(360deg); } }
+    .clockfx { position: absolute; left: -24px; top: -100px; width: 52px; height: 52px; border-radius: 50%;
+      background: #fffdf8; border: 3px solid #79cdd0; animation: counterspin 1.8s linear infinite, bubblepop .4s ease-out 2s forwards; }
+    @keyframes counterspin { to { transform: rotate(-360deg); } }
+    @keyframes bubblepop { 0% { transform: scale(1); opacity: 1; } 55% { transform: scale(1.7); opacity: .5; } 100% { transform: scale(2.1); opacity: 0; } }
+    .clockfx::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid #79cdd0; opacity: 0; animation: bubblering .45s ease-out 2s forwards; }
+    @keyframes bubblering { 0% { opacity: 0; transform: scale(.9); } 30% { opacity: .8; } 100% { opacity: 0; transform: scale(2.3); } }
+    .clockfx .hand { position: absolute; left: 50%; top: 50%; transform-origin: bottom center; background: #56463a; border-radius: 2px; }
+    .clockfx .h { width: 3px; height: 13px; margin-left: -1.5px; margin-top: -13px; animation: spin 3s linear infinite; }
+    .clockfx .m { width: 2.5px; height: 18px; margin-left: -1.25px; margin-top: -18px; animation: spin 1.1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .ripburst, .ripglint, .ripring { position: absolute; left: 50%; top: 152px; border-radius: 50%; opacity: 0; mix-blend-mode: screen; pointer-events: none; }
+    .ripburst { width: 300px; height: 300px; margin: -150px 0 0 -150px;
+      background: radial-gradient(circle, rgba(255,221,137,.6) 18%, rgba(255,201,90,.22) 44%, transparent 66%); animation: rburst 1.7s ease-out 2s forwards; }
+    @keyframes rburst { 0% { opacity: 0; transform: scale(.3); } 20% { opacity: 1; transform: scale(1); } 100% { opacity: .5; transform: scale(1.25); } }
+    .ripglint { width: 290px; height: 290px; margin: -145px 0 0 -145px;
+      background: conic-gradient(from 0deg, transparent 0 7%, rgba(255,255,255,.55) 8% 10%, transparent 11% 32%, rgba(255,255,255,.45) 33% 35%, transparent 36% 57%, rgba(255,255,255,.55) 58% 60%, transparent 61% 82%, rgba(255,255,255,.45) 83% 85%, transparent 86%);
+      animation: rglint 1.7s ease-out 2s forwards, rglintspin 7s linear 2s infinite; }
+    @keyframes rglint { 0% { opacity: 0; } 16% { opacity: .85; } 100% { opacity: .22; } }
+    @keyframes rglintspin { to { transform: rotate(150deg); } }
+    .ripring { width: 142px; height: 142px; margin: -71px 0 0 -71px; border: 3px solid #ffcf6a; animation: ripp 1.9s ease-out 2s infinite; }
+    .ripring.b { border-color: #ffe6a6; animation-delay: 2.3s; }
+    .ripring.c { border-color: #8fe3e3; animation-delay: 2.55s; }
+    .ripring.d { border-color: #f3a6d0; animation-delay: 2.8s; }
+    @keyframes ripp { 0% { opacity: .85; transform: scale(.88); } 100% { opacity: 0; transform: scale(3.4); } }
+
+    .bakebot { position: absolute; left: 50%; top: 150px; width: 120px; margin-left: -60px; image-rendering: pixelated; z-index: 2;
+      opacity: 0; transform: scale(.2) translateY(30px); filter: drop-shadow(0 0 9px rgba(255,210,120,.7));
+      animation: pop .85s cubic-bezier(.2,1.4,.4,1) 2s forwards; }
+    @keyframes pop { to { opacity: 1; transform: scale(1) translateY(-58px); } }
+    .cap { position: absolute; left: -40px; right: -40px; top: 290px; text-align: center; font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 26px; color: #56463a; z-index: 3; }
+    .barfx { position: absolute; left: 50px; right: 50px; top: 336px; height: 6px; border-radius: 3px; background: #e6dcc6; overflow: hidden; z-index: 3; }
+    .barfx > i { display: block; height: 100%; width: 0; background: #b06fce; animation: fill 3.9s linear forwards; }
+    @keyframes fill { to { width: 100%; } }
+  
+/* card select-to-merge tick (workflows only) */
+.node.msel { outline: 3px solid var(--lilac); outline-offset: 2px; box-shadow: 0 10px 26px rgba(203,182,230,.32); }
+.node { position: relative; }
+.mpick { position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 9px; z-index: 2;
+  border: 2px solid var(--line); background: var(--card); display: grid; place-items: center; cursor: pointer;
+  color: transparent; transition: background .12s ease, border-color .12s ease, color .12s ease; padding: 0; }
+.mpick:hover { border-color: var(--lilac); }
+.mpick .ph { font-size: 14px; }
+.node.msel .mpick { background: #b06fce; border-color: #b06fce; color: #fff; }
+/* the merging tray (sticky bottom) */
+.mtray { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 12px 16px;
+  background: rgba(255,247,239,.96); backdrop-filter: blur(8px); border-top: 2px solid #e7d8c4; box-shadow: 0 -8px 24px rgba(0,0,0,.08);
+  transform: translateY(120%); transition: transform .22s ease; }
+.mtray.show { transform: none; }
+.mtray-in { width: min(1080px, 94vw); margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.mtray-in > strong { font-family: var(--font-head); }
+.mtray-chips { display: flex; gap: 7px; flex-wrap: wrap; flex: 1; min-width: 0; }
+.mtray-chip { background: #f1e6fb; border: 1px solid #d9c2ef; border-radius: 999px; padding: 4px 12px; font-weight: 700; font-size: 13.5px; color: var(--ink); }
+.mtray-chip.more { background: var(--paper-2); border-color: var(--line); color: var(--ink-soft); }
+/* wizard extras */
+.mhelp { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 12px 14px; border: 1.5px solid #ddd0bd; border-radius: 12px; background: #fcf7ef; cursor: pointer; }
+.mhelp input { width: 18px; height: 18px; accent-color: #b06fce; flex: none; }
+.mhelp .t { font-weight: 700; } .mhelp .s { color: var(--ink-soft); font-size: 13px; }
+/* result buttons revealed under the bot in the splash (splash never leaves) */
+.bakeactions { position: absolute; left: 50%; top: 330px; transform: translateX(-50%) translateY(8px); width: max-content;
+  display: flex; gap: 10px; align-items: center; z-index: 4; opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; }
+.bakeactions.show { opacity: 1; pointer-events: auto; transform: translateX(-50%); }
+.bakeactions .btn.icon { width: 46px; }
+.bakedone { position: absolute; left: 0; right: 0; top: 392px; text-align: center; z-index: 4; opacity: 0; transition: opacity .3s ease; }
+.bakeactions.show ~ .bakedone, .bakedone.show { opacity: 1; }
+.bakedone a { font-weight: 700; cursor: pointer; }
