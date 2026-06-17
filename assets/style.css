@@ -485,9 +485,8 @@ footer a { color: var(--ink-soft); font-weight: 700; }
 .showcase { position: relative; overflow: hidden; padding: 60px 0 70px; }
 .showcase .section-sub { max-width: 680px; }
 .tv { --a: #56C0D2; --b: #F08A9E; --bg: #F4ECD8; position: relative; margin-top: 38px;
-  perspective: 1400px; transition: --a .6s, --b .6s; }
-.tv-stage { position: relative; width: min(960px, 94%); margin: 0 auto;
-  transform-style: preserve-3d; transition: transform .25s ease-out; }
+  transition: --a .6s, --b .6s; }
+.tv-stage { position: relative; width: min(960px, 94%); margin: 0 auto; }
 
 /* themed ambient glow that breathes behind the device */
 .tv-glow { position: absolute; inset: -14% -10% -22%; z-index: 0; filter: blur(46px); opacity: .8;

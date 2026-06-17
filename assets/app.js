@@ -862,11 +862,7 @@
 
     // hover pauses the countdown (unless a chip has pinned it); leaving resumes
     stage.addEventListener("mouseenter", function () { if (paused) return; clearInterval(timer); var w = getComputedStyle(bar).width; bar.classList.remove("run"); bar.style.width = w; });
-    stage.addEventListener("mouseleave", function () { stage.style.transform = ""; if (paused) return; runBar(); play(); });
-    stage.addEventListener("pointermove", function (e) {
-      var r = stage.getBoundingClientRect(); var dx = (e.clientX - r.left) / r.width - 0.5, dy = (e.clientY - r.top) / r.height - 0.5;
-      stage.style.transform = "rotateY(" + (dx * 5).toFixed(2) + "deg) rotateX(" + (-dy * 4).toFixed(2) + "deg)";
-    });
+    stage.addEventListener("mouseleave", function () { if (paused) return; runBar(); play(); });
   }
 
   // ---------- boot ----------
