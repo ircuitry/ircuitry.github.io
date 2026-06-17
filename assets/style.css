@@ -509,9 +509,11 @@ footer a { color: var(--ink-soft); font-weight: 700; }
   box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 0 1px rgba(255,255,255,.14); }
 
 .tv-screens { position: absolute; inset: 0; }
+/* no zoom: render at native downscale (1600px -> frame width) so it stays crisp. A slow ken-burns scale kept
+   the image permanently upscaled (it never finished before the next switch) and made it look soft. */
 .tv-screens img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center;
-  opacity: 0; transform: scale(1.04); transition: opacity .9s ease, transform 6s ease; }
-.tv-screens img.on { opacity: 1; transform: scale(1); }
+  opacity: 0; transition: opacity .8s ease; }
+.tv-screens img.on { opacity: 1; }
 
 /* a glossy sheen that sweeps across like an old Web 2.0 reflection / a CRT scan */
 .tv-sheen { position: absolute; top: 0; bottom: 0; width: 42%; z-index: 3; pointer-events: none;
@@ -562,3 +564,9 @@ footer a { color: var(--ink-soft); font-weight: 700; }
   .tv-glow, .tv-frame::before, .tv-sheen, .tv-spark, .tv-badge .star { animation: none; }
   .tv-screens img { transition: opacity .4s ease; transform: none; }
 }
+
+/* showcase caption + pinned (chip-selected) state */
+.tv-cap { text-align: center; margin-top: 22px; color: var(--ink-soft); font-size: 15px; }
+.tv-cap a { font-weight: 800; white-space: nowrap; }
+.tv.paused .tv-bar { opacity: 0; }
+.tv.paused .tv-badge .star { animation: none; opacity: .9; }

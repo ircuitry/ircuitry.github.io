@@ -835,32 +835,37 @@
   function initShowcase() {
     var stage = el("tvStage"); if (!stage) return;
     var tv = el("tv"), screens = el("tvScreens"), chips = el("tvChips"), nameEl = el("tvName"), bar = el("tvBar");
-    var DUR = 4200, cur = 0, timer = null;
+    var DUR = 4200, cur = 0, timer = null, paused = false;
     THEME_SHOW.forEach(function (t, i) {
       var im = new Image(); im.src = t.img; im.alt = t.name + " theme"; im.loading = i === 0 ? "eager" : "lazy";
       if (i === 0) im.className = "on"; screens.appendChild(im);
       var chip = document.createElement("button"); chip.type = "button"; chip.className = "tv-chip" + (i === 0 ? " on" : "");
       chip.style.setProperty("--ca", t.a); chip.style.setProperty("--cb", t.b);
       chip.innerHTML = '<span class="dot"></span>' + esc(t.name);
-      chip.addEventListener("click", function () { go(i, true); });
+      // clicking a chip pins that theme and stops the auto-cycle (reload to resume)
+      chip.addEventListener("click", function () { paused = true; clearInterval(timer); stopBar(); tv.classList.add("paused"); show(i); });
       chips.appendChild(chip);
     });
-    function apply(i) {
-      var t = THEME_SHOW[i];
+    function show(i) {
+      cur = (i + THEME_SHOW.length) % THEME_SHOW.length;
+      var t = THEME_SHOW[cur];
       tv.style.setProperty("--a", t.a); tv.style.setProperty("--b", t.b); tv.style.setProperty("--bg", t.bg);
       nameEl.textContent = t.name;
-      screens.querySelectorAll("img").forEach(function (im, k) { im.classList.toggle("on", k === i); });
-      chips.querySelectorAll(".tv-chip").forEach(function (c, k) { c.classList.toggle("on", k === i); });
+      screens.querySelectorAll("img").forEach(function (im, k) { im.classList.toggle("on", k === cur); });
+      chips.querySelectorAll(".tv-chip").forEach(function (c, k) { c.classList.toggle("on", k === cur); });
     }
-    function restartBar() { bar.classList.remove("run"); bar.style.width = "0"; void bar.offsetWidth; bar.style.setProperty("--dur", DUR + "ms"); bar.classList.add("run"); }
-    function go(i, user) { cur = (i + THEME_SHOW.length) % THEME_SHOW.length; apply(cur); restartBar(); if (user) { clearInterval(timer); timer = setInterval(function () { go(cur + 1); }, DUR); } }
-    apply(0); restartBar(); timer = setInterval(function () { go(cur + 1); }, DUR);
+    function runBar() { bar.classList.remove("run"); bar.style.width = "0"; void bar.offsetWidth; bar.style.setProperty("--dur", DUR + "ms"); bar.classList.add("run"); }
+    function stopBar() { bar.classList.remove("run"); bar.style.width = "0"; }
+    function tick() { show(cur + 1); runBar(); }
+    function play() { clearInterval(timer); timer = setInterval(tick, DUR); }
+    show(0); runBar(); play();
 
-    stage.addEventListener("mouseenter", function () { clearInterval(timer); var w = getComputedStyle(bar).width; bar.classList.remove("run"); bar.style.width = w; });
-    stage.addEventListener("mouseleave", function () { restartBar(); clearInterval(timer); timer = setInterval(function () { go(cur + 1); }, DUR); stage.style.transform = ""; });
+    // hover pauses the countdown (unless a chip has pinned it); leaving resumes
+    stage.addEventListener("mouseenter", function () { if (paused) return; clearInterval(timer); var w = getComputedStyle(bar).width; bar.classList.remove("run"); bar.style.width = w; });
+    stage.addEventListener("mouseleave", function () { stage.style.transform = ""; if (paused) return; runBar(); play(); });
     stage.addEventListener("pointermove", function (e) {
       var r = stage.getBoundingClientRect(); var dx = (e.clientX - r.left) / r.width - 0.5, dy = (e.clientY - r.top) / r.height - 0.5;
-      stage.style.transform = "rotateY(" + (dx * 7).toFixed(2) + "deg) rotateX(" + (-dy * 6).toFixed(2) + "deg)";
+      stage.style.transform = "rotateY(" + (dx * 5).toFixed(2) + "deg) rotateX(" + (-dy * 4).toFixed(2) + "deg)";
     });
   }
 
