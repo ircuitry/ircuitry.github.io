@@ -473,3 +473,9 @@ footer a { color: var(--ink-soft); font-weight: 700; }
 .bakedone a { font-weight: 700; cursor: pointer; }
 /* once baked, the progress caption and bar give way to the result */
 .bakefx.done .cap, .bakefx.done .barfx { display: none; }
+
+/* theme gallery cards: a palette swatch strip across the top */
+.node.theme .swatches { display: flex; height: 26px; border-radius: 9px; overflow: hidden; margin-bottom: 12px;
+  border: 1px solid var(--line); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35); }
+.node.theme .swatches .sw { flex: 1 1 0; }
+.node.theme.dark .swatches { border-color: rgba(0, 0, 0, .35); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12); }

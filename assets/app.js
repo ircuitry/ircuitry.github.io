@@ -4,10 +4,13 @@
   var REPO = "ircuitry/ircuitry";
   var NODES = "ircuitry/community-nodes";
   var WORKFLOWS = "ircuitry/community-workflows";
+  var THEMES = "ircuitry/community-themes";
   var NODES_RAW = "https://raw.githubusercontent.com/" + NODES + "/main/";
   var WF_RAW = "https://raw.githubusercontent.com/" + WORKFLOWS + "/main/";
+  var THEMES_RAW = "https://raw.githubusercontent.com/" + THEMES + "/main/";
   var NODES_INDEX = NODES_RAW + "index.json";
   var WF_INDEX = WF_RAW + "index.json";
+  var THEMES_INDEX = THEMES_RAW + "index.json";
   function rawUrl(base, file) { return base + file.split("/").map(encodeURIComponent).join("/"); }
   function installHref(action, raw) { return "ircuitry://" + action + "?url=" + encodeURIComponent(raw); }
   var RELEASE_API = "https://api.github.com/repos/" + REPO + "/releases/latest";
@@ -16,7 +19,8 @@
   function phi(name, cls) { return '<i class="ph ph-' + name + (cls ? " " + cls : "") + '" aria-hidden="true"></i>'; }
   var CAT_ICON = { Event: "lightning", Filter: "funnel", Logic: "git-branch", Data: "hash", Ai: "sparkle",
     Ircv3: "broadcast", Storage: "database", Action: "paper-plane-tilt", Code: "code", AI: "sparkle",
-    Games: "game-controller", Moderation: "shield", Community: "users-three", Utility: "wrench", Reminders: "alarm", Testing: "test-tube" };
+    Games: "game-controller", Moderation: "shield", Community: "users-three", Utility: "wrench", Reminders: "alarm", Testing: "test-tube",
+    Cozy: "coffee", Light: "sun", Nature: "leaf", Seasonal: "tree", Dark: "moon", Vibrant: "sparkle", Retro: "television", Minimal: "circle-half", Accessibility: "eye" };
   // name -> glyph char, for drawing node icons inside the SVG graph viewer (where <i> classes can't go)
   var PH_GLYPH = {};
   fetch("assets/phosphor-codepoints.json", { cache: "force-cache" }).then(function (r) { return r.ok ? r.json() : null; })
@@ -718,6 +722,26 @@
       actionsHtml(w, i, "workflows", "install-bot", rawUrl(WF_RAW, w.file)) + "</div>";
   }
 
+  // themes install with a single action (preview-in-app, then keep/revert); no capability detection needed
+  function themeActions(t, i, raw) {
+    return '<div class="actions">' +
+      '<a class="btn primary install-link" href="' + installHref("install-theme", raw) + '" data-tip="Preview it live in ircuitry, then keep or revert">' + phi("package") + " One-click install</a>" +
+      '<button class="btn icon" data-copy="' + i + '" data-tip="Copy JSON">' + phi("copy") + "</button>" +
+      '<button class="btn icon" data-dl="' + i + '" data-tip="Download .irctheme">' + phi("download-simple") + "</button></div>";
+  }
+  function themeCard(t, i) {
+    var author = "by " + esc(t.author || "community");
+    var sw = (t.preview || []).map(function (c) { return '<span class="sw" style="background:' + esc(c) + '"></span>'; }).join("");
+    var tags = (t.tags || []).slice(0, 3).map(function (x) { return '<span class="lang-tag">' + esc(x) + "</span>"; }).join(" ");
+    return '<div class="node theme' + (t.dark ? " dark" : "") + '">' +
+      '<div class="swatches">' + sw + "</div>" +
+      '<div class="top"><div class="badge">' + phi("palette") + '</div><div>' +
+      '<div class="name">' + esc(t.name) + '</div><div class="meta">' + esc(t.category) + (t.dark ? " · dark" : "") + " · " + author + "</div></div></div>" +
+      '<div class="desc">' + esc(t.description || "") + "</div>" +
+      '<div class="cat">' + tags + "</div>" +
+      themeActions(t, i, rawUrl(THEMES_RAW, t.file)) + "</div>";
+  }
+
   function startGallery(opts) {
     var grid = el("grid"), rail = el("chips");
     if (!grid) return;
@@ -831,6 +855,19 @@
         copyData: function (w) { return JSON.stringify(w.workflow, null, 2); },
         copyMsg: function (w) { return "Copied " + w.name + " · press Ctrl+V in ircuitry"; },
         dlName: function (w) { return w.name.replace(/[^a-zA-Z0-9 ._-]/g, "") + ".ircbot"; }
+      });
+    } else if (gallery === "themes") {
+      startGallery({
+        url: THEMES_INDEX, repo: THEMES, listKey: "themes", noun: "themes",
+        order: ["Cozy", "Light", "Nature", "Seasonal", "Vibrant", "Retro", "Minimal", "Dark", "Accessibility"],
+        blurbs: { Cozy: "Warm and soft, the house style", Light: "Bright and airy", Nature: "Greens, waters and earth", Seasonal: "A mood for the time of year", Vibrant: "Bold and saturated", Retro: "Throwback palettes", Minimal: "Quiet and low-contrast", Dark: "Easy on the eyes at night", Accessibility: "High-contrast and colour-blind-friendly" },
+        facets: function (t) { return [t.category || "Cozy"]; },
+        haystack: function (t) { return t.name + " " + t.description + " " + (t.category || "") + " " + (t.tags || []).join(" "); },
+        sortKey: function (t) { return t.name || ""; },
+        card: themeCard,
+        copyData: function (t) { return JSON.stringify(t.theme, null, 2); },
+        copyMsg: function (t) { return "Copied " + t.name + " · paste into ircuitry Appearance"; },
+        dlName: function (t) { return t.name.replace(/[^a-zA-Z0-9 ._-]/g, "") + ".irctheme"; }
       });
     }
   });

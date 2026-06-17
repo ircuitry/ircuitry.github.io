@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Community workflows - ircuitry</title>
-  <meta name="description" content="Browse shareable bot workflows for ircuitry. Copy one and paste it straight into the app.">
+  <title>Community themes - ircuitry</title>
+  <meta name="description" content="Browse cozy, dark and accessible themes for ircuitry. Install one and preview it live, then keep it or revert.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,12 +12,11 @@
   <link rel="stylesheet" href="assets/phosphor.css">
   <link rel="stylesheet" href="assets/style.css?v=15">
 </head>
-<body data-gallery="workflows">
+<body data-gallery="themes">
   <nav class="nav">
     <div class="wrap">
       <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
       <div class="links">
-        
         <a href="docs.html">Docs</a><a href="nodes.html">Nodes</a>
         <a href="workflows.html">Workflows</a><a href="themes.html">Themes</a>
         <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
@@ -27,24 +26,25 @@
 
   <header class="gallery-head">
     <div class="wrap">
-      <h1 class="section-title" style="text-align:left;">Community workflows</h1>
+      <h1 class="section-title" style="text-align:left;">Community themes</h1>
       <p class="section-sub" style="text-align:left;margin-left:0;">
-        Whole bots, ready to run: games, reminders, quizzes and more. Hit <b>Copy</b>, then paste the
-        workflow straight into ircuitry, or <b>tick two or more</b> and <b>Merge</b> them into one bot. Built one? <a href="https://github.com/ircuitry/community-workflows">Open a PR.</a>
+        Reskin ircuitry from cream-and-pastel to a moody dark or a crisp high-contrast look. Hit
+        <b>Install</b> to preview a theme live in the app, then keep it or revert. Made one in the
+        Appearance editor? <a href="https://github.com/ircuitry/community-themes">Open a PR.</a>
       </p>
 
       <div class="note">
-        <b>Two ways to import:</b>
+        <b>Three ways to use a theme:</b>
         <ol>
-          <li><b>Install in app</b> (one click): opens ircuitry and adds the workflow as a new bot tab. Needs ircuitry installed (Linux for now; the button is a no-op elsewhere).</li>
-          <li><b>Copy</b>, then in ircuitry click an empty spot on the canvas and press <code>Ctrl+V</code>. Or <b>Download</b> and use <b>IMPORT</b> (also accepts a dragged <code>.ircbot</code>). Works everywhere.</li>
+          <li><b>Install in app</b> (one click): opens ircuitry and applies the theme as a live preview - <b>Keep</b> it or revert. Needs ircuitry installed (Linux for now; the button is a no-op elsewhere).</li>
+          <li><b>Copy</b>, then in ircuitry open <b>Appearance &gt; Import / Export</b>, paste it, press <b>Preview</b>, then <b>Keep</b>. Works everywhere.</li>
+          <li><b>Download</b> the <code>.irctheme</code> and drop it in <code>~/ircuitry/themes/</code>, or load it from Appearance.</li>
         </ol>
-        Then open the Inspector, fill in your server, nick and channels, and press <b>RUN BOT</b>.
-        Workflows can include Code nodes that run on your machine, so review one before running it.
+        Prefer to roll your own? Open <b>Appearance</b> from the titlebar menu and tune every colour, font and feel knob from scratch.
       </div>
 
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="Search workflows by name, tag or category...">
+        <input class="search" id="search" type="search" placeholder="Search themes by name, mood or tag...">
         <span class="count" id="count"></span>
       </div>
     </div>
@@ -57,7 +57,7 @@
         <nav class="chips" id="chips"></nav>
       </aside>
       <div class="gallery-main">
-        <div class="state" id="state">Loading workflows...</div>
+        <div class="state" id="state">Loading themes...</div>
         <div id="grid"></div>
         <div class="empty" id="empty" hidden>No matches - try a different search.</div>
       </div>
@@ -69,7 +69,7 @@
       <span>© ircuitry contributors</span>
       <span>
         <a href="index.html">Home</a> ·
-        <a href="https://github.com/ircuitry/community-workflows">Submit a workflow</a> ·
+        <a href="https://github.com/ircuitry/community-themes">Submit a theme</a> ·
         <a href="https://github.com/ircuitry/ircuitry">App</a>
       </span>
     </div>
