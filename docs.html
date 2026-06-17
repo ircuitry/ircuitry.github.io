@@ -118,21 +118,26 @@
 
       <section id="nodes-pins">
         <h2><i class="ph ph-graph"></i> Nodes, pins &amp; wires</h2>
-        <p>Every node has <b>input pins</b> on the left and <b>output pins</b> on the right. Two kinds of pin:</p>
+        <p>Every node has <b>input pins</b> on the left and <b>output pins</b> on the right. Pins come in three flavours:</p>
         <ul class="docs-bul">
-          <li><b>Exec pins</b> (square) carry <b>control flow</b>. A trigger pulses its exec output, which runs the next
-            node, and so on. This is the order things happen in.</li>
-          <li><b>Data pins</b> (round) carry <b>values</b>, pulled on demand. Each has a <b>kind</b> that colours the pin
-            and any wire from it:
-            <span class="kindchip" data-k="Exec">Exec</span>
+          <li><b>Exec pins</b> (square, <span class="kindchip" data-k="Exec">Exec</span>) carry <b>control flow</b>. A trigger
+            pulses its exec output, which runs the next node, and so on - this is the order things happen in. Exec only
+            connects to Exec.</li>
+          <li><b>Data pins</b> (round) carry <b>values</b>, pulled on demand. There are five data kinds, and the kind just
+            colours the pin and any wire from it (a hint, e.g. <span class="kindchip" data-k="User">User</span> = a nick):
             <span class="kindchip" data-k="Text">Text</span>
             <span class="kindchip" data-k="User">User</span>
             <span class="kindchip" data-k="Channel">Channel</span>
             <span class="kindchip" data-k="Number">Number</span>
-            <span class="kindchip" data-k="Bool">Bool</span>
-            <span class="kindchip" data-k="Tool">Tool</span>.
-            Kinds are advisory - any data kind can wire into any data input.</li>
+            <span class="kindchip" data-k="Bool">Bool</span>.
+            Any of these five can wire into any data input.</li>
+          <li><b>Tool pins</b> (round, <span class="kindchip" data-k="Tool">Tool</span>) are special: they carry an AI tool
+            definition and only connect <b>Tool to Tool</b> (an AI Tool node into Ask AI).</li>
         </ul>
+        <p>A node can mix them. <b>On Command</b> has a square <code>then</code> (Exec) plus round <code>args</code> (Text),
+          <code>nick</code> (User) and <code>channel</code> (Channel) outputs. A node with <b>only</b> round pins - like
+          <b>Text Transform</b> (<code>text</code> in &rarr; <code>result</code> out, no exec) - is a pure data node: nothing
+          "runs" it; its output is computed on demand when something downstream pulls it.</p>
         <p>Drag from one pin to another to <b>wire</b> them. A node with no incoming exec runs as a pure data node when
           something pulls its output. <b>Mute</b> a node (press <code>M</code>) to skip it without deleting it.</p>
       </section>
