@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documentation - ircuitry</title>
+  <meta name="description" content="The complete ircuitry manual: the interface, building bots, every node, IRCv3, DCC, AI tools, baking, community nodes, keyboard shortcuts, file formats and the CLI.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/phosphor.css">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="docs">
+  <nav class="nav">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
+      <div class="links">
+        <a href="docs.html">Docs</a>
+        <a href="nodes.html">Nodes</a>
+        <a href="workflows.html">Workflows</a>
+        <a href="factory.html">Factory</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="docs-layout wrap">
+    <aside class="docs-side">
+      <input class="docs-search" id="tocSearch" type="search" placeholder="Search the docs..." aria-label="Search docs">
+      <nav class="docs-toc" id="toc">
+        <a href="#overview">Overview</a>
+        <a href="#install">Install &amp; first run</a>
+        <a href="#interface">The interface</a>
+        <a href="#nodes-pins">Nodes, pins &amp; wires</a>
+        <a href="#tokens">Tokens &amp; variables</a>
+        <a href="#commands">Bot commands &amp; replies</a>
+        <a href="#ircv3">IRCv3</a>
+        <a href="#dcc">DCC file transfer</a>
+        <a href="#ai">AI: Ask, tools &amp; memory</a>
+        <a href="#baking">Baking your own nodes</a>
+        <a href="#bakery">Bot Bakery (merging)</a>
+        <a href="#network">Network map</a>
+        <a href="#community">Community nodes &amp; workflows</a>
+        <a href="#secrets">Secrets &amp; KEYS</a>
+        <a href="#testing">Testing &amp; the console</a>
+        <a href="#shortcuts">Keyboard shortcuts</a>
+        <a href="#reference">Node reference (122)</a>
+        <a href="#formats">File formats</a>
+        <a href="#cli">Command line &amp; MCP</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </aside>
+
+    <main class="docs-main" id="docsMain">
+      <header class="docs-hero">
+        <h1>ircuitry documentation</h1>
+        <p class="lead">Everything in the app, in one page. ircuitry is a cozy node-graph builder for IRC bots
+          with first-class IRCv3 support: you wire little nodes together instead of writing code, and a bot
+          falls out the other end.</p>
+        <p class="docs-ver" id="docsVer">app reference loaded from the current release</p>
+      </header>
+
+      <section id="overview">
+        <h2><i class="ph ph-book-open"></i> Overview</h2>
+        <p>An ircuitry <b>workspace</b> holds one or more <b>bots</b>. Each bot has a node <b>graph</b> (its
+          behaviour) and one or more <b>server</b> connections. A graph reacts to incoming IRC events through
+          <b>trigger</b> nodes, runs logic/data nodes, and performs effects through <b>action</b> nodes. The
+          same graph fires for events from every server the bot is on.</p>
+        <ul class="docs-bul">
+          <li><b>No code required.</b> Drag nodes, wire them, set a few fields. (There is still a Code node if you want it.)</li>
+          <li><b>IRCv3 native.</b> Capabilities, message tags, account-tag, labeled-response, typing, reactions, redaction and more are nodes.</li>
+          <li><b>Local &amp; private.</b> Everything lives in your workspace folder on disk; secrets are kept out of exports.</li>
+          <li><b>Extensible.</b> Bake your own nodes from existing ones, install community nodes/workflows, or drive the app over MCP.</li>
+        </ul>
+      </section>
+
+      <section id="install">
+        <h2><i class="ph ph-download-simple"></i> Install &amp; first run</h2>
+        <ol class="docs-steps">
+          <li>Grab a build from the <a href="https://github.com/ircuitry/ircuitry/releases/latest">latest release</a>
+            (Windows <code>.exe</code>/<code>.zip</code>, Linux <code>.deb</code>/<code>.AppImage</code>/<code>.zip</code>, macOS <code>.zip</code>). The builds are self-contained, no runtime to install.</li>
+          <li>Launch it. Your workspace is created at <code>~/ircuitry</code> (override with the <code>IRCUITRY_HOME</code> environment variable).</li>
+          <li>A starter bot tab is waiting. Open the <b>Connection inspector</b>, set a <b>server</b>
+            (e.g. <code>irc.libera.chat</code> : <code>6697</code>, TLS on), a <b>nick</b> and the <b>channels</b> to join.</li>
+          <li>Press <b>Play</b> in the title bar to connect. The <b>Event Console</b> shows the handshake and everything coming in.</li>
+        </ol>
+        <p class="docs-note"><i class="ph ph-info"></i> The first run also registers the <code>ircuitry://</code>
+          link handler so one-click installs from this site work.</p>
+      </section>
+
+      <section id="interface">
+        <h2><i class="ph ph-layout"></i> The interface</h2>
+        <h3>Title bar</h3>
+        <p>A single glossy bar holds the app icon, your bots as scrollable <b>cartridge tabs</b>, and a tool cluster on the right:</p>
+        <ul class="docs-icons">
+          <li><i class="ph ph-play"></i> <b>Play / Stop</b> - connect or disconnect the active bot.</li>
+          <li><i class="ph ph-test-tube"></i> <b>Test</b> - dry-run a command against your graph without touching IRC.</li>
+          <li><i class="ph ph-scroll"></i> <b>History</b> - a timeline of every run, with the exact node path and pin values.</li>
+          <li><i class="ph ph-bell"></i> <b>Notifications</b> - achievements and important events.</li>
+          <li><i class="ph ph-map-trifold"></i> <b>Network map</b> - a live graph of every bot, server and channel (see below).</li>
+          <li><i class="ph ph-folder"></i> <b>File</b> - new/import/export bots, workspace actions.</li>
+          <li><i class="ph ph-list"></i> <b>More</b> - the rest: secrets, node library, tutorial, settings.</li>
+        </ul>
+        <h3>Canvas</h3>
+        <p>The main area is the node graph. <b>Drag</b> empty space to pan, <b>scroll</b> to zoom, and a
+          <b>minimap</b> sits in the corner. Double-click empty space (or <code>Ctrl+K</code>) for <b>Quick Add</b>
+          to drop a node by name. Right-click for the context menu (cut/copy/paste/duplicate, mute, bake, tidy, delete).</p>
+        <h3>Node palette &amp; Node Library</h3>
+        <p>The palette lists every built-in node by category. The <b>Node Library</b> (in the More menu) manages your
+          installed community nodes - install from clipboard, update, or uninstall.</p>
+        <h3>Inspector</h3>
+        <p>Select a node to edit its <b>parameters</b> in the right panel. Select nothing (or the bot itself) to get the
+          <b>Connection inspector</b>: bot name, the reusable <b>Servers</b> list, and per-server settings (host/port, TLS,
+          SASL account/password, nick/ident/real-name, channels, auto-reconnect, connect-on-startup).</p>
+      </section>
+
+      <section id="nodes-pins">
+        <h2><i class="ph ph-graph"></i> Nodes, pins &amp; wires</h2>
+        <p>Every node has <b>input pins</b> on the left and <b>output pins</b> on the right. Two kinds of pin:</p>
+        <ul class="docs-bul">
+          <li><b>Exec pins</b> (square) carry <b>control flow</b>. A trigger pulses its exec output, which runs the next
+            node, and so on. This is the order things happen in.</li>
+          <li><b>Data pins</b> (round) carry <b>values</b>, pulled on demand. Each has a <b>kind</b> that colours the pin
+            and any wire from it:
+            <span class="kindchip" data-k="Exec">Exec</span>
+            <span class="kindchip" data-k="Text">Text</span>
+            <span class="kindchip" data-k="User">User</span>
+            <span class="kindchip" data-k="Channel">Channel</span>
+            <span class="kindchip" data-k="Number">Number</span>
+            <span class="kindchip" data-k="Bool">Bool</span>
+            <span class="kindchip" data-k="Tool">Tool</span>.
+            Kinds are advisory - any data kind can wire into any data input.</li>
+        </ul>
+        <p>Drag from one pin to another to <b>wire</b> them. A node with no incoming exec runs as a pure data node when
+          something pulls its output. <b>Mute</b> a node (press <code>M</code>) to skip it without deleting it.</p>
+      </section>
+
+      <section id="tokens">
+        <h2><i class="ph ph-brackets-curly"></i> Tokens &amp; variables</h2>
+        <p>Most text fields accept <code>{tokens}</code> that expand at run time:</p>
+        <table class="docs-table">
+          <tr><td><code>{nick}</code> <code>{user}</code> <code>{channel}</code></td><td>who/where the trigger came from</td></tr>
+          <tr><td><code>{message}</code> <code>{args}</code> <code>{command}</code></td><td>the raw line, the args after a command, the command word</td></tr>
+          <tr><td><code>{arg.NAME}</code></td><td>a named AI-tool argument (see AI)</td></tr>
+          <tr><td><code>{var.path}</code></td><td>dot-notation into a stored JSON value, e.g. <code>{data.user.name}</code> or <code>{items.0}</code></td></tr>
+          <tr><td><code>{item.field}</code></td><td>the current element inside a For-Each loop</td></tr>
+          <tr><td><code>{{secret.NAME}}</code></td><td>a stored secret (never written to exports)</td></tr>
+        </table>
+        <p>Use <b>Set Variable</b> to stash a value and read it later anywhere with <code>{name}</code>. JSON values can be
+          walked with dot paths and iterated with <b>For Each</b>.</p>
+      </section>
+
+      <section id="commands">
+        <h2><i class="ph ph-terminal-window"></i> Bot commands &amp; replies</h2>
+        <p>The classic shape is <b>On Command</b> -&gt; do something -&gt; <b>Reply</b>.</p>
+        <ul class="docs-bul">
+          <li><b>On Command</b> has a <b>prefix</b> (default <code>!</code>), a <b>command</b> word, and the <b>contexts</b>
+            it answers in: <code>public</code> (in a channel), <code>private</code> (a private message that has channel
+            context), and <code>pm</code> (a direct query). It outputs the <code>args</code>, the <code>nick</code> and the
+            <code>channel</code>.</li>
+          <li><b>Reply</b> sends a line back to wherever the command came from. <b>Threaded Reply</b> correlates the reply to
+            the triggering message (IRCv3 <code>+reply</code>) so clients can thread it, and attaches
+            <code>+draft/invoked-by</code> / channel-context where appropriate.</li>
+          <li>Owner controls: build admin commands behind a <b>Filter: from account</b> node so only allow-listed
+            <i>accounts</i> (not spoofable nicks) can run them.</li>
+        </ul>
+        <p>The dedicated <b>Test</b> panel lets you type a command and watch it run with no live connection - perfect for
+          building and for the test workflows below.</p>
+      </section>
+
+      <section id="ircv3">
+        <h2><i class="ph ph-broadcast"></i> IRCv3</h2>
+        <p>ircuitry speaks modern IRCv3. The <b>Ircv3</b> category (22 nodes) exposes capabilities, message tags and the
+          drafts as plain nodes, so a client/server/bot developer can drive and verify each feature from a command:</p>
+        <ul class="docs-bul">
+          <li><b>Capabilities &amp; tags</b> - read negotiated caps, read/attach arbitrary message tags, see the
+            <code>account</code> tag, <code>msgid</code>, <code>time</code> (server-time), and the <code>label</code> for
+            labeled-response correlation.</li>
+          <li><b>Typing</b> - send <code>+typing=active/paused/done</code> (<code>!typing start</code> / <code>!typing stop</code>).</li>
+          <li><b>Reactions</b> - <code>+draft/react</code> via TAGMSG.</li>
+          <li><b>Redaction</b> - request message <b>REDACT</b> on a target msgid.</li>
+          <li><b>Multiline, chathistory, account-notify, away-notify, setname, metadata</b> and friends, where supported.</li>
+        </ul>
+        <p class="docs-note"><i class="ph ph-flask"></i> There is a growing set of <a href="workflows.html">IRCv3 testing
+          workflows</a> - install one, then drive it with bot commands to verify your client or server handles each feature.</p>
+      </section>
+
+      <section id="dcc">
+        <h2><i class="ph ph-files"></i> DCC file transfer</h2>
+        <p>ircuitry implements CTCP DCC SEND, including <b>passive/reverse</b> transfers and acknowledgements.</p>
+        <ul class="docs-bul">
+          <li><b>On DCC Offer</b> fires when someone offers you a file - it outputs the filename, size, sender nick, and the
+            sender's authenticated <b>account</b>.</li>
+          <li><b>Accept</b> downloads to a path you choose (wire in <code>{filename}</code>), <b>Reject</b> declines, and
+            <b>Send</b> offers a file to a nick.</li>
+          <li>Good practice: gate <b>Accept</b> behind a <b>from-account</b> allow-list so only people you trust can send you files.</li>
+        </ul>
+      </section>
+
+      <section id="ai">
+        <h2><i class="ph ph-sparkle"></i> AI: Ask, tools &amp; memory</h2>
+        <p>ircuitry is provider-agnostic - point the AI nodes at any OpenAI-compatible endpoint (base URL + key + model).</p>
+        <ul class="docs-bul">
+          <li><b>Ask AI</b> takes a prompt and a system message and returns a reply. Wire nodes into its <b>tools</b> input and
+            the model can call them.</li>
+          <li><b>AI Tool</b> defines a callable tool (name, description, any number of arguments). Wire its <b>tool</b> output
+            into Ask AI; wire its <b>call</b> output to a sub-flow that ends in <b>Tool Reply</b> (whatever you feed Tool Reply
+            is what the model gets back). Read arguments anywhere with <code>{arg.NAME}</code>.</li>
+          <li><b>AI Memory</b> remembers context across turns; <b>Workflow Editor</b> gives the model inward MCP tools to read
+            and edit bot graphs; <b>Programmer AI</b> is a sandboxed coding agent confined to a codebase.</li>
+          <li><b>Bake a node into a tool.</b> A baked composite can be used as an AI tool two ways: (1) it contains an AI Tool
+            sub-flow - Ask AI looks inside and uses it; or (2) tick <b>Usable as an AI tool</b> in the Bake dialog and the
+            node's input pins become the model's arguments and its first output the result.</li>
+        </ul>
+      </section>
+
+      <section id="baking">
+        <h2><i class="ph ph-cake"></i> Baking your own nodes</h2>
+        <p>Select a few wired nodes, right-click -&gt; <b>Bake into a node</b>, and ircuitry bundles them into one reusable
+          node - the pins are worked out from the wires crossing your selection. Or open the full <b>Bake</b> dialog to build a
+          node from scratch in a little embedded editor.</p>
+        <ul class="docs-bul">
+          <li><b>Expose</b> an inner setting as a node parameter so whoever uses the node fills it in; <b>hard-code</b> the rest.</li>
+          <li>Tick <b>Usable as an AI tool</b> to give the node a tool output.</li>
+          <li><b>Submit</b> sends it as a PR to the community-nodes repo, or <b>Export</b> writes a <code>.ircnode</code> file.</li>
+        </ul>
+        <p class="docs-note"><i class="ph ph-info"></i> Community nodes are <b>composites</b> of built-in nodes (no opaque code
+          blobs), so anyone can open one up and see exactly how it works.</p>
+      </section>
+
+      <section id="bakery">
+        <h2><i class="ph ph-cooking-pot"></i> Bot Bakery (merging)</h2>
+        <p>The <b>Bot Bakery</b> merges two or more bots into one. It walks you through conflicts (e.g. two bots that both
+          answer <code>!help</code>) and lets you resolve each. There is a matching <a href="factory.html">Bot Factory</a> on
+          this site that does the same merge in the browser.</p>
+      </section>
+
+      <section id="network">
+        <h2><i class="ph ph-graph"></i> Network map</h2>
+        <p>The <i class="ph ph-map-trifold"></i> button in the title bar opens a live node-link graph of your whole setup:
+          <b>bot</b> nodes on the left, unique <b>server</b> hubs in the middle, and <b>channel</b> nodes on the right, wired by
+          membership. Each bot-to-server wire is coloured by that bot's live connection status.</p>
+      </section>
+
+      <section id="community">
+        <h2><i class="ph ph-users-three"></i> Community nodes &amp; workflows</h2>
+        <p>Browse <a href="nodes.html">community nodes</a> and <a href="workflows.html">workflows</a> right here. Two ways to install:</p>
+        <ol class="docs-steps">
+          <li><b>One-click install</b> opens ircuitry and stages the item behind a confirm dialog (needs the app installed).</li>
+          <li><b>Copy</b>, then in ircuitry open the <b>Node Library</b> and <b>Install from clipboard</b> (<code>Ctrl+Shift+V</code>).</li>
+        </ol>
+        <p>After your first install, the gallery quietly checks your running app and tailors each card: <b>Inspect</b> shows the
+          underlying graph, an <b>Upgrade</b> hint appears if a card needs a node your build is missing, and prerequisite
+          community nodes are offered before a workflow that depends on them. Installed nodes auto-update.</p>
+      </section>
+
+      <section id="secrets">
+        <h2><i class="ph ph-key"></i> Secrets &amp; KEYS</h2>
+        <p>Store API keys, passwords and tokens under <b>KEYS</b> and reference them as <code>{{secret.NAME}}</code>. Secrets are
+          kept out of the workspace file and out of any export or submitted node, so you can share a graph safely.</p>
+      </section>
+
+      <section id="testing">
+        <h2><i class="ph ph-test-tube"></i> Testing &amp; the console</h2>
+        <p>The <b>Event Console</b> renders every incoming line with friendly badges (the <code>account</code> tag, a bot
+          marker) instead of raw tag soup, and exposes every tag to the graph. The <b>Test</b> panel dry-runs a command; the
+          <b>History</b> panel records each run with the exact node path and the value on every pin, so you can see precisely
+          what happened.</p>
+      </section>
+
+      <section id="shortcuts">
+        <h2><i class="ph ph-keyboard"></i> Keyboard shortcuts</h2>
+        <table class="docs-table kbd">
+          <tr><td><code>2x click</code> / <code>Ctrl+K</code></td><td>Quick Add a node</td></tr>
+          <tr><td><code>Ctrl+Z</code> / <code>Ctrl+Y</code></td><td>Undo / Redo</td></tr>
+          <tr><td><code>Ctrl+X</code> <code>Ctrl+C</code> <code>Ctrl+V</code></td><td>Cut / Copy / Paste</td></tr>
+          <tr><td><code>Ctrl+D</code></td><td>Duplicate selection</td></tr>
+          <tr><td><code>Ctrl+A</code></td><td>Select all</td></tr>
+          <tr><td><code>Ctrl+L</code></td><td>Tidy layout</td></tr>
+          <tr><td><code>Ctrl+S</code></td><td>Save workspace</td></tr>
+          <tr><td><code>Ctrl+Shift+V</code></td><td>Install node from clipboard</td></tr>
+          <tr><td><code>M</code></td><td>Mute / unmute selection</td></tr>
+          <tr><td><code>Del</code> / <code>Backspace</code></td><td>Delete selection</td></tr>
+          <tr><td><code>Esc</code></td><td>Close the open panel/menu</td></tr>
+        </table>
+      </section>
+
+      <section id="reference">
+        <h2><i class="ph ph-stack"></i> Node reference</h2>
+        <p>Every built-in node, generated from the app itself. Filter by name, then expand one for its pins and parameters.</p>
+        <input class="docs-search" id="nodeSearch" type="search" placeholder="Filter nodes by name, id or category..." aria-label="Filter nodes">
+        <div id="nodeRef" class="node-ref"><p class="docs-loading">Loading the node reference...</p></div>
+      </section>
+
+      <section id="formats">
+        <h2><i class="ph ph-file-code"></i> File formats</h2>
+        <h3><code>.ircnode</code> - a community node</h3>
+        <p>JSON declaring one node: <code>typeId</code>, <code>title</code>, <code>subtitle</code>, <code>icon</code> (a
+          Phosphor name), <code>category</code>, <code>description</code>, <code>inputs</code>/<code>outputs</code>
+          (<code>{name,kind}</code>), <code>params</code>, and either a <code>subgraph</code> (a composite of other nodes) or
+          <code>code</code>+<code>language</code>.</p>
+        <h3><code>.ircbot</code> - a workflow</h3>
+        <p>JSON with <code>format: "ircuitry.workflow.v1"</code>, <code>name</code>, <code>description</code>,
+          <code>author</code>, <code>category</code>, <code>tags</code>, a <code>nodes</code> array
+          (<code>{id,type,x,y,params,...}</code>) and a <code>connections</code> array
+          (<code>{from,fromPin,to,toPin}</code>). Installing one adds a new bot tab.</p>
+        <h3>Workspace</h3>
+        <p>Lives at <code>~/ircuitry</code> (or <code>$IRCUITRY_HOME</code>): your bots, the saved servers, installed
+          community nodes (<code>.ircnode</code> files), secrets and achievements.</p>
+      </section>
+
+      <section id="cli">
+        <h2><i class="ph ph-terminal"></i> Command line &amp; MCP</h2>
+        <p>The same binary doubles as a CLI:</p>
+        <table class="docs-table">
+          <tr><td><code>--run</code> / <code>--headless</code></td><td>run bots headlessly, no window</td></tr>
+          <tr><td><code>--mcp</code></td><td>expose the editor as an MCP server over stdio (drive ircuitry from an AI agent)</td></tr>
+          <tr><td><code>--selftest</code></td><td>run the full self-test suite</td></tr>
+          <tr><td><code>--validate-node FILE</code> / <code>--validate-workflow FILE</code></td><td>validate an <code>.ircnode</code> / <code>.ircbot</code></td></tr>
+          <tr><td><code>--schema</code> / <code>--listnodes</code></td><td>dump the node schema / list installed nodes</td></tr>
+          <tr><td><code>--emit-docs</code> / <code>--emit-nodetypes</code> / <code>--emit-builtins</code></td><td>emit the node reference / type schema / builtin list (this page uses <code>--emit-docs</code>)</td></tr>
+          <tr><td><code>--register-scheme</code></td><td>(re)register the <code>ircuitry://</code> link handler</td></tr>
+          <tr><td><code>--updatecheck</code></td><td>check the latest release</td></tr>
+        </table>
+        <p>The app also serves a tiny read-only loopback endpoint (locked to this website's origin) so the gallery can detect
+          which nodes your build has - it never takes any action on its own.</p>
+      </section>
+
+      <section id="faq">
+        <h2><i class="ph ph-question"></i> FAQ</h2>
+        <p><b>Where are my files?</b> <code>~/ircuitry</code> (or wherever <code>$IRCUITRY_HOME</code> points).</p>
+        <p><b>Does it support TLS / SASL?</b> Yes - per server, in the Connection inspector.</p>
+        <p><b>Can one bot be on several servers?</b> Yes - a bot's graph reacts to events from all of its servers and routes
+          replies back to the right one.</p>
+        <p><b>Is my data sent anywhere?</b> No. Everything is local; AI nodes only call the endpoint you configure.</p>
+        <p><b>Found a bug or want a node?</b> <a href="https://github.com/ircuitry/ircuitry">Open an issue</a>, or
+          <a href="https://github.com/ircuitry/community-nodes">PR a node</a>.</p>
+      </section>
+
+      <footer class="docs-foot">
+        <p>ircuitry is free software (GPLv3). Built for the IRC that should have been.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="assets/docs.js?v=1"></script>
+</body>
+</html>

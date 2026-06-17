@@ -1,0 +1,6936 @@
+{
+  "app": "ircuitry",
+  "version": "0.11.0",
+  "nodes": [
+    {
+      "typeId": "event.connect",
+      "title": "On Connect",
+      "subtitle": "trigger",
+      "icon": "plug",
+      "category": "Event",
+      "description": "Fires once when the bot finishes registering with the server.",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": []
+    },
+    {
+      "typeId": "event.signal",
+      "title": "On Signal",
+      "subtitle": "trigger",
+      "icon": "envelope",
+      "category": "Event",
+      "description": "Fires when another part of your bot emits a matching signal (via Emit Signal). Lets one workflow trigger another, or run a shared flow from several places. Carries optional {data}.",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "data",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "signal",
+          "label": "Signal name",
+          "type": "Text",
+          "default": "my-signal",
+          "placeholder": "my-signal"
+        }
+      ]
+    },
+    {
+      "typeId": "action.signal",
+      "title": "Emit Signal",
+      "subtitle": "flow",
+      "icon": "megaphone",
+      "category": "Logic",
+      "description": "Triggers every On Signal node with the matching name, running their flows now. A way for one workflow to call another. Pass optional data along.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "data",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "signal",
+          "label": "Signal name",
+          "type": "Text",
+          "default": "my-signal",
+          "placeholder": "my-signal"
+        },
+        {
+          "key": "data",
+          "label": "Data (optional)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "{message}"
+        }
+      ]
+    },
+    {
+      "typeId": "event.message",
+      "title": "On Message",
+      "subtitle": "trigger",
+      "icon": "chat-circle",
+      "category": "Event",
+      "description": "Fires for every channel/PM message. Optionally limit to one channel.",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "message",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "nick",
+          "k": "User",
+          "multi": false
+        },
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Only channel",
+          "type": "Text",
+          "default": "",
+          "placeholder": "#any (blank = all)"
+        }
+      ]
+    },
+    {
+      "typeId": "event.command",
+      "title": "On Command",
+      "subtitle": "trigger",
+      "icon": "lightning",
+      "category": "Event",
+      "description": "Fires when a message begins with a prefix \u002B command word, e.g. !ping.",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "args",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "nick",
+          "k": "User",
+          "multi": false
+        },
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "prefix",
+          "label": "Prefix",
+          "type": "Text",
+          "default": "!",
+          "placeholder": "!"
+        },
+        {
+          "key": "command",
+          "label": "Command",
+          "type": "Text",
+          "default": "ping",
+          "placeholder": "ping"
+        },
+        {
+          "key": "contexts",
+          "label": "Contexts (IRCv3 slash)",
+          "type": "Text",
+          "default": "public, private, pm",
+          "placeholder": "public, private, pm"
+        }
+      ]
+    },
+    {
+      "typeId": "event.join",
+      "title": "On Join",
+      "subtitle": "trigger",
+      "icon": "hand-waving",
+      "category": "Event",
+      "description": "Fires when a user joins a channel the bot is in.",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "nick",
+          "k": "User",
+          "multi": false
+        },
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "params": []
+    },
+    {
+      "typeId": "event.numeric",
+      "title": "On Numeric",
+      "subtitle": "trigger",
+      "icon": "hash",
+      "category": "Event",
+      "description": "Fires when the server sends a numeric reply you pick from the list (e.g. RPL_WELCOME, ERR_NICKNAMEINUSE, RPL_INVITING). Exposes {numeric} {numname} {message} {channel} and {arg1}, {arg2}, \u2026",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "numeric",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "which",
+          "label": "Numeric",
+          "type": "Choice",
+          "default": "(any numeric)",
+          "placeholder": "",
+          "choices": [
+            "(any numeric)",
+            "001 RPL_WELCOME",
+            "002 RPL_YOURHOST",
+            "003 RPL_CREATED",
+            "004 RPL_MYINFO",
+            "005 RPL_ISUPPORT",
+            "010 RPL_BOUNCE",
+            "212 RPL_STATSCOMMANDS",
+            "219 RPL_ENDOFSTATS",
+            "221 RPL_UMODEIS",
+            "242 RPL_STATSUPTIME",
+            "251 RPL_LUSERCLIENT",
+            "252 RPL_LUSEROP",
+            "253 RPL_LUSERUNKNOWN",
+            "254 RPL_LUSERCHANNELS",
+            "255 RPL_LUSERME",
+            "256 RPL_ADMINME",
+            "257 RPL_ADMINLOC1",
+            "258 RPL_ADMINLOC2",
+            "259 RPL_ADMINEMAIL",
+            "263 RPL_TRYAGAIN",
+            "265 RPL_LOCALUSERS",
+            "266 RPL_GLOBALUSERS",
+            "276 RPL_WHOISCERTFP",
+            "300 RPL_NONE",
+            "301 RPL_AWAY",
+            "302 RPL_USERHOST",
+            "305 RPL_UNAWAY",
+            "306 RPL_NOWAWAY",
+            "307 RPL_WHOISREGNICK",
+            "311 RPL_WHOISUSER",
+            "312 RPL_WHOISSERVER",
+            "313 RPL_WHOISOPERATOR",
+            "314 RPL_WHOWASUSER",
+            "315 RPL_ENDOFWHO",
+            "317 RPL_WHOISIDLE",
+            "318 RPL_ENDOFWHOIS",
+            "319 RPL_WHOISCHANNELS",
+            "320 RPL_WHOISSPECIAL",
+            "321 RPL_LISTSTART",
+            "322 RPL_LIST",
+            "323 RPL_LISTEND",
+            "324 RPL_CHANNELMODEIS",
+            "329 RPL_CREATIONTIME",
+            "330 RPL_WHOISACCOUNT",
+            "331 RPL_NOTOPIC",
+            "332 RPL_TOPIC",
+            "333 RPL_TOPICWHOTIME",
+            "336 RPL_INVITELIST",
+            "337 RPL_ENDOFINVITELIST",
+            "338 RPL_WHOISACTUALLY",
+            "341 RPL_INVITING",
+            "346 RPL_INVEXLIST",
+            "347 RPL_ENDOFINVEXLIST",
+            "348 RPL_EXCEPTLIST",
+            "349 RPL_ENDOFEXCEPTLIST",
+            "351 RPL_VERSION",
+            "352 RPL_WHOREPLY",
+            "353 RPL_NAMREPLY",
+            "364 RPL_LINKS",
+            "365 RPL_ENDOFLINKS",
+            "366 RPL_ENDOFNAMES",
+            "367 RPL_BANLIST",
+            "368 RPL_ENDOFBANLIST",
+            "369 RPL_ENDOFWHOWAS",
+            "371 RPL_INFO",
+            "372 RPL_MOTD",
+            "374 RPL_ENDOFINFO",
+            "375 RPL_MOTDSTART",
+            "376 RPL_ENDOFMOTD",
+            "378 RPL_WHOISHOST",
+            "379 RPL_WHOISMODES",
+            "381 RPL_YOUREOPER",
+            "382 RPL_REHASHING",
+            "391 RPL_TIME",
+            "400 ERR_UNKNOWNERROR",
+            "401 ERR_NOSUCHNICK",
+            "402 ERR_NOSUCHSERVER",
+            "403 ERR_NOSUCHCHANNEL",
+            "404 ERR_CANNOTSENDTOCHAN",
+            "405 ERR_TOOMANYCHANNELS",
+            "406 ERR_WASNOSUCHNICK",
+            "409 ERR_NOORIGIN",
+            "411 ERR_NORECIPIENT",
+            "412 ERR_NOTEXTTOSEND",
+            "417 ERR_INPUTTOOLONG",
+            "421 ERR_UNKNOWNCOMMAND",
+            "422 ERR_NOMOTD",
+            "431 ERR_NONICKNAMEGIVEN",
+            "432 ERR_ERRONEUSNICKNAME",
+            "433 ERR_NICKNAMEINUSE",
+            "436 ERR_NICKCOLLISION",
+            "441 ERR_USERNOTINCHANNEL",
+            "442 ERR_NOTONCHANNEL",
+            "443 ERR_USERONCHANNEL",
+            "451 ERR_NOTREGISTERED",
+            "461 ERR_NEEDMOREPARAMS",
+            "462 ERR_ALREADYREGISTERED",
+            "464 ERR_PASSWDMISMATCH",
+            "465 ERR_YOUREBANNEDCREEP",
+            "471 ERR_CHANNELISFULL",
+            "472 ERR_UNKNOWNMODE",
+            "473 ERR_INVITEONLYCHAN",
+            "474 ERR_BANNEDFROMCHAN",
+            "475 ERR_BADCHANNELKEY",
+            "476 ERR_BADCHANMASK",
+            "481 ERR_NOPRIVILEGES",
+            "482 ERR_CHANOPRIVSNEEDED",
+            "483 ERR_CANTKILLSERVER",
+            "491 ERR_NOOPERHOST",
+            "501 ERR_UMODEUNKNOWNFLAG",
+            "502 ERR_USERSDONTMATCH",
+            "524 ERR_HELPNOTFOUND",
+            "525 ERR_INVALIDKEY",
+            "670 RPL_STARTTLS",
+            "671 RPL_WHOISSECURE",
+            "691 ERR_STARTTLS",
+            "696 ERR_INVALIDMODEPARAM",
+            "704 RPL_HELPSTART",
+            "705 RPL_HELPTXT",
+            "706 RPL_ENDOFHELP",
+            "723 ERR_NOPRIVS",
+            "900 RPL_LOGGEDIN",
+            "901 RPL_LOGGEDOUT",
+            "902 ERR_NICKLOCKED",
+            "903 RPL_SASLSUCCESS",
+            "904 ERR_SASLFAIL",
+            "905 ERR_SASLTOOLONG",
+            "906 ERR_SASLABORTED",
+            "907 ERR_SASLALREADY",
+            "908 RPL_SASLMECHS"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "filter.contains",
+      "title": "Text Contains",
+      "subtitle": "filter",
+      "icon": "magnifying-glass",
+      "category": "Filter",
+      "description": "Branches on whether the text contains a substring.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "match",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "no match",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "needle",
+          "label": "Contains",
+          "type": "Text",
+          "default": "",
+          "placeholder": "hello"
+        },
+        {
+          "key": "ci",
+          "label": "Ignore case",
+          "type": "Bool",
+          "default": "true",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "filter.fromUser",
+      "title": "From User",
+      "subtitle": "filter",
+      "icon": "user",
+      "category": "Filter",
+      "description": "Branches on whether the event came from a specific nick.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "nick",
+          "k": "User",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "match",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "else",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "nick",
+          "label": "Nick",
+          "type": "Text",
+          "default": "",
+          "placeholder": "someuser"
+        }
+      ]
+    },
+    {
+      "typeId": "filter.fromAccount",
+      "title": "From Account",
+      "subtitle": "ircv3",
+      "icon": "identification-card",
+      "category": "Ircv3",
+      "description": "Branches on the sender\u0027s authenticated account (IRCv3 account-tag) - a safe allow-list, since accounts can\u0027t be faked the way nicks can. Blank = anyone logged in; one account, or a comma-separated allow-list.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "match",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "else",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "account",
+          "label": "Account(s)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = any logged-in \u00B7 or alice \u00B7 or alice, bob, carol"
+        }
+      ]
+    },
+    {
+      "typeId": "filter.isBot",
+      "title": "Is Bot",
+      "subtitle": "ircv3",
+      "icon": "robot",
+      "category": "Ircv3",
+      "description": "Branches on whether the sender is flagged as a bot (IRCv3 bot mode/tag).",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "bot",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "human",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": []
+    },
+    {
+      "typeId": "logic.chance",
+      "title": "Random Chance",
+      "subtitle": "filter",
+      "icon": "clover",
+      "category": "Filter",
+      "description": "Branches randomly: \u0027hit\u0027 with the given percent chance.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "hit",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "miss",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "percent",
+          "label": "Percent",
+          "type": "Int",
+          "default": "50",
+          "placeholder": "50"
+        }
+      ]
+    },
+    {
+      "typeId": "data.random",
+      "title": "Random Reply",
+      "subtitle": "data",
+      "icon": "dice-five",
+      "category": "Data",
+      "description": "Outputs a random line from the list (one option per line).",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "options",
+          "label": "Options",
+          "type": "Multiline",
+          "default": "hi there!\nhello!\nhey :)",
+          "placeholder": "one per line"
+        }
+      ]
+    },
+    {
+      "typeId": "data.format",
+      "title": "Format Text",
+      "subtitle": "data",
+      "icon": "translate",
+      "category": "Data",
+      "description": "Builds a string from a template. {a}/{b} use the inputs; {nick} etc. use the event.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "a",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "b",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "template",
+          "label": "Template",
+          "type": "Text",
+          "default": "{a}",
+          "placeholder": "{nick}: {a}"
+        }
+      ]
+    },
+    {
+      "typeId": "action.reply",
+      "title": "Send Reply",
+      "subtitle": "action",
+      "icon": "heart",
+      "category": "Action",
+      "description": "Replies in the channel/PM the triggering message came from.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "message",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "message",
+          "label": "Message",
+          "type": "Multiline",
+          "default": "pong",
+          "placeholder": "supports {me} {nick} {args} {arg1} {channel} {time} \u2026"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.say",
+      "title": "Send to Channel",
+      "subtitle": "action",
+      "icon": "megaphone",
+      "category": "Action",
+      "description": "Sends a PRIVMSG to a specific channel or nick.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        },
+        {
+          "n": "message",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Target",
+          "type": "Text",
+          "default": "#channel",
+          "placeholder": "#channel or nick"
+        },
+        {
+          "key": "message",
+          "label": "Message",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "supports {me} {nick} {args} {arg1} \u2026"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.join",
+      "title": "Join Channel",
+      "subtitle": "action",
+      "icon": "door",
+      "category": "Action",
+      "description": "Makes the bot join a channel.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "Text",
+          "default": "#channel",
+          "placeholder": "#channel"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.part",
+      "title": "Part Channel",
+      "subtitle": "action",
+      "icon": "hand-waving",
+      "category": "Action",
+      "description": "Makes the bot leave a channel. Blank channel = the triggering channel.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = current"
+        },
+        {
+          "key": "reason",
+          "label": "Reason",
+          "type": "Text",
+          "default": "",
+          "placeholder": "optional"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "irc.raw",
+      "title": "Raw IRC",
+      "subtitle": "ircv3",
+      "icon": "broadcast",
+      "category": "Ircv3",
+      "description": "Sends a raw IRC line, with up to 4 IRCv3 client-tags composed for you. Tag keys may omit the leading \u0027\u002B\u0027. The line is the rest of the protocol, e.g. PRIVMSG #lobby :lmao",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "line",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "tags",
+          "label": "IRCv3 client tags",
+          "type": "List",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "line",
+          "label": "Raw line",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "PRIVMSG #lobby :lmao"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "irc.typing.start",
+      "title": "Start Typing",
+      "subtitle": "ircv3",
+      "icon": "pencil-line",
+      "category": "Ircv3",
+      "description": "Shows an IRCv3 typing indicator (\u002Btyping=active) on the target, refreshed every few seconds until Stop Typing or the workflow ends. Great before a slow AI reply. Needs a server with message-tags.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "target",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = where it came from"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "irc.typing.stop",
+      "title": "Stop Typing",
+      "subtitle": "ircv3",
+      "icon": "octagon",
+      "category": "Ircv3",
+      "description": "Stops the IRCv3 typing indicator (\u002Btyping=done) on the target.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "target",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = where it came from"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.react",
+      "title": "Add Reaction",
+      "subtitle": "ircv3",
+      "icon": "heart",
+      "category": "Ircv3",
+      "description": "Reacts to the triggering message with an emoji (IRCv3 \u002Bdraft/react). Needs a server that supports message tags.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "emoji",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "emoji",
+          "label": "Emoji",
+          "type": "Text",
+          "default": "\uD83D\uDC4D",
+          "placeholder": "\uD83D\uDC4D \u2764\uFE0F \uD83C\uDF89"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.replythread",
+      "title": "Reply (threaded)",
+      "subtitle": "ircv3",
+      "icon": "needle",
+      "category": "Ircv3",
+      "description": "Replies threaded to the triggering message (IRCv3 \u002Bdraft/reply), so clients show it as a reply.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "message",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "message",
+          "label": "Message",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "supports {me} {nick} {args} {arg1} \u2026"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.setname",
+      "title": "Set Name",
+      "subtitle": "ircv3",
+      "icon": "pencil",
+      "category": "Ircv3",
+      "description": "Changes the bot\u0027s realname live (IRCv3 setname). No reconnect needed on servers that support it.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "name",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Real name",
+          "type": "Text",
+          "default": "",
+          "placeholder": "ircuitry \u2022 cozy bot"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.away",
+      "title": "Set Away",
+      "subtitle": "ircv3",
+      "icon": "moon",
+      "category": "Ircv3",
+      "description": "Sets or clears the bot\u0027s away status (away-notify / pre-away). Blank message = back.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "message",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "message",
+          "label": "Away message",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = mark as back"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.tagmsg",
+      "title": "Send TAGMSG",
+      "subtitle": "ircv3",
+      "icon": "tag",
+      "category": "Ircv3",
+      "description": "Sends a tags-only message (IRCv3 TAGMSG) - client tags with no text, e.g. a reaction or typing hint.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "target",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = where it came from"
+        },
+        {
+          "key": "tags",
+          "label": "Client tags",
+          "type": "List",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.redact",
+      "title": "Redact Message",
+      "subtitle": "draft",
+      "icon": "bandaids",
+      "category": "Ircv3",
+      "description": "Deletes/hides a message by id (draft/message-redaction REDACT). Needs the target message\u0027s id (msgid).",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "target",
+          "k": "Channel",
+          "multi": false
+        },
+        {
+          "n": "msgid",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = where it came from"
+        },
+        {
+          "key": "msgid",
+          "label": "Message id",
+          "type": "Text",
+          "default": "",
+          "placeholder": "{msgid}"
+        },
+        {
+          "key": "reason",
+          "label": "Reason",
+          "type": "Text",
+          "default": "",
+          "placeholder": "optional"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.monitor",
+      "title": "Monitor User",
+      "subtitle": "ircv3",
+      "icon": "eyes",
+      "category": "Ircv3",
+      "description": "Watches nicks for online/offline (IRCv3 MONITOR). Add or remove a comma-separated list.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "nicks",
+          "k": "User",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "nicks",
+          "label": "Nicks",
+          "type": "Text",
+          "default": "",
+          "placeholder": "alice,bob"
+        },
+        {
+          "key": "mode",
+          "label": "Mode",
+          "type": "Choice",
+          "default": "add",
+          "placeholder": "",
+          "choices": [
+            "add",
+            "remove"
+          ]
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.chathistory",
+      "title": "Request History",
+      "subtitle": "ircv3",
+      "icon": "scroll",
+      "category": "Ircv3",
+      "description": "Fetches a target\u0027s recent server history (IRCv3 CHATHISTORY), INCLUDING messages from before the bot joined. The history batch never triggers your message/join nodes - it just hands the messages back as JSON on \u0027messages\u0027. Wire that into For Each, or into Ask AI as a tool. Each item has nick, channel, text and id.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "target",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "messages",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "fetch_history",
+          "placeholder": "fetch_history"
+        },
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "Text",
+          "default": "",
+          "placeholder": "#channel or nick (blank = where this ran)"
+        },
+        {
+          "key": "count",
+          "label": "How many",
+          "type": "Int",
+          "default": "50",
+          "placeholder": "50"
+        },
+        {
+          "key": "timeout",
+          "label": "Wait up to (seconds)",
+          "type": "Int",
+          "default": "8",
+          "placeholder": "8"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "irc.me",
+      "title": "My Info",
+      "subtitle": "ircv3",
+      "icon": "identification-card",
+      "category": "Ircv3",
+      "description": "Reads the bot\u0027s own live, tracked state: its nick, the network it\u0027s connected to, the channels it\u0027s in (comma-separated), or its enabled IRCv3 caps. Wire \u0027value\u0027 anywhere.",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "field",
+          "label": "What",
+          "type": "Choice",
+          "default": "nick",
+          "placeholder": "",
+          "choices": [
+            "nick",
+            "network",
+            "channels",
+            "caps"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "irc.channel",
+      "title": "Channel Info",
+      "subtitle": "ircv3",
+      "icon": "clipboard",
+      "category": "Ircv3",
+      "description": "Reads live, tracked state about a channel the bot is in: its topic, member list (comma-separated, with @/\u002B prefixes), member count, or whether the bot is in it. Wire \u0027value\u0027 anywhere.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "Text",
+          "default": "",
+          "placeholder": "#channel (blank = where this ran)"
+        },
+        {
+          "key": "field",
+          "label": "What",
+          "type": "Choice",
+          "default": "topic",
+          "placeholder": "",
+          "choices": [
+            "topic",
+            "members",
+            "count",
+            "joined"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "action.rename",
+      "title": "Rename Channel",
+      "subtitle": "draft",
+      "icon": "translate",
+      "category": "Ircv3",
+      "description": "Renames a channel in place (draft/channel-rename RENAME), keeping members. Needs the right privileges.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "channel",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "Text",
+          "default": "",
+          "placeholder": "#old"
+        },
+        {
+          "key": "newname",
+          "label": "New name",
+          "type": "Text",
+          "default": "",
+          "placeholder": "#new"
+        },
+        {
+          "key": "reason",
+          "label": "Reason",
+          "type": "Text",
+          "default": "",
+          "placeholder": "optional"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.metadata",
+      "title": "Set Metadata",
+      "subtitle": "draft",
+      "icon": "folders",
+      "category": "Ircv3",
+      "description": "Sets a metadata key on a target (draft/metadata METADATA SET), e.g. an avatar or status URL.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "Text",
+          "default": "*",
+          "placeholder": "* = self, or #chan / nick"
+        },
+        {
+          "key": "key",
+          "label": "Key",
+          "type": "Text",
+          "default": "",
+          "placeholder": "url / avatar / ..."
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = clear the key"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.multiline",
+      "title": "Send Multiline",
+      "subtitle": "draft",
+      "icon": "file-text",
+      "category": "Ircv3",
+      "description": "Sends several lines as one logical message (draft/multiline batch). One line per row in the text.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "target",
+          "k": "Channel",
+          "multi": false
+        },
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = where it came from"
+        },
+        {
+          "key": "text",
+          "label": "Text",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "line one\nline two"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "action.log",
+      "title": "Console Log",
+      "subtitle": "action",
+      "icon": "clipboard",
+      "category": "Action",
+      "description": "Writes a line to the ircuitry event console.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "text",
+          "label": "Text",
+          "type": "Text",
+          "default": "{nick}: {message}",
+          "placeholder": "{nick}: {message}"
+        }
+      ]
+    },
+    {
+      "typeId": "ai.reply",
+      "title": "Ask AI",
+      "subtitle": "ai",
+      "icon": "robot",
+      "category": "Ai",
+      "description": "Generates a reply via any OpenAI-compatible API (OpenAI, Ollama, LM Studio, OpenRouter, Groq, vLLM\u2026). Wire AI Tool nodes into \u0027tools\u0027 to let the model fetch data / act. Wire \u0027reply\u0027 into a Send Reply.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "prompt",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tools",
+          "k": "Tool",
+          "multi": true
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "reply",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "baseUrl",
+          "label": "Base URL",
+          "type": "Text",
+          "default": "https://api.openai.com/v1",
+          "placeholder": "http://localhost:11434/v1 \u00B7 openrouter \u00B7 groq \u2026"
+        },
+        {
+          "key": "model",
+          "label": "Model",
+          "type": "Text",
+          "default": "gpt-4o-mini",
+          "placeholder": "gpt-4o-mini \u00B7 llama3 \u00B7 mistral \u00B7 \u2026"
+        },
+        {
+          "key": "apiKey",
+          "label": "API key",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = $OPENAI_API_KEY (or none for local)"
+        },
+        {
+          "key": "system",
+          "label": "System prompt",
+          "type": "Multiline",
+          "default": "You are a witty IRC bot named ircuitry. Reply in one short sentence.",
+          "placeholder": ""
+        },
+        {
+          "key": "prompt",
+          "label": "Prompt",
+          "type": "Multiline",
+          "default": "{nick} said: {message}",
+          "placeholder": "supports {nick} {message} {args}"
+        },
+        {
+          "key": "maxTokens",
+          "label": "Max tokens",
+          "type": "Int",
+          "default": "300",
+          "placeholder": "300"
+        }
+      ]
+    },
+    {
+      "typeId": "ircv3.recent",
+      "title": "Recent Messages",
+      "subtitle": "ircv3",
+      "icon": "clock",
+      "category": "Ircv3",
+      "description": "Lists the messages the bot has recently seen, as JSON [{nick,channel,text,id}]. As an AI tool it lets the model find a message to act on.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "count",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "messages",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "recent_messages",
+          "placeholder": "recent_messages"
+        },
+        {
+          "key": "count",
+          "label": "How many",
+          "type": "Int",
+          "default": "15",
+          "placeholder": "15"
+        }
+      ]
+    },
+    {
+      "typeId": "action.reactid",
+      "title": "React to Message",
+      "subtitle": "ircv3",
+      "icon": "heart",
+      "category": "Ircv3",
+      "description": "Adds an emoji reaction to a specific message by its id (from Recent Messages / Request History). As an AI tool the model passes the id \u002B emoji it chose.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "msgid",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "emoji",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "target",
+          "k": "Channel",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "react",
+          "placeholder": "react"
+        },
+        {
+          "key": "msgid",
+          "label": "Message id",
+          "type": "Text",
+          "default": "",
+          "placeholder": "{arg.msgid}"
+        },
+        {
+          "key": "emoji",
+          "label": "Emoji",
+          "type": "Text",
+          "default": "",
+          "placeholder": "\uD83C\uDF82"
+        },
+        {
+          "key": "target",
+          "label": "Target (blank = here)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "#channel or nick"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "ai.tool",
+      "title": "AI Tool",
+      "subtitle": "ai",
+      "icon": "toolbox",
+      "category": "Ai",
+      "description": "Defines a tool the AI may call, with ANY number of arguments (Add argument). Wire \u0027tool\u0027 into Ask AI; wire \u0027call\u0027 to a sub-flow that ends in a Tool Reply. Read an argument anywhere with {arg.NAME} - the first three are also on the arg pins.",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        },
+        {
+          "n": "call",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "arg 1",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "arg 2",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "arg 3",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name",
+          "type": "Text",
+          "default": "lookup",
+          "placeholder": "get_weather"
+        },
+        {
+          "key": "description",
+          "label": "What it does",
+          "type": "Text",
+          "default": "",
+          "placeholder": "tell the model when to use it"
+        },
+        {
+          "key": "args",
+          "label": "Arguments (name \u002B what it is)",
+          "type": "List",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "arg1name",
+          "label": "Arg 1 name",
+          "type": "Text",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "arg1desc",
+          "label": "",
+          "type": "Text",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "arg2name",
+          "label": "Arg 2 name",
+          "type": "Text",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "arg2desc",
+          "label": "",
+          "type": "Text",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "arg3name",
+          "label": "Arg 3 name",
+          "type": "Text",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "arg3desc",
+          "label": "",
+          "type": "Text",
+          "default": "",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "tool.reply",
+      "title": "Tool Reply",
+      "subtitle": "ai",
+      "icon": "gift",
+      "category": "Ai",
+      "description": "Ends an AI Tool\u0027s sub-flow: whatever you feed it is the result the model gets back.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "result",
+          "label": "Result",
+          "type": "Text",
+          "default": "",
+          "placeholder": "value returned to the AI"
+        }
+      ]
+    },
+    {
+      "typeId": "ai.editor",
+      "title": "Workflow Editor",
+      "subtitle": "ai",
+      "icon": "note-pencil",
+      "category": "Ai",
+      "description": "Gives an Ask AI node the inward MCP tools to read and EDIT bot workflows in this workspace - its own or another bot\u0027s: add/remove nodes, wire pins, set params, replace or validate a graph, dry-run a command. Wire \u0027tools\u0027 into Ask AI. Edits save to the workspace (the canvas hot-reloads); a running bot applies them on its next start.",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "tools",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "bot",
+          "label": "Target bot",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = the active bot; or a bot name (the model can still target others by name)"
+        },
+        {
+          "key": "mode",
+          "label": "Access",
+          "type": "Choice",
+          "default": "edit",
+          "placeholder": "read-only = introspect/validate/dry-run only",
+          "choices": [
+            "edit",
+            "read-only"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "ai.programmer",
+      "title": "Programmer AI",
+      "subtitle": "ai",
+      "icon": "wrench",
+      "category": "Ai",
+      "description": "An AI software engineer that reads and edits a whole codebase (read/write/edit/search/move files, run build \u0026 test commands) and delivers the finished result. It is sandboxed to the codebase folder you give it and CANNOT touch anything outside. Set a \u0027task\u0027 and wire \u0027reply\u0027 into Send Reply. Wire extra AI Tool nodes into \u0027tools\u0027 to give it more abilities.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "task",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tools",
+          "k": "Tool",
+          "multi": true
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "reply",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 the AI is locked inside this folder"
+        },
+        {
+          "key": "baseUrl",
+          "label": "Base URL",
+          "type": "Text",
+          "default": "https://api.openai.com/v1",
+          "placeholder": "openai \u00B7 openrouter \u00B7 groq \u00B7 ollama \u2026"
+        },
+        {
+          "key": "model",
+          "label": "Model",
+          "type": "Text",
+          "default": "gpt-4o",
+          "placeholder": "gpt-4o \u00B7 a coding model \u00B7 llama3 \u2026"
+        },
+        {
+          "key": "apiKey",
+          "label": "API key",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = $OPENAI_API_KEY"
+        },
+        {
+          "key": "task",
+          "label": "Task",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "what to build or change (supports {nick} {message} {args})"
+        },
+        {
+          "key": "instructions",
+          "label": "Extra instructions (optional)",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "house style, constraints, what \u0027done\u0027 means"
+        },
+        {
+          "key": "allowCommands",
+          "label": "Allow running commands",
+          "type": "Bool",
+          "default": "true",
+          "placeholder": ""
+        },
+        {
+          "key": "maxTokens",
+          "label": "Max tokens",
+          "type": "Int",
+          "default": "1500",
+          "placeholder": "1500"
+        },
+        {
+          "key": "filehostUrl",
+          "label": "Filehost URL",
+          "type": "Text",
+          "default": "https://0x0.st",
+          "placeholder": "where the finished codebase is uploaded"
+        },
+        {
+          "key": "filehostField",
+          "label": "Filehost file field",
+          "type": "Text",
+          "default": "file",
+          "placeholder": "file \u00B7 fileToUpload (catbox) \u00B7 image"
+        },
+        {
+          "key": "filehostFields",
+          "label": "Filehost extra fields (optional)",
+          "type": "List",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "filehostHeaders",
+          "label": "Filehost headers (optional)",
+          "type": "List",
+          "default": "",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "human.alert",
+      "title": "Alert Human",
+      "subtitle": "notify",
+      "icon": "bell",
+      "category": "Action",
+      "description": "Pops a native desktop notification on the machine running ircuitry, so a human notices something even when they aren\u0027t watching chat. notify-send on Linux, osascript on macOS, a toast on Windows (best effort).",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "message",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "title",
+          "label": "Title",
+          "type": "Text",
+          "default": "ircuitry",
+          "placeholder": "notification title"
+        },
+        {
+          "key": "message",
+          "label": "Message",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "supports {nick} {message} {channel} \u2026"
+        },
+        {
+          "key": "urgency",
+          "label": "Urgency",
+          "type": "Choice",
+          "default": "normal",
+          "placeholder": "",
+          "choices": [
+            "low",
+            "normal",
+            "critical"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "human.loop",
+      "title": "Human in the Loop",
+      "subtitle": "approval",
+      "icon": "hand-palm",
+      "category": "Action",
+      "description": "Pauses the flow and asks a human to approve or deny before it continues (like n8n\u0027s Human in the Loop). Posts the question to a channel/PM (and optionally a desktop alert), then resumes on \u0027approved\u0027 or \u0027denied\u0027 when they reply - or \u0027denied\u0027 if it times out. Their reply text comes out on \u0027response\u0027.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "question",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "approved",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "denied",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "response",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "question",
+          "label": "Question",
+          "type": "Multiline",
+          "default": "Approve this?",
+          "placeholder": "what to ask the human"
+        },
+        {
+          "key": "target",
+          "label": "Ask in",
+          "type": "Text",
+          "default": "{channel}",
+          "placeholder": "channel or nick (blank = where the event came from)"
+        },
+        {
+          "key": "approver",
+          "label": "Only from",
+          "type": "Text",
+          "default": "",
+          "placeholder": "a specific nick, or blank for anyone there"
+        },
+        {
+          "key": "approveWord",
+          "label": "Approve word",
+          "type": "Text",
+          "default": "yes",
+          "placeholder": "yes / approve / ok"
+        },
+        {
+          "key": "denyWord",
+          "label": "Deny word",
+          "type": "Text",
+          "default": "no",
+          "placeholder": "no / deny / stop"
+        },
+        {
+          "key": "timeout",
+          "label": "Timeout (s)",
+          "type": "Int",
+          "default": "120",
+          "placeholder": "0 = wait forever"
+        },
+        {
+          "key": "notify",
+          "label": "Desktop alert too",
+          "type": "Bool",
+          "default": "true",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "net.http",
+      "title": "HTTP Request",
+      "subtitle": "web",
+      "icon": "globe",
+      "category": "Action",
+      "description": "Calls a web API. Sends a text/JSON body, or uploads a file as multipart/form-data (the standard way to push an image or any file to a filehost). Outputs the response body and status. Headers are \u0027Key: value\u0027 lines.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "url",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "file",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "response",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "status",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "method",
+          "label": "Method",
+          "type": "Choice",
+          "default": "GET",
+          "placeholder": "",
+          "choices": [
+            "GET",
+            "POST"
+          ]
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "type": "Text",
+          "default": "https://",
+          "placeholder": "https://api.example.com/..."
+        },
+        {
+          "key": "send",
+          "label": "Send",
+          "type": "Choice",
+          "default": "body",
+          "placeholder": "",
+          "choices": [
+            "body",
+            "file (multipart)"
+          ]
+        },
+        {
+          "key": "field",
+          "label": "File field name",
+          "type": "Text",
+          "default": "file",
+          "placeholder": "file \u00B7 fileToUpload \u00B7 image"
+        },
+        {
+          "key": "file",
+          "label": "File path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "pic.png (under ~/ircuitry/files) or /abs/pic.png"
+        },
+        {
+          "key": "headers",
+          "label": "Headers",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "Authorization: Bearer ..."
+        },
+        {
+          "key": "body",
+          "label": "Body / form fields",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "{ ... } for POST  \u00B7  or key=value lines for multipart"
+        }
+      ]
+    },
+    {
+      "typeId": "file.read",
+      "title": "Read File",
+      "subtitle": "file",
+      "icon": "folder-open",
+      "category": "Storage",
+      "description": "Reads a text file and outputs its contents. Relative paths live under ~/ircuitry/files. Branches to \u0027missing\u0027 if the file isn\u0027t there.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "missing",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "content",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "notes.txt or /abs/path.txt"
+        }
+      ]
+    },
+    {
+      "typeId": "file.write",
+      "title": "Write File",
+      "subtitle": "file",
+      "icon": "floppy-disk",
+      "category": "Storage",
+      "description": "Writes (or appends) text to a file. Relative paths live under ~/ircuitry/files, which is created if missing.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "log.txt or /abs/path.txt"
+        },
+        {
+          "key": "mode",
+          "label": "Mode",
+          "type": "Choice",
+          "default": "overwrite",
+          "placeholder": "",
+          "choices": [
+            "overwrite",
+            "append"
+          ]
+        },
+        {
+          "key": "text",
+          "label": "Text",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "supports {nick} {message} \u2026"
+        }
+      ]
+    },
+    {
+      "typeId": "file.ical",
+      "title": "Calendar (iCal)",
+      "subtitle": "calendar",
+      "icon": "calendar",
+      "category": "Storage",
+      "description": "Reads an iCalendar (.ics) feed - a file path, an http(s) URL, or pasted text - and pulls out events. Modes: next upcoming, today\u0027s, a count, or a list. Outputs summary/when/location/description; branches to \u0027none\u0027 when empty.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "source",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "none",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "summary",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "when",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "location",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "description",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "count",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "source",
+          "label": "Source (.ics path / URL)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "calendar.ics \u00B7 https://\u2026 \u00B7 pasted text"
+        },
+        {
+          "key": "mode",
+          "label": "Mode",
+          "type": "Choice",
+          "default": "next",
+          "placeholder": "",
+          "choices": [
+            "next",
+            "today",
+            "count",
+            "list"
+          ]
+        },
+        {
+          "key": "max",
+          "label": "Max (list/today)",
+          "type": "Int",
+          "default": "5",
+          "placeholder": "5"
+        }
+      ]
+    },
+    {
+      "typeId": "code.read",
+      "title": "Read File",
+      "subtitle": "code",
+      "icon": "book-open",
+      "category": "Code",
+      "description": "Reads a text file from the codebase and returns its contents (optionally a line range). Paths are relative to the codebase folder. Branches to \u0027missing\u0027 if the file isn\u0027t there.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "missing",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "content",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "read_file",
+          "placeholder": "read_file"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/main.py"
+        },
+        {
+          "key": "startLine",
+          "label": "From line (optional)",
+          "type": "Int",
+          "default": "0",
+          "placeholder": "0 = start"
+        },
+        {
+          "key": "endLine",
+          "label": "To line (optional)",
+          "type": "Int",
+          "default": "0",
+          "placeholder": "0 = end"
+        }
+      ]
+    },
+    {
+      "typeId": "code.write",
+      "title": "Write File",
+      "subtitle": "code",
+      "icon": "note-pencil",
+      "category": "Code",
+      "description": "Creates or overwrites a file with the given content (parent folders are made). Use for new files or full rewrites; prefer Edit File for small changes. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "content",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "write_file",
+          "placeholder": "write_file"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/new.py"
+        },
+        {
+          "key": "content",
+          "label": "Content",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "file contents"
+        }
+      ]
+    },
+    {
+      "typeId": "code.edit",
+      "title": "Edit File",
+      "subtitle": "code",
+      "icon": "pencil-line",
+      "category": "Code",
+      "description": "Replaces an exact piece of text in a file with new text - the precise way to change code. By default \u0027find\u0027 must be unique (one edit); turn on Replace all to change every occurrence. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "find",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "replace",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "edit_file",
+          "placeholder": "edit_file"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/main.py"
+        },
+        {
+          "key": "find",
+          "label": "Find (exact)",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "text to replace"
+        },
+        {
+          "key": "replace",
+          "label": "Replace with",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "new text"
+        },
+        {
+          "key": "all",
+          "label": "Replace all",
+          "type": "Bool",
+          "default": "false",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "code.insert",
+      "title": "Insert Lines",
+      "subtitle": "code",
+      "icon": "plus",
+      "category": "Code",
+      "description": "Inserts text into a file after a given line number (0 = at the very top). Good for adding imports, functions or config blocks. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "after",
+          "k": "Number",
+          "multi": false
+        },
+        {
+          "n": "content",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "insert_lines",
+          "placeholder": "insert_lines"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/main.py"
+        },
+        {
+          "key": "after",
+          "label": "After line",
+          "type": "Int",
+          "default": "0",
+          "placeholder": "0 = top"
+        },
+        {
+          "key": "content",
+          "label": "Content",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "lines to insert"
+        }
+      ]
+    },
+    {
+      "typeId": "code.append",
+      "title": "Append to File",
+      "subtitle": "code",
+      "icon": "paperclip",
+      "category": "Code",
+      "description": "Appends text to the end of a file (creating it if needed). Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "content",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "append_file",
+          "placeholder": "append_file"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "notes.md"
+        },
+        {
+          "key": "content",
+          "label": "Content",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "text to append"
+        }
+      ]
+    },
+    {
+      "typeId": "code.delete",
+      "title": "Delete Path",
+      "subtitle": "code",
+      "icon": "trash",
+      "category": "Code",
+      "description": "Deletes a file or a folder (recursively) inside the codebase. Refuses to delete the codebase root itself. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "delete_path",
+          "placeholder": "delete_path"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "old/temp.py"
+        }
+      ]
+    },
+    {
+      "typeId": "code.move",
+      "title": "Move / Rename",
+      "subtitle": "code",
+      "icon": "truck",
+      "category": "Code",
+      "description": "Moves or renames a file or folder within the codebase. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "from",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "to",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "move_path",
+          "placeholder": "move_path"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "from",
+          "label": "From",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/old.py"
+        },
+        {
+          "key": "to",
+          "label": "To",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/new.py"
+        }
+      ]
+    },
+    {
+      "typeId": "code.copy",
+      "title": "Copy Path",
+      "subtitle": "code",
+      "icon": "bookmarks",
+      "category": "Code",
+      "description": "Copies a file or folder (recursively) to a new path within the codebase. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "from",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "to",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "copy_path",
+          "placeholder": "copy_path"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "from",
+          "label": "From",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/a.py"
+        },
+        {
+          "key": "to",
+          "label": "To",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/b.py"
+        }
+      ]
+    },
+    {
+      "typeId": "code.mkdir",
+      "title": "Make Directory",
+      "subtitle": "code",
+      "icon": "folder",
+      "category": "Code",
+      "description": "Creates a directory (and any missing parents) inside the codebase. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "make_dir",
+          "placeholder": "make_dir"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/utils"
+        }
+      ]
+    },
+    {
+      "typeId": "code.list",
+      "title": "List Directory",
+      "subtitle": "code",
+      "icon": "file-text",
+      "category": "Code",
+      "description": "Lists the files and subfolders directly inside a directory (folders end with /). Paths are relative to the codebase folder; blank lists the root.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "list_dir",
+          "placeholder": "list_dir"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src (blank = root)"
+        }
+      ]
+    },
+    {
+      "typeId": "code.tree",
+      "title": "Project Tree",
+      "subtitle": "code",
+      "icon": "tree",
+      "category": "Code",
+      "description": "Shows a compact directory tree (skipping .git, node_modules, build output, etc.) so an AI can orient itself in the codebase. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "project_tree",
+          "placeholder": "project_tree"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(blank = root)"
+        },
+        {
+          "key": "depth",
+          "label": "Max depth",
+          "type": "Int",
+          "default": "3",
+          "placeholder": "3"
+        }
+      ]
+    },
+    {
+      "typeId": "code.glob",
+      "title": "Find Files",
+      "subtitle": "code",
+      "icon": "magnifying-glass",
+      "category": "Code",
+      "description": "Finds files by glob pattern (e.g. **/*.cs, src/*.py, **/test_*.py), newest first. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "pattern",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "find_files",
+          "placeholder": "find_files"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "pattern",
+          "label": "Glob",
+          "type": "Text",
+          "default": "**/*",
+          "placeholder": "**/*.cs"
+        }
+      ]
+    },
+    {
+      "typeId": "code.grep",
+      "title": "Search Code",
+      "subtitle": "code",
+      "icon": "magnifying-glass",
+      "category": "Code",
+      "description": "Searches the codebase for a regular expression and returns matches as path:line: text. Optionally restrict to files matching a glob. The fast way to find where something is defined or used.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "pattern",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "glob",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "search_code",
+          "placeholder": "search_code"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "pattern",
+          "label": "Regex",
+          "type": "Text",
+          "default": "",
+          "placeholder": "TODO|FIXME"
+        },
+        {
+          "key": "glob",
+          "label": "Only files (glob, optional)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "**/*.py"
+        }
+      ]
+    },
+    {
+      "typeId": "code.replace",
+      "title": "Replace Across Files",
+      "subtitle": "code",
+      "icon": "repeat",
+      "category": "Code",
+      "description": "Replaces an exact string with another across every matching file (optionally filtered by a glob). Returns the number of files changed. Powerful - keep the find text specific.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "find",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "replace",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "glob",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "replace_across",
+          "placeholder": "replace_across"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "find",
+          "label": "Find (exact)",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "old string"
+        },
+        {
+          "key": "replace",
+          "label": "Replace with",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "new string"
+        },
+        {
+          "key": "glob",
+          "label": "Only files (glob, optional)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "**/*.cs"
+        }
+      ]
+    },
+    {
+      "typeId": "code.stat",
+      "title": "File Info",
+      "subtitle": "code",
+      "icon": "chart-bar",
+      "category": "Code",
+      "description": "Reports whether a path is a file or folder, plus size, line count and last-modified time. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "file_info",
+          "placeholder": "file_info"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/main.py"
+        }
+      ]
+    },
+    {
+      "typeId": "code.exists",
+      "title": "Path Exists",
+      "subtitle": "code",
+      "icon": "question",
+      "category": "Code",
+      "description": "Checks whether a file or folder exists in the codebase. Branches yes/no and returns true/false. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "yes",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "no",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "path_exists",
+          "placeholder": "path_exists"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "README.md"
+        }
+      ]
+    },
+    {
+      "typeId": "code.diff",
+      "title": "Diff Files",
+      "subtitle": "code",
+      "icon": "shuffle",
+      "category": "Code",
+      "description": "Shows the line differences between two files in the codebase (- removed, \u002B added). Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "a",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "b",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "diff_files",
+          "placeholder": "diff_files"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "a",
+          "label": "File A",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/old.py"
+        },
+        {
+          "key": "b",
+          "label": "File B",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/new.py"
+        }
+      ]
+    },
+    {
+      "typeId": "code.shell",
+      "title": "Run Command",
+      "subtitle": "code",
+      "icon": "keyboard",
+      "category": "Code",
+      "description": "Runs a shell command with its working directory set to the codebase folder (build, test, lint, git, etc.) and returns the combined output. The working directory is confined to the codebase.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "command",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "run_command",
+          "placeholder": "run_command"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "command",
+          "label": "Command",
+          "type": "Text",
+          "default": "",
+          "placeholder": "npm test"
+        },
+        {
+          "key": "timeout",
+          "label": "Timeout (s)",
+          "type": "Int",
+          "default": "30",
+          "placeholder": "30"
+        }
+      ]
+    },
+    {
+      "typeId": "code.outline",
+      "title": "Code Outline",
+      "subtitle": "code",
+      "icon": "compass",
+      "category": "Code",
+      "description": "Lists the top-level definitions (classes, functions, methods) in a source file as line: signature, so an AI can navigate large files. Paths are relative to the codebase folder.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "code_outline",
+          "placeholder": "code_outline"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "src/main.py"
+        }
+      ]
+    },
+    {
+      "typeId": "code.stats",
+      "title": "Project Stats",
+      "subtitle": "code",
+      "icon": "chart-line-up",
+      "category": "Code",
+      "description": "Summarises the codebase: file count, total lines, size, and the most common file types. A quick overview before diving in.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "project_stats",
+          "placeholder": "project_stats"
+        },
+        {
+          "key": "root",
+          "label": "Codebase folder",
+          "type": "Text",
+          "default": "",
+          "placeholder": "~/projects/mybot \u00B7 all paths are relative to this and can\u0027t escape it"
+        }
+      ]
+    },
+    {
+      "typeId": "media.info",
+      "title": "Image Info",
+      "subtitle": "media",
+      "icon": "image",
+      "category": "Storage",
+      "description": "Reads an image\u0027s width, height and format straight from its header (PNG, JPEG, GIF, BMP, WebP) - no decoding, no dependencies. Relative paths live under ~/ircuitry/files. Branches to \u0027not image\u0027 if unrecognised.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "notimage",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "info",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "width",
+          "k": "Number",
+          "multi": false
+        },
+        {
+          "n": "height",
+          "k": "Number",
+          "multi": false
+        },
+        {
+          "n": "format",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "image_info",
+          "placeholder": "image_info"
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "pic.png or /abs/pic.jpg"
+        }
+      ]
+    },
+    {
+      "typeId": "media.download",
+      "title": "Download File",
+      "subtitle": "media",
+      "icon": "tray",
+      "category": "Storage",
+      "description": "Downloads a URL (image, audio, any file) to a local file under ~/ircuitry/files and outputs the saved path. Branches to \u0027failed\u0027 on error.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "url",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "filename",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "failed",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "download_file",
+          "placeholder": "download_file"
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "type": "Text",
+          "default": "",
+          "placeholder": "https://\u2026/pic.png"
+        },
+        {
+          "key": "filename",
+          "label": "Save as",
+          "type": "Text",
+          "default": "download.bin",
+          "placeholder": "media/pic.png"
+        }
+      ]
+    },
+    {
+      "typeId": "media.organize",
+      "title": "Organize Media",
+      "subtitle": "media",
+      "icon": "folders",
+      "category": "Storage",
+      "description": "Moves, copies, renames or deletes a media file under ~/ircuitry/files - handy for sorting downloads into folders.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "to",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "organize_media",
+          "placeholder": "organize_media"
+        },
+        {
+          "key": "op",
+          "label": "Action",
+          "type": "Choice",
+          "default": "move",
+          "placeholder": "",
+          "choices": [
+            "move",
+            "copy",
+            "rename",
+            "delete"
+          ]
+        },
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "downloads/a.png"
+        },
+        {
+          "key": "to",
+          "label": "To (move/copy/rename)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "images/a.png"
+        }
+      ]
+    },
+    {
+      "typeId": "media.transform",
+      "title": "Transform Image",
+      "subtitle": "media",
+      "icon": "sparkle",
+      "category": "Storage",
+      "description": "Resizes, converts or rotates an image using ImageMagick or ffmpeg if installed. Outputs the new file\u0027s path; branches to \u0027failed\u0027 (with a clear message) when no image tool is available. Relative paths live under ~/ircuitry/files.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "out",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "failed",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "path",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "transform_image",
+          "placeholder": "transform_image"
+        },
+        {
+          "key": "op",
+          "label": "Operation",
+          "type": "Choice",
+          "default": "resize",
+          "placeholder": "",
+          "choices": [
+            "resize",
+            "convert",
+            "rotate"
+          ]
+        },
+        {
+          "key": "path",
+          "label": "Source",
+          "type": "Text",
+          "default": "",
+          "placeholder": "pic.png"
+        },
+        {
+          "key": "out",
+          "label": "Output",
+          "type": "Text",
+          "default": "out.png",
+          "placeholder": "small.jpg"
+        },
+        {
+          "key": "arg",
+          "label": "Size / degrees",
+          "type": "Text",
+          "default": "512x512",
+          "placeholder": "512x512 \u00B7 90"
+        }
+      ]
+    },
+    {
+      "typeId": "archive.zip",
+      "title": "Zip",
+      "subtitle": "archive",
+      "icon": "package",
+      "category": "Storage",
+      "description": "Compresses a folder (or a single file) into a .zip archive. Relative paths live under ~/ircuitry/files; absolute paths are honoured. As an AI tool, pass a source path and a zip path.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "source",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "zip",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "zip",
+          "placeholder": "zip"
+        },
+        {
+          "key": "source",
+          "label": "Source folder / file",
+          "type": "Text",
+          "default": "",
+          "placeholder": "myfolder"
+        },
+        {
+          "key": "zip",
+          "label": "Zip path",
+          "type": "Text",
+          "default": "archive.zip",
+          "placeholder": "archive.zip"
+        }
+      ]
+    },
+    {
+      "typeId": "archive.unzip",
+      "title": "Unzip",
+      "subtitle": "archive",
+      "icon": "folder-open",
+      "category": "Storage",
+      "description": "Extracts a .zip archive into a folder (created if needed), safely rejecting any entry that would escape the folder (zip-slip). Relative paths live under ~/ircuitry/files.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "zip",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "dest",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "tool",
+          "k": "Tool",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tool name (for AI)",
+          "type": "Text",
+          "default": "unzip",
+          "placeholder": "unzip"
+        },
+        {
+          "key": "zip",
+          "label": "Zip path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "archive.zip"
+        },
+        {
+          "key": "dest",
+          "label": "Extract to",
+          "type": "Text",
+          "default": "unzipped",
+          "placeholder": "unzipped"
+        }
+      ]
+    },
+    {
+      "typeId": "data.encode",
+      "title": "Encode / Decode",
+      "subtitle": "data",
+      "icon": "calculator",
+      "category": "Data",
+      "description": "Encodes or decodes text: Base64, Base32, hex, URL, HTML entities, binary, Morse, or ROT13.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Scheme",
+          "type": "Choice",
+          "default": "base64",
+          "placeholder": "",
+          "choices": [
+            "base64",
+            "base32",
+            "hex",
+            "url",
+            "html",
+            "binary",
+            "morse",
+            "rot13",
+            "zwsp"
+          ]
+        },
+        {
+          "key": "mode",
+          "label": "Mode",
+          "type": "Choice",
+          "default": "encode",
+          "placeholder": "",
+          "choices": [
+            "encode",
+            "decode"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "data.hash",
+      "title": "Hash",
+      "subtitle": "data",
+      "icon": "lock-key",
+      "category": "Data",
+      "description": "Hashes text with MD5, SHA-1, SHA-256, SHA-512, or a CRC32 checksum.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Algorithm",
+          "type": "Choice",
+          "default": "sha256",
+          "placeholder": "",
+          "choices": [
+            "md5",
+            "sha1",
+            "sha256",
+            "sha512",
+            "crc32"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "data.case",
+      "title": "Change Case",
+      "subtitle": "data",
+      "icon": "translate",
+      "category": "Data",
+      "description": "Recases text: UPPER, lower, Title, Sentence, camelCase, snake_case, kebab-case, mOcKiNg, l33t, clap\uD83D\uDC4Fcase, and more.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Style",
+          "type": "Choice",
+          "default": "upper",
+          "placeholder": "",
+          "choices": [
+            "upper",
+            "lower",
+            "title",
+            "sentence",
+            "capitalize",
+            "camel",
+            "pascal",
+            "snake",
+            "kebab",
+            "constant",
+            "mock",
+            "leet",
+            "clap",
+            "invert"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "data.shape",
+      "title": "Shape Text",
+      "subtitle": "data",
+      "icon": "scissors",
+      "category": "Data",
+      "description": "Reshapes text: reverse, trim, squeeze spaces, length, repeat, truncate, pad, slugify, acronym, disemvowel, number lines, word-wrap.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Op",
+          "type": "Choice",
+          "default": "trim",
+          "placeholder": "",
+          "choices": [
+            "reverse",
+            "trim",
+            "squeeze",
+            "length",
+            "repeat",
+            "truncate",
+            "padleft",
+            "padright",
+            "slug",
+            "acronym",
+            "disemvowel",
+            "numbering",
+            "wrap",
+            "zalgo",
+            "banner"
+          ]
+        },
+        {
+          "key": "n",
+          "label": "Amount (repeat/width/length)",
+          "type": "Int",
+          "default": "1",
+          "placeholder": "1"
+        },
+        {
+          "key": "fill",
+          "label": "Pad char",
+          "type": "Text",
+          "default": " ",
+          "placeholder": " "
+        }
+      ]
+    },
+    {
+      "typeId": "data.regex",
+      "title": "Regex",
+      "subtitle": "data",
+      "icon": "magnifying-glass",
+      "category": "Data",
+      "description": "Runs a regular expression over text: test match, extract the first match / capture group, extract all matches, count, or replace.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Op",
+          "type": "Choice",
+          "default": "first",
+          "placeholder": "",
+          "choices": [
+            "match",
+            "first",
+            "all",
+            "count",
+            "replace"
+          ]
+        },
+        {
+          "key": "pattern",
+          "label": "Pattern",
+          "type": "Text",
+          "default": "",
+          "placeholder": "\\d\u002B"
+        },
+        {
+          "key": "replace",
+          "label": "Replace with",
+          "type": "Text",
+          "default": "",
+          "placeholder": "$0"
+        },
+        {
+          "key": "flags",
+          "label": "Flags (ims)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "i"
+        }
+      ]
+    },
+    {
+      "typeId": "data.mathx",
+      "title": "Math",
+      "subtitle": "data",
+      "icon": "divide",
+      "category": "Data",
+      "description": "Evaluates an arithmetic expression: \u002B - * / % ^, parentheses, and functions (sqrt, abs, round, floor, ceil, sin, cos, log, \u2026). Supports pi and e.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "expr",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "expr",
+          "label": "Expression",
+          "type": "Text",
+          "default": "",
+          "placeholder": "2 * (3 \u002B 4)"
+        }
+      ]
+    },
+    {
+      "typeId": "data.convert",
+      "title": "Unit Convert",
+      "subtitle": "data",
+      "icon": "ruler",
+      "category": "Data",
+      "description": "Converts a value between units: temperature (c/f/k), length (mm..mi), mass (mg..lb), speed (m/s, km/h, mph, kn), data (B..TiB).",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "value",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "family",
+          "label": "Kind",
+          "type": "Choice",
+          "default": "temperature",
+          "placeholder": "",
+          "choices": [
+            "temperature",
+            "length",
+            "mass",
+            "speed",
+            "data"
+          ]
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "Text",
+          "default": "",
+          "placeholder": "100"
+        },
+        {
+          "key": "from",
+          "label": "From",
+          "type": "Text",
+          "default": "c",
+          "placeholder": "c \u00B7 km \u00B7 kg \u00B7 mph"
+        },
+        {
+          "key": "to",
+          "label": "To",
+          "type": "Text",
+          "default": "f",
+          "placeholder": "f \u00B7 mi \u00B7 lb \u00B7 km/h"
+        }
+      ]
+    },
+    {
+      "typeId": "num.theory",
+      "title": "Number Theory",
+      "subtitle": "data",
+      "icon": "hash",
+      "category": "Data",
+      "description": "Whole-number math: factorial, nth Fibonacci, GCD, LCM, is-prime, next prime, ordinal (1st/2nd), absolute value, sign.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "a",
+          "k": "Number",
+          "multi": false
+        },
+        {
+          "n": "b",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Op",
+          "type": "Choice",
+          "default": "factorial",
+          "placeholder": "",
+          "choices": [
+            "factorial",
+            "fibonacci",
+            "gcd",
+            "lcm",
+            "isprime",
+            "nextprime",
+            "ordinal",
+            "abs",
+            "sign",
+            "round",
+            "floor",
+            "ceil"
+          ]
+        },
+        {
+          "key": "a",
+          "label": "A",
+          "type": "Text",
+          "default": "",
+          "placeholder": "5"
+        },
+        {
+          "key": "b",
+          "label": "B",
+          "type": "Text",
+          "default": "",
+          "placeholder": "10"
+        }
+      ]
+    },
+    {
+      "typeId": "num.format",
+      "title": "Number Format",
+      "subtitle": "data",
+      "icon": "seal-check",
+      "category": "Data",
+      "description": "Formats a number: convert between bases (bin/oct/dec/hex/any), Roman numerals (and back), number-to-words, or thousands separators.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Op",
+          "type": "Choice",
+          "default": "base",
+          "placeholder": "",
+          "choices": [
+            "base",
+            "roman",
+            "unroman",
+            "words",
+            "commas"
+          ]
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "Text",
+          "default": "",
+          "placeholder": "255 \u00B7 0xff \u00B7 MMXXIV"
+        },
+        {
+          "key": "radix",
+          "label": "Base (for \u0027base\u0027)",
+          "type": "Int",
+          "default": "16",
+          "placeholder": "2..36"
+        }
+      ]
+    },
+    {
+      "typeId": "data.datetime",
+      "title": "Date / Time",
+      "subtitle": "data",
+      "icon": "clock",
+      "category": "Data",
+      "description": "Works with dates/times: current time (any timezone), format a date, day of week, unix timestamp conversion, countdown until a date, or age in years.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "input",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Op",
+          "type": "Choice",
+          "default": "now",
+          "placeholder": "",
+          "choices": [
+            "now",
+            "format",
+            "weekday",
+            "unix",
+            "until",
+            "age"
+          ]
+        },
+        {
+          "key": "input",
+          "label": "Date / value",
+          "type": "Text",
+          "default": "",
+          "placeholder": "2026-12-25"
+        },
+        {
+          "key": "format",
+          "label": "Format",
+          "type": "Text",
+          "default": "",
+          "placeholder": "yyyy-MM-dd HH:mm"
+        },
+        {
+          "key": "zone",
+          "label": "Timezone (for now)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "UTC \u00B7 Europe/London"
+        }
+      ]
+    },
+    {
+      "typeId": "gen.random",
+      "title": "Random Generator",
+      "subtitle": "data",
+      "icon": "dice-five",
+      "category": "Data",
+      "description": "Generates random things: a coin flip, dice (NdM\u002BK), a UUID, a password, a cute username, a fake name, a hex colour, an integer in a range, or lorem ipsum.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "spec",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Generate",
+          "type": "Choice",
+          "default": "uuid",
+          "placeholder": "",
+          "choices": [
+            "coin",
+            "dice",
+            "uuid",
+            "password",
+            "username",
+            "fakename",
+            "color",
+            "int",
+            "lorem",
+            "gradient"
+          ]
+        },
+        {
+          "key": "spec",
+          "label": "Spec",
+          "type": "Text",
+          "default": "",
+          "placeholder": "2d6\u002B3 \u00B7 16 \u00B7 1-100 \u00B7 24"
+        }
+      ]
+    },
+    {
+      "typeId": "data.pick",
+      "title": "Pick from List",
+      "subtitle": "data",
+      "icon": "hand-pointing",
+      "category": "Data",
+      "description": "Picks from a list: a random item, the first / last / Nth, or counts them. Choose how the list is separated.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "list",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Pick",
+          "type": "Choice",
+          "default": "random",
+          "placeholder": "",
+          "choices": [
+            "random",
+            "first",
+            "last",
+            "nth",
+            "count"
+          ]
+        },
+        {
+          "key": "sep",
+          "label": "Separator",
+          "type": "Choice",
+          "default": "newline",
+          "placeholder": "",
+          "choices": [
+            "newline",
+            "comma",
+            "space",
+            "pipe"
+          ]
+        },
+        {
+          "key": "n",
+          "label": "N (for nth)",
+          "type": "Int",
+          "default": "1",
+          "placeholder": "1"
+        }
+      ]
+    },
+    {
+      "typeId": "data.stats",
+      "title": "Number Stats",
+      "subtitle": "data",
+      "icon": "chart-bar",
+      "category": "Data",
+      "description": "Computes a statistic over a list of numbers found in the text: sum, mean, median, min, max, count, range, or standard deviation.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "numbers",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Stat",
+          "type": "Choice",
+          "default": "sum",
+          "placeholder": "",
+          "choices": [
+            "sum",
+            "mean",
+            "median",
+            "min",
+            "max",
+            "count",
+            "range",
+            "stdev"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "irc.color",
+      "title": "IRC Color",
+      "subtitle": "ircv3",
+      "icon": "rainbow",
+      "category": "Ircv3",
+      "description": "Adds or removes IRC formatting: rainbow-colour text, strip all colours/formatting, or wrap in bold / italic / underline.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Op",
+          "type": "Choice",
+          "default": "rainbow",
+          "placeholder": "",
+          "choices": [
+            "rainbow",
+            "strip",
+            "bold",
+            "italic",
+            "underline"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "event.dcc",
+      "title": "On DCC Offer",
+      "subtitle": "trigger",
+      "icon": "broadcast",
+      "category": "Event",
+      "description": "Fires when a user offers a DCC transfer over IRC - a direct file SEND, or a CHAT/RESUME/ACCEPT negotiation. Decide what to do with Accept DCC File or Decline DCC. The \u0027account\u0027 pin is the sender\u0027s authenticated login (use it to allow-list - nicks can be faked, accounts can\u0027t). Also exposes {dcc.file} {dcc.size} {dcc.ip} {dcc.port} {dcc.token} {dcc.type} {account}.",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "filename",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "size",
+          "k": "Number",
+          "multi": false
+        },
+        {
+          "n": "nick",
+          "k": "User",
+          "multi": false
+        },
+        {
+          "n": "type",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "account",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "only",
+          "label": "Only",
+          "type": "Choice",
+          "default": "send",
+          "placeholder": "",
+          "choices": [
+            "any",
+            "send",
+            "chat",
+            "resume",
+            "accept"
+          ]
+        }
+      ]
+    },
+    {
+      "typeId": "dcc.accept",
+      "title": "Accept DCC File",
+      "subtitle": "dcc",
+      "icon": "folder-open",
+      "category": "Action",
+      "description": "Accepts the DCC file offer that triggered this flow and downloads it - you choose where it lands. Blank path = ~/ircuitry/files/dcc/. A folder saves it there under the offered name; a full path names the file. The transfer runs in the background and logs when it finishes.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "save to",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "path",
+          "label": "Save to (file or folder)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = ~/ircuitry/files/dcc/ \u00B7 or a folder \u00B7 or a full path"
+        }
+      ]
+    },
+    {
+      "typeId": "dcc.reject",
+      "title": "Decline DCC",
+      "subtitle": "dcc",
+      "icon": "prohibit",
+      "category": "Action",
+      "description": "Declines the DCC offer that triggered this flow (DCC has no formal \u0027no\u0027 - we simply don\u0027t connect, and optionally send the sender a notice).",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "notice",
+          "label": "Notice (optional)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "sorry, I\u0027m not accepting files"
+        }
+      ]
+    },
+    {
+      "typeId": "dcc.send",
+      "title": "Send File (DCC)",
+      "subtitle": "dcc",
+      "icon": "export",
+      "category": "Action",
+      "description": "Offers a file to a user over DCC: the bot listens on a port, sends the DCC SEND, and streams the file when they accept. Relative paths live under ~/ircuitry/files. Note: the receiver connects back to this machine, so a public IP / port-forwarding may be needed across the internet.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "nick",
+          "k": "User",
+          "multi": false
+        },
+        {
+          "n": "file",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "nick",
+          "label": "To nick",
+          "type": "Text",
+          "default": "",
+          "placeholder": "{nick}"
+        },
+        {
+          "key": "file",
+          "label": "File path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "report.pdf or /abs/path"
+        },
+        {
+          "key": "ip",
+          "label": "Advertise IP (optional)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = auto-detect this machine"
+        }
+      ]
+    },
+    {
+      "typeId": "data.gettag",
+      "title": "Get Tag",
+      "subtitle": "ircv3",
+      "icon": "bookmark-simple",
+      "category": "Ircv3",
+      "description": "Reads any IRCv3 message tag from the triggering message (e.g. account, time, msgid).",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Tag",
+          "type": "Text",
+          "default": "account",
+          "placeholder": "account \u00B7 time \u00B7 msgid \u2026"
+        }
+      ]
+    },
+    {
+      "typeId": "data.json",
+      "title": "JSON Field",
+      "subtitle": "data",
+      "icon": "puzzle-piece",
+      "category": "Data",
+      "description": "Extracts a value from JSON by dotted path, e.g. results.0.title.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "json",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "path",
+          "label": "Path",
+          "type": "Text",
+          "default": "",
+          "placeholder": "results.0.title"
+        }
+      ]
+    },
+    {
+      "typeId": "event.timer",
+      "title": "On Timer",
+      "subtitle": "trigger",
+      "icon": "alarm",
+      "category": "Event",
+      "description": "Fires every N seconds while the bot is connected. Pair with Send to Channel for announcements.",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "seconds",
+          "label": "Every (seconds)",
+          "type": "Int",
+          "default": "60",
+          "placeholder": "60"
+        }
+      ]
+    },
+    {
+      "typeId": "event.schedule",
+      "title": "On Schedule",
+      "subtitle": "trigger",
+      "icon": "calendar",
+      "category": "Event",
+      "description": "Fires on a schedule: an interval, every day at a time, on chosen weekdays, or once at a date/time. Uses your computer\u0027s local time. Outputs {time} and {date}; pair with Send to Channel.",
+      "trigger": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "time",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "date",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "mode",
+          "label": "Mode",
+          "type": "Choice",
+          "default": "interval",
+          "placeholder": "",
+          "choices": [
+            "interval",
+            "daily",
+            "weekly",
+            "once"
+          ]
+        },
+        {
+          "key": "every",
+          "label": "Every",
+          "type": "Int",
+          "default": "5",
+          "placeholder": "5"
+        },
+        {
+          "key": "unit",
+          "label": "Unit",
+          "type": "Choice",
+          "default": "minutes",
+          "placeholder": "",
+          "choices": [
+            "seconds",
+            "minutes",
+            "hours",
+            "days"
+          ]
+        },
+        {
+          "key": "time",
+          "label": "Time (HH:MM)",
+          "type": "Text",
+          "default": "09:00",
+          "placeholder": "09:00"
+        },
+        {
+          "key": "days",
+          "label": "Days",
+          "type": "Text",
+          "default": "Mon-Fri",
+          "placeholder": "Mon-Fri \u00B7 Mon,Wed,Fri \u00B7 1-5 \u00B7 *"
+        },
+        {
+          "key": "datetime",
+          "label": "Run once at",
+          "type": "Text",
+          "default": "",
+          "placeholder": "2026-12-31 09:00"
+        }
+      ]
+    },
+    {
+      "typeId": "logic.if",
+      "title": "If / Compare",
+      "subtitle": "condition",
+      "icon": "question",
+      "category": "Filter",
+      "description": "Compares A to B and branches. A defaults to the message; B uses the input if wired, else the value field.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "A",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "B",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "true",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "false",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Operator",
+          "type": "Choice",
+          "default": "=",
+          "placeholder": "",
+          "choices": [
+            "=",
+            "\u2260",
+            "contains",
+            "starts with",
+            "ends with",
+            "\u003E",
+            "\u003C",
+            "is empty",
+            "matches"
+          ]
+        },
+        {
+          "key": "b",
+          "label": "Value (B)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "compare against"
+        },
+        {
+          "key": "ci",
+          "label": "Ignore case",
+          "type": "Bool",
+          "default": "true",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "logic.regex",
+      "title": "Regex Match",
+      "subtitle": "condition",
+      "icon": "magnifying-glass",
+      "category": "Filter",
+      "description": "Matches text against a pattern; branches and outputs capture groups $1 and $2.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "match",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "no match",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "$1",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "$2",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "pattern",
+          "label": "Pattern",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(\\d\u002B)"
+        },
+        {
+          "key": "ci",
+          "label": "Ignore case",
+          "type": "Bool",
+          "default": "true",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "logic.switch",
+      "title": "Switch",
+      "subtitle": "logic",
+      "icon": "shuffle",
+      "category": "Logic",
+      "description": "Routes to the output whose case matches the value, else \u0027default\u0027. Add as many cases as you like with \u0027Add case\u0027 - each one grows its own output pin. Great for command menus. (The \u0027default\u0027 pin stays on top so adding a case never disturbs your existing wires.)",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "default",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "value",
+          "label": "Value to match",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = the command (or message) \u00B7 or {nick}, {arg1} \u2026"
+        },
+        {
+          "key": "cases",
+          "label": "Cases (one output each)",
+          "type": "List",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "ci",
+          "label": "Ignore case",
+          "type": "Bool",
+          "default": "true",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "logic.cooldown",
+      "title": "Cooldown",
+      "subtitle": "logic",
+      "icon": "hourglass",
+      "category": "Logic",
+      "description": "Only passes once per N seconds (optionally per-user). Stops spam and rate-limits commands.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "user",
+          "k": "User",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "ready",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "wait",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "seconds",
+          "label": "Seconds",
+          "type": "Int",
+          "default": "10",
+          "placeholder": "10"
+        },
+        {
+          "key": "perUser",
+          "label": "Per user",
+          "type": "Bool",
+          "default": "true",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "logic.forEach",
+      "title": "For Each",
+      "subtitle": "logic",
+      "icon": "repeat",
+      "category": "Logic",
+      "description": "Runs \u0027each\u0027 once per list item, then \u0027done\u0027. Splits text by a separator, or set Separator to \u0027json\u0027 to iterate a JSON array. Each item is on the \u0027item\u0027 pin and in a var (default {item}) so {item.field} works for JSON elements.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "list",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "each",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "done",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "item",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "index",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "sep",
+          "label": "Separator",
+          "type": "Choice",
+          "default": "newline",
+          "placeholder": "",
+          "choices": [
+            "newline",
+            "comma",
+            "space",
+            "json"
+          ]
+        },
+        {
+          "key": "var",
+          "label": "Item var",
+          "type": "Text",
+          "default": "item",
+          "placeholder": "reference items as {item} / {item.field}"
+        }
+      ]
+    },
+    {
+      "typeId": "logic.repeat",
+      "title": "Repeat",
+      "subtitle": "logic",
+      "icon": "repeat-once",
+      "category": "Logic",
+      "description": "Runs \u0027each\u0027 a fixed number of times (the 0-based count on \u0027i\u0027 and as {i}), then \u0027done\u0027. Bounded so it can never loop forever.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "times",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "each",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "done",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "i",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "times",
+          "label": "Times",
+          "type": "Int",
+          "default": "3",
+          "placeholder": "how many iterations"
+        }
+      ]
+    },
+    {
+      "typeId": "data.setvar",
+      "title": "Set Variable",
+      "subtitle": "state",
+      "icon": "tray",
+      "category": "Logic",
+      "description": "Stores a value under a name. Persists across events and saves with the bot.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "Text",
+          "default": "counter",
+          "placeholder": "counter"
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "Text",
+          "default": "",
+          "placeholder": "supports {message} {nick} \u2026"
+        }
+      ]
+    },
+    {
+      "typeId": "data.getvar",
+      "title": "Get Variable",
+      "subtitle": "state",
+      "icon": "export",
+      "category": "Data",
+      "description": "Reads a stored variable (or the default if it isn\u0027t set yet).",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "Text",
+          "default": "counter",
+          "placeholder": "counter"
+        },
+        {
+          "key": "default",
+          "label": "Default",
+          "type": "Text",
+          "default": "0",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "data.math",
+      "title": "Math",
+      "subtitle": "data",
+      "icon": "calculator",
+      "category": "Data",
+      "description": "Computes A (op) B as a number. Pair with variables for counters and scores.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "a",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "b",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Op",
+          "type": "Choice",
+          "default": "\u002B",
+          "placeholder": "",
+          "choices": [
+            "\u002B",
+            "-",
+            "\u00D7",
+            "\u00F7",
+            "%",
+            "min",
+            "max"
+          ]
+        },
+        {
+          "key": "a",
+          "label": "A",
+          "type": "Text",
+          "default": "0",
+          "placeholder": ""
+        },
+        {
+          "key": "b",
+          "label": "B",
+          "type": "Text",
+          "default": "1",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "data.transform",
+      "title": "Text Transform",
+      "subtitle": "data",
+      "icon": "text-aa",
+      "category": "Data",
+      "description": "Transforms text: lower / upper / trim / length / reverse / replace.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "op",
+          "label": "Op",
+          "type": "Choice",
+          "default": "lower",
+          "placeholder": "",
+          "choices": [
+            "lower",
+            "upper",
+            "trim",
+            "length",
+            "reverse",
+            "replace"
+          ]
+        },
+        {
+          "key": "find",
+          "label": "Find",
+          "type": "Text",
+          "default": "",
+          "placeholder": ""
+        },
+        {
+          "key": "replace",
+          "label": "Replace",
+          "type": "Text",
+          "default": "",
+          "placeholder": ""
+        }
+      ]
+    },
+    {
+      "typeId": "data.randnum",
+      "title": "Random Number",
+      "subtitle": "data",
+      "icon": "target",
+      "category": "Data",
+      "description": "A random whole number between min and max (inclusive). For !roll, !8ball, etc.",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "value",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "min",
+          "label": "Min",
+          "type": "Int",
+          "default": "1",
+          "placeholder": "1"
+        },
+        {
+          "key": "max",
+          "label": "Max",
+          "type": "Int",
+          "default": "6",
+          "placeholder": "6"
+        }
+      ]
+    },
+    {
+      "typeId": "irc.topic",
+      "title": "Set Topic",
+      "subtitle": "channel",
+      "icon": "push-pin",
+      "category": "Action",
+      "description": "Sets a channel\u0027s topic (needs the right channel privileges). Blank channel = the triggering channel.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "topic",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = current"
+        },
+        {
+          "key": "topic",
+          "label": "Topic",
+          "type": "Text",
+          "default": "",
+          "placeholder": "supports {me} {nick} {args} {arg1} \u2026"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "irc.kick",
+      "title": "Kick User",
+      "subtitle": "moderation",
+      "icon": "boot",
+      "category": "Action",
+      "description": "Kicks a user from a channel (needs operator). Blank channel = the triggering channel.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "nick",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = current"
+        },
+        {
+          "key": "nick",
+          "label": "Nick",
+          "type": "Text",
+          "default": "",
+          "placeholder": "{nick}"
+        },
+        {
+          "key": "reason",
+          "label": "Reason",
+          "type": "Text",
+          "default": "",
+          "placeholder": "bye!"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "irc.mode",
+      "title": "Set Mode",
+      "subtitle": "moderation",
+      "icon": "shield",
+      "category": "Action",
+      "description": "Applies a channel mode, e.g. \u002Bo/-o (op), \u002Bv (voice), \u002Bb (ban). Target is a nick or mask; leave blank for channel-wide modes like \u002Bm.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "target",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "channel",
+          "label": "Channel",
+          "type": "Text",
+          "default": "",
+          "placeholder": "blank = current"
+        },
+        {
+          "key": "modes",
+          "label": "Modes",
+          "type": "Text",
+          "default": "\u002Bo",
+          "placeholder": "\u002Bo \u00B7 \u002Bv \u00B7 \u002Bb \u00B7 -o"
+        },
+        {
+          "key": "target",
+          "label": "Target (nick/mask)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "{nick}"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "irc.action",
+      "title": "Send Action",
+      "subtitle": "emote",
+      "icon": "mask-happy",
+      "category": "Action",
+      "description": "Sends a CTCP ACTION (a /me emote), e.g. \u0022waves hello\u0022. Replies to the triggering channel/user.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "text",
+          "label": "Action text",
+          "type": "Text",
+          "default": "",
+          "placeholder": "waves at {nick}"
+        },
+        {
+          "key": "server",
+          "label": "Send via server",
+          "type": "Text",
+          "default": "",
+          "placeholder": "(origin)"
+        }
+      ]
+    },
+    {
+      "typeId": "flow.delay",
+      "title": "Delay",
+      "subtitle": "flow",
+      "icon": "hourglass",
+      "category": "Logic",
+      "description": "Waits before continuing. Runs off the connection thread, so it never stalls keepalive or other workflows (capped at 5 min). For long or recurring waits, prefer a Schedule/Timer trigger.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "seconds",
+          "label": "Seconds",
+          "type": "Int",
+          "default": "1",
+          "placeholder": "1"
+        }
+      ]
+    },
+    {
+      "typeId": "flow.in",
+      "title": "Subflow Start",
+      "subtitle": "subflow",
+      "icon": "arrow-bend-down-right",
+      "category": "Logic",
+      "description": "The entry point of a reusable subflow. Wire its \u0027then\u0027 to the subflow\u0027s body. (Only meaningful inside a saved node.)",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": []
+    },
+    {
+      "typeId": "flow.arg",
+      "title": "Subflow Input",
+      "subtitle": "subflow",
+      "icon": "tray",
+      "category": "Logic",
+      "description": "Reads one of the subflow\u0027s named inputs. The \u0027name\u0027 becomes an input pin on the saved node.",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Input name",
+          "type": "Text",
+          "default": "input",
+          "placeholder": "city"
+        }
+      ]
+    },
+    {
+      "typeId": "flow.return",
+      "title": "Subflow Output",
+      "subtitle": "subflow",
+      "icon": "export",
+      "category": "Logic",
+      "description": "Writes one of the subflow\u0027s named outputs. The \u0027name\u0027 becomes an output pin on the saved node.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "name",
+          "label": "Output name",
+          "type": "Text",
+          "default": "result",
+          "placeholder": "result"
+        }
+      ]
+    },
+    {
+      "typeId": "db.set",
+      "title": "DB Set",
+      "subtitle": "database",
+      "icon": "archive",
+      "category": "Storage",
+      "description": "Stores a value in a named table on disk (~/ircuitry/data). Empty value deletes the key. Survives restarts and is shared across bots.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "table",
+          "label": "Table",
+          "type": "Text",
+          "default": "main",
+          "placeholder": "scores \u00B7 seen \u00B7 notes"
+        },
+        {
+          "key": "key",
+          "label": "Key",
+          "type": "Text",
+          "default": "",
+          "placeholder": "{nick}"
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "Text",
+          "default": "",
+          "placeholder": "supports {tokens} \u00B7 blank = delete"
+        }
+      ]
+    },
+    {
+      "typeId": "db.get",
+      "title": "DB Get",
+      "subtitle": "database",
+      "icon": "key",
+      "category": "Storage",
+      "description": "Reads from a named table on disk. Modes: a key\u0027s value, the row count, or a substring search across values.",
+      "trigger": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "n": "value",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "count",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "table",
+          "label": "Table",
+          "type": "Text",
+          "default": "main",
+          "placeholder": "scores \u00B7 seen \u00B7 notes"
+        },
+        {
+          "key": "mode",
+          "label": "Mode",
+          "type": "Choice",
+          "default": "value",
+          "placeholder": "",
+          "choices": [
+            "value",
+            "count",
+            "find"
+          ]
+        },
+        {
+          "key": "key",
+          "label": "Key",
+          "type": "Text",
+          "default": "",
+          "placeholder": "{nick}"
+        },
+        {
+          "key": "default",
+          "label": "Default",
+          "type": "Text",
+          "default": "",
+          "placeholder": "if missing"
+        },
+        {
+          "key": "find",
+          "label": "Find (substring)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "needle"
+        }
+      ]
+    },
+    {
+      "typeId": "ai.memory",
+      "title": "AI Memory",
+      "subtitle": "ai",
+      "icon": "brain",
+      "category": "Ai",
+      "description": "Per-conversation memory for Ask AI. \u0027recall\u0027 outputs the running transcript to feed into the prompt; \u0027remember\u0027 appends a turn; \u0027clear\u0027 wipes it. Keyed by session (default the channel), kept to the last N turns, and persisted.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "text",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "history",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "session",
+          "label": "Session",
+          "type": "Text",
+          "default": "{channel}",
+          "placeholder": "{channel} \u00B7 {nick}"
+        },
+        {
+          "key": "mode",
+          "label": "Mode",
+          "type": "Choice",
+          "default": "recall",
+          "placeholder": "",
+          "choices": [
+            "recall",
+            "remember",
+            "clear"
+          ]
+        },
+        {
+          "key": "role",
+          "label": "Role",
+          "type": "Choice",
+          "default": "user",
+          "placeholder": "",
+          "choices": [
+            "user",
+            "assistant"
+          ]
+        },
+        {
+          "key": "text",
+          "label": "Text",
+          "type": "Multiline",
+          "default": "{message}",
+          "placeholder": "what to remember"
+        },
+        {
+          "key": "max",
+          "label": "Max turns",
+          "type": "Int",
+          "default": "8",
+          "placeholder": "8"
+        }
+      ]
+    },
+    {
+      "typeId": "cal.add",
+      "title": "Add Calendar Event",
+      "subtitle": "calendar",
+      "icon": "calendar",
+      "category": "Storage",
+      "description": "Appends an event to an .ics file (created if missing). Start accepts \u00272026-12-31 09:00\u0027 or a date; duration is in minutes.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "summary",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "uid",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "path",
+          "label": "Calendar file (.ics)",
+          "type": "Text",
+          "default": "calendar.ics",
+          "placeholder": "calendar.ics"
+        },
+        {
+          "key": "summary",
+          "label": "Title",
+          "type": "Text",
+          "default": "",
+          "placeholder": "Team standup"
+        },
+        {
+          "key": "start",
+          "label": "Start",
+          "type": "Text",
+          "default": "",
+          "placeholder": "2026-12-31 09:00"
+        },
+        {
+          "key": "duration",
+          "label": "Duration (min)",
+          "type": "Int",
+          "default": "60",
+          "placeholder": "60"
+        },
+        {
+          "key": "location",
+          "label": "Location",
+          "type": "Text",
+          "default": "",
+          "placeholder": "optional"
+        },
+        {
+          "key": "description",
+          "label": "Notes",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "optional"
+        }
+      ]
+    },
+    {
+      "typeId": "cal.search",
+      "title": "Search Calendar",
+      "subtitle": "calendar",
+      "icon": "magnifying-glass",
+      "category": "Storage",
+      "description": "Searches an .ics source (file/URL/text) for events whose title, location or notes contain the query, optionally within a date range. Branches to \u0027none\u0027 if nothing matches.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "query",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "none",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "summary",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "when",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "count",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "source",
+          "label": "Source (.ics path / URL)",
+          "type": "Text",
+          "default": "calendar.ics",
+          "placeholder": "calendar.ics \u00B7 https://\u2026"
+        },
+        {
+          "key": "query",
+          "label": "Query",
+          "type": "Text",
+          "default": "",
+          "placeholder": "text to find"
+        },
+        {
+          "key": "from",
+          "label": "From (date, optional)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "2026-01-01"
+        },
+        {
+          "key": "to",
+          "label": "To (date, optional)",
+          "type": "Text",
+          "default": "",
+          "placeholder": "2026-12-31"
+        },
+        {
+          "key": "max",
+          "label": "Max",
+          "type": "Int",
+          "default": "5",
+          "placeholder": "5"
+        }
+      ]
+    },
+    {
+      "typeId": "db.sql",
+      "title": "SQL Query",
+      "subtitle": "database",
+      "icon": "cylinder",
+      "category": "Storage",
+      "description": "Advanced: runs raw SQL against a SQLite file (created on first use). SELECT returns rows (pipe-separated); INSERT/UPDATE/DDL return the affected count.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "sql",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "result",
+          "k": "Text",
+          "multi": false
+        },
+        {
+          "n": "rows",
+          "k": "Number",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "file",
+          "label": "Database file",
+          "type": "Text",
+          "default": "data.sqlite",
+          "placeholder": "data.sqlite"
+        },
+        {
+          "key": "sql",
+          "label": "SQL",
+          "type": "Multiline",
+          "default": "",
+          "placeholder": "SELECT * FROM scores ORDER BY n DESC LIMIT 5;"
+        }
+      ]
+    },
+    {
+      "typeId": "code.run",
+      "title": "Code",
+      "subtitle": "js / python",
+      "icon": "scroll",
+      "category": "Logic",
+      "description": "Runs JavaScript (node) or Python (python3). Reads context from env vars (NICK, CHANNEL, MESSAGE, ARGS, INPUT) or JSON on stdin; whatever it prints to stdout becomes \u0027output\u0027.",
+      "trigger": false,
+      "inputs": [
+        {
+          "n": "",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "input",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "outputs": [
+        {
+          "n": "then",
+          "k": "Exec",
+          "multi": false
+        },
+        {
+          "n": "output",
+          "k": "Text",
+          "multi": false
+        }
+      ],
+      "params": [
+        {
+          "key": "language",
+          "label": "Language",
+          "type": "Choice",
+          "default": "javascript",
+          "placeholder": "",
+          "choices": [
+            "javascript",
+            "python"
+          ]
+        },
+        {
+          "key": "code",
+          "label": "Code",
+          "type": "Multiline",
+          "default": "console.log(\u0027hi \u0027 \u002B (process.env.NICK || \u0027there\u0027))",
+          "placeholder": "print your result to stdout"
+        },
+        {
+          "key": "timeout",
+          "label": "Timeout (s)",
+          "type": "Int",
+          "default": "5",
+          "placeholder": "5"
+        }
+      ]
+    }
+  ]
+}
