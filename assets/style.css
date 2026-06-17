@@ -489,7 +489,7 @@ footer a { color: var(--ink-soft); font-weight: 700; }
 .tv-stage { position: relative; width: min(960px, 94%); margin: 0 auto; }
 
 /* themed ambient glow that breathes behind the device */
-.tv-glow { position: absolute; inset: -14% -10% -22%; z-index: 0; filter: blur(46px); opacity: .8;
+.tv-glow { position: absolute; inset: -14% -10% -22%; z-index: 0; pointer-events: none; filter: blur(46px); opacity: .8;
   background:
     radial-gradient(38% 60% at 22% 28%, var(--a) 0, transparent 70%),
     radial-gradient(40% 60% at 80% 72%, var(--b) 0, transparent 72%);
