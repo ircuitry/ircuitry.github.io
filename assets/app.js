@@ -605,8 +605,11 @@
       '<img class="bakebot" src="assets/icon-256.png" alt="">' +
       '<div class="cap" id="bakeCap">Baking your bot…</div>' +
       '<div class="barfx"><i></i></div>' +
-      '<div class="bakeactions" id="bakeActions"></div>' +
-      '<div class="bakedone" id="bakeDone"></div></div>';
+      '<div class="bakeresult" id="bakeResult">' +
+        '<div class="bakeactions" id="bakeActions"></div>' +
+        '<div class="baketitle" id="bakeTitle"></div>' +
+        '<div class="bakedone" id="bakeDone"></div>' +
+      '</div></div>';
   }
   function mToggle(i) {
     var k = MSEL.indexOf(i);
@@ -668,8 +671,7 @@
     MERGED = mMerge(bots, MCONFLICTS, genHelp, botMeta);
     MERGED.name = (el("mname").value || "Merged Bot").trim() || "Merged Bot";
     el("mwiz").classList.remove("show");
-    var fx = el("bakefx"); fx.innerHTML = mStageHtml(); fx.classList.add("show");   // fresh markup restarts the animation
-    setTimeout(function () { var c = el("bakeCap"); if (c) c.textContent = MERGED.name + " is ready!"; }, 2150);
+    var fx = el("bakefx"); fx.classList.remove("done"); fx.innerHTML = mStageHtml(); fx.classList.add("show");   // fresh markup restarts the animation
     setTimeout(function () {
       var json = JSON.stringify(MERGED, null, 2), safe = MERGED.name.replace(/[^a-zA-Z0-9 ._-]/g, "") || "merged-bot";
       var href = mInstallHref();
@@ -679,8 +681,9 @@
       el("bakeActions").innerHTML = install +
         '<button class="btn icon" id="bakeCopy" data-tip="Copy JSON">' + phi("copy") + "</button>" +
         '<button class="btn icon" id="bakeDl" data-tip="Download .ircbot">' + phi("download-simple") + "</button>";
+      el("bakeTitle").textContent = MERGED.name + " is ready!";
       el("bakeDone").innerHTML = '<span style="color:#7a6a52;font-size:13.5px;">' + esc(MERGED.name) + " · " + MERGED.nodes.length + " nodes · " + MERGED.connections.length + ' wires</span><br><a id="bakeClose">Done</a>';
-      el("bakeActions").classList.add("show"); el("bakeDone").classList.add("show");
+      fx.classList.add("done"); el("bakeResult").classList.add("show");   // hides the baking caption/bar, reveals buttons -> title -> subtitle
       var inst = el("bakeActions").querySelector(".install-link"); if (inst) inst.addEventListener("click", function () { setTimeout(probeApp, 1500); });
       el("bakeCopy").addEventListener("click", function () { copyText(json, "Copied - press Ctrl+V in ircuitry"); });
       el("bakeDl").addEventListener("click", function () { downloadFile(json, safe + ".ircbot"); });

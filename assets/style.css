@@ -460,11 +460,16 @@ footer a { color: var(--ink-soft); font-weight: 700; }
 .mhelp { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 12px 14px; border: 1.5px solid #ddd0bd; border-radius: 12px; background: #fcf7ef; cursor: pointer; }
 .mhelp input { width: 18px; height: 18px; accent-color: #b06fce; flex: none; }
 .mhelp .t { font-weight: 700; } .mhelp .s { color: var(--ink-soft); font-size: 13px; }
-/* result buttons revealed under the bot in the splash (splash never leaves) */
-.bakeactions { position: absolute; left: 50%; top: 330px; transform: translateX(-50%) translateY(8px); width: max-content;
-  display: flex; gap: 10px; align-items: center; z-index: 4; opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; }
-.bakeactions.show { opacity: 1; pointer-events: auto; transform: translateX(-50%); }
+/* result revealed under the bot in the splash (splash never leaves): a centred flowing column
+   so the buttons always sit between the icon and the title, and a long name never overlaps anything */
+.bakeresult { position: absolute; left: -60px; right: -60px; top: 246px; z-index: 4;
+  display: flex; flex-direction: column; align-items: center; gap: 15px;
+  opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .3s ease, transform .3s ease; }
+.bakeresult.show { opacity: 1; pointer-events: auto; transform: none; }
+.bakeactions { display: flex; gap: 10px; align-items: center; }
 .bakeactions .btn.icon { width: 46px; }
-.bakedone { position: absolute; left: 0; right: 0; top: 392px; text-align: center; z-index: 4; opacity: 0; transition: opacity .3s ease; }
-.bakeactions.show ~ .bakedone, .bakedone.show { opacity: 1; }
+.baketitle { font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 26px; line-height: 1.12; color: #56463a; text-align: center; }
+.bakedone { text-align: center; }
 .bakedone a { font-weight: 700; cursor: pointer; }
+/* once baked, the progress caption and bar give way to the result */
+.bakefx.done .cap, .bakefx.done .barfx { display: none; }
