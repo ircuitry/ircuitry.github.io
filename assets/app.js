@@ -825,9 +825,49 @@
     });
   }
 
+  // ---------- theme showcase (front page) ----------
+  var THEME_SHOW = [
+    { img: "assets/theme-cozy.png", name: "Cozy", a: "#56C0D2", b: "#F08A9E", bg: "#F4ECD8" },
+    { img: "assets/theme-grape.png", name: "Grape Soda", a: "#9B7CE0", b: "#E884BC", bg: "#F2EDFA" },
+    { img: "assets/theme-cocoa.png", name: "Cocoa Noir", a: "#6FC8BC", b: "#EE9080", bg: "#241C18" },
+    { img: "assets/theme-contrast.png", name: "High Contrast Dark", a: "#3CC8F0", b: "#FF5CA8", bg: "#000000" }
+  ];
+  function initShowcase() {
+    var stage = el("tvStage"); if (!stage) return;
+    var tv = el("tv"), screens = el("tvScreens"), chips = el("tvChips"), nameEl = el("tvName"), bar = el("tvBar");
+    var DUR = 4200, cur = 0, timer = null;
+    THEME_SHOW.forEach(function (t, i) {
+      var im = new Image(); im.src = t.img; im.alt = t.name + " theme"; im.loading = i === 0 ? "eager" : "lazy";
+      if (i === 0) im.className = "on"; screens.appendChild(im);
+      var chip = document.createElement("button"); chip.type = "button"; chip.className = "tv-chip" + (i === 0 ? " on" : "");
+      chip.style.setProperty("--ca", t.a); chip.style.setProperty("--cb", t.b);
+      chip.innerHTML = '<span class="dot"></span>' + esc(t.name);
+      chip.addEventListener("click", function () { go(i, true); });
+      chips.appendChild(chip);
+    });
+    function apply(i) {
+      var t = THEME_SHOW[i];
+      tv.style.setProperty("--a", t.a); tv.style.setProperty("--b", t.b); tv.style.setProperty("--bg", t.bg);
+      nameEl.textContent = t.name;
+      screens.querySelectorAll("img").forEach(function (im, k) { im.classList.toggle("on", k === i); });
+      chips.querySelectorAll(".tv-chip").forEach(function (c, k) { c.classList.toggle("on", k === i); });
+    }
+    function restartBar() { bar.classList.remove("run"); bar.style.width = "0"; void bar.offsetWidth; bar.style.setProperty("--dur", DUR + "ms"); bar.classList.add("run"); }
+    function go(i, user) { cur = (i + THEME_SHOW.length) % THEME_SHOW.length; apply(cur); restartBar(); if (user) { clearInterval(timer); timer = setInterval(function () { go(cur + 1); }, DUR); } }
+    apply(0); restartBar(); timer = setInterval(function () { go(cur + 1); }, DUR);
+
+    stage.addEventListener("mouseenter", function () { clearInterval(timer); var w = getComputedStyle(bar).width; bar.classList.remove("run"); bar.style.width = w; });
+    stage.addEventListener("mouseleave", function () { restartBar(); clearInterval(timer); timer = setInterval(function () { go(cur + 1); }, DUR); stage.style.transform = ""; });
+    stage.addEventListener("pointermove", function (e) {
+      var r = stage.getBoundingClientRect(); var dx = (e.clientX - r.left) / r.width - 0.5, dy = (e.clientY - r.top) / r.height - 0.5;
+      stage.style.transform = "rotateY(" + (dx * 7).toFixed(2) + "deg) rotateX(" + (-dy * 6).toFixed(2) + "deg)";
+    });
+  }
+
   // ---------- boot ----------
   document.addEventListener("DOMContentLoaded", function () {
     loadDownloads();
+    initShowcase();
     var gallery = document.body.getAttribute("data-gallery");
     if (gallery === "nodes" || gallery === "workflows") loadDetectionData();
     if (gallery === "nodes") {

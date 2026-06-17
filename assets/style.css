@@ -479,3 +479,86 @@ footer a { color: var(--ink-soft); font-weight: 700; }
   border: 1px solid var(--line); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35); }
 .node.theme .swatches .sw { flex: 1 1 0; }
 .node.theme.dark .swatches { border-color: rgba(0, 0, 0, .35); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12); }
+
+/* ============ theme showcase: 2004 gloss x 2026 clean x 2050 holo ============ */
+@property --holo { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.showcase { position: relative; overflow: hidden; padding: 60px 0 70px; }
+.showcase .section-sub { max-width: 680px; }
+.tv { --a: #56C0D2; --b: #F08A9E; --bg: #F4ECD8; position: relative; margin-top: 38px;
+  perspective: 1400px; transition: --a .6s, --b .6s; }
+.tv-stage { position: relative; width: min(960px, 94%); margin: 0 auto;
+  transform-style: preserve-3d; transition: transform .25s ease-out; }
+
+/* themed ambient glow that breathes behind the device */
+.tv-glow { position: absolute; inset: -14% -10% -22%; z-index: 0; filter: blur(46px); opacity: .8;
+  background:
+    radial-gradient(38% 60% at 22% 28%, var(--a) 0, transparent 70%),
+    radial-gradient(40% 60% at 80% 72%, var(--b) 0, transparent 72%);
+  animation: glowpulse 6s ease-in-out infinite; }
+@keyframes glowpulse { 0%,100% { opacity: .62; transform: scale(1); } 50% { opacity: .92; transform: scale(1.05); } }
+
+/* the device: clean rounded card (2026) wrapped in a spinning holographic edge (2050) */
+.tv-frame { position: relative; z-index: 1; aspect-ratio: 1600 / 952; border-radius: 20px;
+  background: var(--bg); box-shadow: 0 30px 70px rgba(40,30,60,.34), 0 6px 18px rgba(40,30,60,.18);
+  overflow: hidden; isolation: isolate; }
+.tv-frame::before { content: ""; position: absolute; inset: -2.5px; z-index: -1; border-radius: 22px;
+  background: conic-gradient(from var(--holo), var(--a), var(--b), #ffffff, var(--a));
+  animation: holo 7s linear infinite; }
+@keyframes holo { to { --holo: 360deg; } }
+.tv-frame::after { content: ""; position: absolute; inset: 0; border-radius: 20px; pointer-events: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 0 1px rgba(255,255,255,.14); }
+
+.tv-screens { position: absolute; inset: 0; }
+.tv-screens img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center;
+  opacity: 0; transform: scale(1.04); transition: opacity .9s ease, transform 6s ease; }
+.tv-screens img.on { opacity: 1; transform: scale(1); }
+
+/* a glossy sheen that sweeps across like an old Web 2.0 reflection / a CRT scan */
+.tv-sheen { position: absolute; top: 0; bottom: 0; width: 42%; z-index: 3; pointer-events: none;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,.30) 50%, transparent);
+  transform: skewX(-14deg); animation: sweep 5.5s ease-in-out infinite; }
+@keyframes sweep { 0%,18% { left: -55%; } 55%,100% { left: 115%; } }
+
+.tv-spark { position: absolute; width: 8px; height: 8px; z-index: 4; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, #fff 0, rgba(255,255,255,.5) 40%, transparent 70%);
+  filter: drop-shadow(0 0 6px #fff); animation: twinkle 3.2s ease-in-out infinite; }
+.tv-spark.s1 { top: 12%; left: 8%; animation-delay: .2s; }
+.tv-spark.s2 { top: 70%; left: 90%; animation-delay: 1.1s; }
+.tv-spark.s3 { top: 28%; left: 78%; animation-delay: 2.0s; width: 6px; height: 6px; }
+@keyframes twinkle { 0%,100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1.2); } }
+
+/* retro "now showing" badge with a blinking star */
+.tv-badge { position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%); z-index: 5;
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 999px;
+  background: rgba(255,253,247,.92); backdrop-filter: blur(6px); box-shadow: var(--shadow);
+  border: 1px solid var(--line); font-weight: 800; font-family: var(--font-head); color: var(--ink); white-space: nowrap; }
+.tv-badge b { font-family: var(--font-head); color: var(--ink);
+  background: linear-gradient(90deg, var(--a), var(--b)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.tv-badge .star { color: var(--a); animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+
+/* auto-advance progress bar */
+.tv-bar { position: absolute; left: 8%; right: 8%; bottom: -30px; height: 4px; z-index: 4;
+  background: rgba(120,100,80,.18); border-radius: 3px; overflow: hidden; }
+.tv-bar i { display: block; height: 100%; width: 0; border-radius: 3px;
+  background: linear-gradient(90deg, var(--a), var(--b)); }
+.tv-bar i.run { width: 100%; transition: width var(--dur, 4200ms) linear; }
+
+/* theme chips (clean 2026 pills, each tinted with its own palette) */
+.tv-chips { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 56px; }
+.tv-chip { --ca: #56C0D2; --cb: #F08A9E; display: inline-flex; align-items: center; gap: 10px;
+  padding: 9px 16px 9px 11px; border-radius: 999px; cursor: pointer; font-weight: 800; font-size: 15px;
+  color: var(--ink); background: var(--card); border: 1.5px solid var(--line); box-shadow: var(--shadow-sm);
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease; }
+.tv-chip .dot { width: 22px; height: 22px; border-radius: 7px; flex: none;
+  background: linear-gradient(135deg, var(--ca), var(--cb)); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.45); }
+.tv-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.tv-chip.on { border-color: transparent; color: #fff; transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--ca), var(--cb)); box-shadow: 0 10px 26px color-mix(in srgb, var(--ca) 55%, transparent); }
+.tv-chip.on .dot { background: rgba(255,255,255,.9); box-shadow: none; }
+
+@media (max-width: 640px) { .tv-badge { font-size: 13px; } .tv-chip { font-size: 13.5px; } }
+@media (prefers-reduced-motion: reduce) {
+  .tv-glow, .tv-frame::before, .tv-sheen, .tv-spark, .tv-badge .star { animation: none; }
+  .tv-screens img { transition: opacity .4s ease; transform: none; }
+}
