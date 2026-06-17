@@ -746,6 +746,9 @@
     var grid = el("grid"), rail = el("chips");
     if (!grid) return;
     var all = [], query = "", io = null;
+    query = new URLSearchParams(location.search).get("q") || "";   // restore a shared search from the URL
+    function qs() { return query.trim() ? "?q=" + encodeURIComponent(query.trim()) : ""; }
+    function syncUrl() { history.replaceState(null, "", location.pathname + qs() + location.hash); }
 
     function primary(it) { var fs = opts.facets(it); return (fs && fs[0]) || "Other"; }
     function catRank(c) { var i = (opts.order || []).indexOf(c); return i < 0 ? 99 : i; }
@@ -765,7 +768,8 @@
       grid.innerHTML = cats.map(function (c) {
         return '<section class="cat-section" id="' + secId(c) + '">' +
           '<div class="section-head"><div class="ic">' + icon(c) + '</div>' +
-          '<div class="h"><h3>' + esc(c) + ' <span class="pill">' + b[c].length + "</span></h3>" +
+          '<div class="h"><h3><a class="cat-anchor" href="#' + secId(c) + '">' + esc(c) + '</a> <span class="pill">' + b[c].length + '</span>' +
+          '<a class="cat-hash" href="#' + secId(c) + '" aria-label="Link to ' + esc(c) + '">' + phi("link") + '</a></h3>' +
           (blurb(c) ? '<div class="blurb">' + esc(blurb(c)) + "</div>" : "") + "</div></div>" +
           '<div class="grid">' + b[c].map(function (it) { return opts.card(it, all.indexOf(it)); }).join("") + "</div></section>";
       }).join("");
@@ -798,7 +802,11 @@
         return '<button class="chip" data-cat="' + esc(secId(c)) + '"><span class="ic">' + icon(c) + "</span>" + esc(c) + '<span class="n">' + b[c].length + "</span></button>";
       }).join("");
       rail.querySelectorAll("[data-cat]").forEach(function (btn) {
-        btn.addEventListener("click", function () { var s = document.getElementById(btn.getAttribute("data-cat")); if (s) s.scrollIntoView({ behavior: "smooth", block: "start" }); });
+        btn.addEventListener("click", function () {
+          var id = btn.getAttribute("data-cat"), s = document.getElementById(id);
+          if (s) s.scrollIntoView({ behavior: "smooth", block: "start" });
+          history.replaceState(null, "", location.pathname + qs() + "#" + id);   // shareable: keeps search + sets the category
+        });
       });
     }
 
@@ -818,8 +826,12 @@
       all = (data[opts.listKey] || []).sort(function (a, b) { return opts.sortKey(a).localeCompare(opts.sortKey(b)); });
       if (document.body.getAttribute("data-gallery") === "workflows") { WF_ITEMS = all; mEnsureUi(); mRenderTray(); }
       el("state").style.display = "none";
-      var s = el("search"); if (s) s.addEventListener("input", function () { query = s.value; render(); });
+      var s = el("search"); if (s) { s.value = query; s.addEventListener("input", function () { query = s.value; syncUrl(); render(); }); }
       render();
+      if (location.hash) {   // a deep link to a category: scroll there once the gallery has rendered
+        var anchor = document.getElementById(location.hash.slice(1));
+        if (anchor) setTimeout(function () { anchor.scrollIntoView({ block: "start" }); }, 60);
+      }
     }).catch(function () {
       el("state").innerHTML = "Could not load right now. Browse it on <a href=\"https://github.com/" + opts.repo + "\">GitHub</a>.";
     });
