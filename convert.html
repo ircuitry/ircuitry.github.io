@@ -95,9 +95,9 @@
       <div class="features">
         <div class="feature"><div class="ic c-leaf"><i class="ph ph-lightning"></i></div><h3>Events</h3><p>Maps <code>on TEXT/ACTION/JOIN/PART/QUIT/KICK/NICK/MODE/NOTICE/INVITE/CONNECT</code> to trigger nodes. A <code>!cmd</code> matchtext becomes an On Command node.</p></div>
         <div class="feature"><div class="ic c-blue"><i class="ph ph-paper-plane-tilt"></i></div><h3>Commands</h3><p><code>msg notice me kick mode ban topic join part nick set inc write hadd</code> and more become action and data nodes, chained in order.</p></div>
-        <div class="feature"><div class="ic c-pink"><i class="ph ph-git-branch"></i></div><h3>Logic</h3><p>A single <code>if ( ) { } else { }</code> becomes an If/Compare branch. Identifiers like <code>$nick $chan $1- %var</code> become <code>{tokens}</code>.</p></div>
+        <div class="feature"><div class="ic c-pink"><i class="ph ph-git-branch"></i></div><h3>Logic &amp; flow</h3><p>Nested <code>if / elseif / else</code> become If/Compare branches; a forward <code>goto</code> becomes a jump. Identifiers like <code>$nick $chan $1- $rand() $calc() $read() %var</code> become tokens or helper nodes.</p></div>
         <div class="feature"><div class="ic c-yellow"><i class="ph ph-note"></i></div><h3>Comments &rarr; notes</h3><p>Your <code>;</code> and <code>/* */</code> comments become resizable sticky notes on the canvas, right where they belong.</p></div>
-        <div class="feature"><div class="ic c-lilac"><i class="ph ph-hand-waving"></i></div><h3>Honest fallbacks</h3><p>Loops, <code>goto</code>, nested ifs, aliases and unknown identifiers are kept verbatim in a TODO note and flagged in the report - never converted wrong.</p></div>
+        <div class="feature"><div class="ic c-lilac"><i class="ph ph-hand-waving"></i></div><h3>Honest fallbacks</h3><p>Loops (<code>while</code> / backward <code>goto</code>), aliases and unknown identifiers are kept verbatim in a TODO note and flagged in the report - never converted wrong. ircuitry loops live on the Repeat / For Each / On Timer nodes.</p></div>
         <div class="feature"><div class="ic c-leaf"><i class="ph ph-download-simple"></i></div><h3>Import</h3><p>Download the <code>.ircbot</code> (or copy it), then open ircuitry and import - or paste it straight onto the canvas.</p></div>
       </div>
     </div>
@@ -115,7 +115,7 @@
   </footer>
 
   <div class="toast" id="toast"></div>
-  <script src="assets/mirc2ircbot.js?v=1"></script>
+  <script src="assets/mirc2ircbot.js?v=2"></script>
   <script>
   (function () {
     var $ = function (id) { return document.getElementById(id); };
