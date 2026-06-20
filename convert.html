@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ircuitry - mIRC script converter</title>
+  <meta name="description" content="Paste an mIRC remote script and get an importable ircuitry .ircbot file. Comments become sticky notes. Runs entirely in your browser - nothing is uploaded.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <meta property="og:title" content="ircuitry - mIRC script converter">
+  <meta property="og:description" content="Turn an mIRC remote script into an importable ircuitry bot, in your browser.">
+  <meta property="og:image" content="assets/theme-cozy.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/phosphor.css">
+  <link rel="stylesheet" href="assets/style.css?v=20">
+  <style>
+    .conv-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+    @media (max-width:820px){ .conv-grid{ grid-template-columns:1fr; } }
+    .conv label { display:block; font-family:var(--font-head); font-weight:700; color:var(--ink); margin:0 0 8px; }
+    .conv textarea {
+      width:100%; height:420px; resize:vertical; padding:14px 16px; border:1.5px solid var(--line);
+      border-radius:var(--radius); background:var(--card); color:var(--ink); font:13px/1.55 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+      box-shadow:var(--shadow-sm); outline:none;
+    }
+    .conv textarea:focus { border-color:var(--leaf); }
+    .conv .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:14px; }
+    .conv .nm { display:inline-flex; align-items:center; gap:6px; color:var(--ink-soft); font-size:.92rem; }
+    .conv .nm input { padding:7px 10px; border:1.5px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink); font:inherit; width:160px; }
+    .out { min-height:420px; border:1.5px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow-sm); padding:18px 20px; }
+    .out.empty { display:flex; align-items:center; justify-content:center; text-align:center; color:var(--ink-faint); }
+    .out h3 { font-family:var(--font-head); margin:0 0 4px; }
+    .pill { display:inline-block; background:var(--leaf-bg); color:var(--leaf-deep); border-radius:999px; padding:3px 12px; font-weight:700; font-size:.9rem; margin-bottom:14px; }
+    .ev { list-style:none; margin:6px 0 0; padding:0; }
+    .ev li { display:flex; gap:8px; padding:7px 0; border-top:1px dashed var(--line); font-size:.94rem; }
+    .ev li:first-child { border-top:0; }
+    .ev .res { color:var(--ink-soft); margin-left:auto; text-align:right; white-space:nowrap; }
+    .ev .ok i { color:var(--leaf-deep); } .ev .todo i { color:#c98a2b; }
+    details.warns { margin-top:14px; } details.warns summary { cursor:pointer; color:#a9762a; font-weight:700; }
+    details.warns ul { margin:8px 0 0 18px; color:var(--ink-soft); font-size:.9rem; }
+    .out .btn-row { margin-top:18px; }
+    .err { color:#b4452f; font-weight:700; }
+    .explain .feature p code, .conv p code { background:var(--paper-2); padding:1px 6px; border-radius:6px; font-size:.86em; }
+    .privacy { color:var(--ink-faint); font-size:.9rem; margin-top:10px; display:flex; align-items:center; gap:7px; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
+      <div class="links">
+        <a href="docs.html">Docs</a><a href="nodes.html">Nodes</a>
+        <a href="workflows.html">Workflows</a><a href="convert.html">Convert</a><a href="themes.html">Themes</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/ircuitry/releases/latest">Download</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" style="padding-bottom:8px;">
+    <div class="wrap">
+      <h1>Bring your <span class="leaf">mIRC scripts</span> home.</h1>
+      <p class="lead">
+        Paste an mIRC remote script and get an importable ircuitry <b>.ircbot</b>. Events become triggers,
+        commands become nodes, and your <b>comments turn into sticky notes</b>. It runs entirely in your
+        browser - your script is never uploaded anywhere.
+      </p>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap conv">
+      <div class="conv-grid">
+        <div>
+          <label for="src">Your mIRC remote script (<code>.mrc</code>)</label>
+          <textarea id="src" spellcheck="false" placeholder="on *:TEXT:!hello*:#:{ msg $chan Hello $nick $+ ! }"></textarea>
+          <div class="toolbar">
+            <button class="btn primary" id="go"><i class="ph ph-arrows-left-right"></i> Convert</button>
+            <button class="btn" id="ex">Load example</button>
+            <span class="nm">name <input id="name" value="imported-mirc-bot" spellcheck="false"></span>
+          </div>
+          <p class="privacy"><i class="ph ph-lock-simple"></i> 100% client-side. Nothing leaves your browser.</p>
+        </div>
+        <div>
+          <div id="out" class="out empty">Your converted bot and a conversion report will appear here.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="explain">
+    <div class="wrap">
+      <h2 class="section-title">What it converts</h2>
+      <p class="section-sub">A best-effort, honest converter. It handles the common bot patterns cleanly and never silently guesses - anything it can't map is preserved verbatim in a "needs a human" note and listed in the report.</p>
+      <div class="features">
+        <div class="feature"><div class="ic c-leaf"><i class="ph ph-lightning"></i></div><h3>Events</h3><p>Maps <code>on TEXT/ACTION/JOIN/PART/QUIT/KICK/NICK/MODE/NOTICE/INVITE/CONNECT</code> to trigger nodes. A <code>!cmd</code> matchtext becomes an On Command node.</p></div>
+        <div class="feature"><div class="ic c-blue"><i class="ph ph-paper-plane-tilt"></i></div><h3>Commands</h3><p><code>msg notice me kick mode ban topic join part nick set inc write hadd</code> and more become action and data nodes, chained in order.</p></div>
+        <div class="feature"><div class="ic c-pink"><i class="ph ph-git-branch"></i></div><h3>Logic &amp; flow</h3><p>Nested <code>if / elseif / else</code> become If/Compare branches; a forward <code>goto</code> becomes a jump. Identifiers like <code>$nick $chan $1- $rand() $calc() $read() %var</code> become tokens or helper nodes.</p></div>
+        <div class="feature"><div class="ic c-yellow"><i class="ph ph-note"></i></div><h3>Comments &rarr; notes</h3><p>Your <code>;</code> and <code>/* */</code> comments become resizable sticky notes on the canvas, right where they belong.</p></div>
+        <div class="feature"><div class="ic c-lilac"><i class="ph ph-hand-waving"></i></div><h3>Honest fallbacks</h3><p>Loops (<code>while</code> / backward <code>goto</code>), aliases and unknown identifiers are kept verbatim in a TODO note and flagged in the report - never converted wrong. ircuitry loops live on the Repeat / For Each / On Timer nodes.</p></div>
+        <div class="feature"><div class="ic c-leaf"><i class="ph ph-download-simple"></i></div><h3>Import</h3><p>Download the <code>.ircbot</code> (or copy it), then open ircuitry and import - or paste it straight onto the canvas.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>© ircuitry contributors · <a href="https://github.com/ircuitry/ircuitry/blob/main/LICENSE">GPL-3.0</a></span>
+      <span>
+        <a href="https://github.com/ircuitry/ircuitry">App</a> ·
+        <a href="workflows.html">Workflows</a> ·
+        <a href="nodes.html">Nodes</a>
+      </span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="assets/mirc2ircbot.js?v=2"></script>
+  <script>
+  (function () {
+    var $ = function (id) { return document.getElementById(id); };
+    var last = null;
+    var EXAMPLE = [
+      "; A cozy little channel bot.",
+      "; Greets newcomers and answers a couple of commands.",
+      "",
+      "on *:JOIN:#:{ msg $chan Welcome $nick $+ , make yourself at home! }",
+      "",
+      "on *:TEXT:!hello*:#:{ msg $chan Hello $nick $+ ! }",
+      "",
+      "; the magic 8-ball",
+      "on *:TEXT:!8ball*:#:{",
+      "  if (yes isin $1-) { msg $chan Definitely, $nick }",
+      "  else { notice $nick Ask again later }",
+      "}",
+      "",
+      "on *:TEXT:!op*:#:{ mode $chan +o $nick }"
+    ].join("\n");
+
+    function toast(msg) {
+      var t = $("toast"); if (!t) { return; } t.textContent = msg; t.classList.add("show");
+      setTimeout(function () { t.classList.remove("show"); }, 1800);
+    }
+    function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]; }); }
+
+    function render(res) {
+      var r = res.report, out = $("out"); out.classList.remove("empty");
+      var html = '<span class="pill">' + esc(r.summary) + '</span>';
+      html += '<h3>Conversion report</h3>';
+      if (r.events.length) {
+        html += '<ul class="ev">';
+        r.events.forEach(function (e) {
+          var todo = /note|manual|TODO|control flow|condition/i.test(e.result);
+          html += '<li class="' + (todo ? "todo" : "ok") + '"><span><i class="ph ' + (todo ? "ph-note-pencil" : "ph-check-circle") + '"></i> ' + esc(e.name) + '</span><span class="res">' + esc(e.result) + '</span></li>';
+        });
+        html += '</ul>';
+      } else {
+        html += '<p class="err">No <code>on</code> events found. Paste an mIRC <em>remote</em> script (the <code>on *:TEXT:...</code> kind).</p>';
+      }
+      if (r.warnings && r.warnings.length) {
+        html += '<details class="warns"><summary>' + r.warnings.length + ' warning(s)</summary><ul>';
+        r.warnings.forEach(function (w) { html += "<li>" + esc(w) + "</li>"; });
+        html += "</ul></details>";
+      }
+      html += '<div class="btn-row">' +
+        '<button class="btn primary" id="dl"><i class="ph ph-download-simple"></i> Download .ircbot</button>' +
+        '<button class="btn" id="cp"><i class="ph ph-copy"></i> Copy JSON</button></div>';
+      out.innerHTML = html;
+      $("dl").onclick = function () {
+        var blob = new Blob([res.json], { type: "application/json" });
+        var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+        a.download = res.name + ".ircbot"; document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 100);
+      };
+      $("cp").onclick = function () {
+        navigator.clipboard.writeText(res.json).then(function () { toast("Copied - paste it onto the ircuitry canvas"); },
+          function () { toast("Copy failed"); });
+      };
+    }
+
+    $("go").onclick = function () {
+      var src = $("src").value;
+      if (!src.trim()) { toast("Paste a script first"); return; }
+      try {
+        last = window.MircConvert.convert(src, { name: $("name").value || "imported-mirc-bot" });
+        render(last);
+      } catch (e) {
+        $("out").classList.remove("empty");
+        $("out").innerHTML = '<p class="err">Sorry - the converter hit an error parsing that script:</p><pre style="white-space:pre-wrap;color:var(--ink-soft)">' + esc(e && e.message || e) + "</pre>";
+      }
+    };
+    $("ex").onclick = function () { $("src").value = EXAMPLE; toast("Example loaded - hit Convert"); };
+  })();
+  </script>
+</body>
+</html>
