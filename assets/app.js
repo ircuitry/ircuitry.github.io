@@ -5,12 +5,15 @@
   var NODES = "ircuitry/community-nodes";
   var WORKFLOWS = "ircuitry/community-workflows";
   var THEMES = "ircuitry/community-themes";
+  var PLUGINS = "ircuitry/community-plugins";
   var NODES_RAW = "https://raw.githubusercontent.com/" + NODES + "/main/";
   var WF_RAW = "https://raw.githubusercontent.com/" + WORKFLOWS + "/main/";
   var THEMES_RAW = "https://raw.githubusercontent.com/" + THEMES + "/main/";
+  var PLUGINS_RAW = "https://raw.githubusercontent.com/" + PLUGINS + "/main/";
   var NODES_INDEX = NODES_RAW + "index.json";
   var WF_INDEX = WF_RAW + "index.json";
   var THEMES_INDEX = THEMES_RAW + "index.json";
+  var PLUGINS_INDEX = PLUGINS_RAW + "index.json";
   function rawUrl(base, file) { return base + file.split("/").map(encodeURIComponent).join("/"); }
   function installHref(action, raw) { return "ircuitry://" + action + "?url=" + encodeURIComponent(raw); }
   var RELEASE_API = "https://api.github.com/repos/" + REPO + "/releases/latest";
@@ -20,7 +23,8 @@
   var CAT_ICON = { Event: "lightning", Filter: "funnel", Logic: "git-branch", Data: "hash", Ai: "sparkle",
     Ircv3: "broadcast", Storage: "database", Action: "paper-plane-tilt", Code: "code", AI: "sparkle",
     Games: "game-controller", Moderation: "shield", Community: "users-three", Utility: "wrench", Reminders: "alarm", Testing: "test-tube",
-    Cozy: "coffee", Light: "sun", Nature: "leaf", Seasonal: "tree", Dark: "moon", Vibrant: "sparkle", Retro: "television", Minimal: "circle-half", Accessibility: "eye" };
+    Cozy: "coffee", Light: "sun", Nature: "leaf", Seasonal: "tree", Dark: "moon", Vibrant: "sparkle", Retro: "television", Minimal: "circle-half", Accessibility: "eye",
+    Panels: "sidebar", Dev: "terminal-window", Productivity: "rocket-launch", Fun: "confetti" };
   // name -> glyph char, for drawing node icons inside the SVG graph viewer (where <i> classes can't go)
   var PH_GLYPH = {};
   fetch("assets/phosphor-codepoints.json", { cache: "force-cache" }).then(function (r) { return r.ok ? r.json() : null; })
@@ -410,7 +414,7 @@
   }
   function openInspect(item, kind) {
     var graph, title, sub;
-    if (kind === "workflows" || (item && item.workflow)) { graph = item.workflow; title = item.name || "Workflow"; sub = (item.nodeCount != null ? item.nodeCount + " nodes · " + item.connectionCount + " wires" : "workflow"); }
+    if (kind === "workflows" || kind === "plugins" || (item && (item.workflow || item.plugin))) { graph = item.workflow || item.plugin; title = item.name || (kind === "plugins" ? "Plugin" : "Workflow"); sub = (item.nodeCount != null ? item.nodeCount + " nodes · " + item.connectionCount + " wires" : (kind === "plugins" ? "plugin" : "workflow")); }
     else { graph = item && item.manifest && item.manifest.subgraph; title = (item && (item.title || item.typeId)) || "Node"; sub = "node graph"; }
     var m = gvEnsureModal();
     m.querySelector(".gv-title").innerHTML = esc(title) + ' <span class="gv-sub">' + esc(sub) + "</span>";
@@ -742,6 +746,32 @@
       themeActions(t, i, rawUrl(THEMES_RAW, t.file)) + "</div>";
   }
 
+  // plugins: a friendly label for each derived permission (mirrors the app's trust card), shown as chips
+  var PERM_LABEL = {
+    panel: "side panel", menu: "menu", toolbar: "toolbar", context: "right-click", command: "commands",
+    dialogs: "dialogs", "app-state": "reads app state", navigate: "switches tabs", "control-bots": "runs bots",
+    "edit-graph": "edits workflows", "run-commands": "runs commands", network: "network", settings: "settings"
+  };
+  function permChips(p) {
+    return (p.permissions || []).map(function (x) { return '<span class="lang-tag perm">' + phi("shield-check") + esc(PERM_LABEL[x] || x) + "</span>"; }).join(" ");
+  }
+  function pluginActions(p, i, raw) {
+    return '<div class="actions">' +
+      '<a class="btn primary install-link" href="' + installHref("install-plugin", raw) + '" data-tip="Opens ircuitry and shows a trust card (what it can do) before installing">' + phi("package") + " One-click install</a>" +
+      '<button class="btn icon" data-inspect="' + i + '" data-kind="plugins" data-tip="Inspect graph">' + phi("magnifying-glass") + "</button>" +
+      '<button class="btn icon" data-copy="' + i + '" data-tip="Copy JSON">' + phi("copy") + "</button>" +
+      '<button class="btn icon" data-dl="' + i + '" data-tip="Download .ircplugin">' + phi("download-simple") + "</button></div>";
+  }
+  function pluginCard(p, i) {
+    var author = "by " + esc(p.author || "community");
+    return '<div class="node">' +
+      '<div class="top"><div class="badge">' + phi(p.icon || "puzzle-piece") + '</div><div>' +
+      '<div class="name">' + esc(p.name) + '</div><div class="meta">v' + esc(p.version || "1.0.0") + " · " + esc(p.nodeCount) + " nodes · " + author + "</div></div></div>" +
+      '<div class="desc">' + esc(p.description || "") + "</div>" +
+      '<div class="cat perms">' + permChips(p) + "</div>" +
+      pluginActions(p, i, rawUrl(PLUGINS_RAW, p.file)) + "</div>";
+  }
+
   function startGallery(opts) {
     var grid = el("grid"), rail = el("chips");
     if (!grid) return;
@@ -921,6 +951,19 @@
         copyData: function (t) { return JSON.stringify(t.theme, null, 2); },
         copyMsg: function (t) { return "Copied " + t.name + " · paste into ircuitry Appearance"; },
         dlName: function (t) { return t.name.replace(/[^a-zA-Z0-9 ._-]/g, "") + ".irctheme"; }
+      });
+    } else if (gallery === "plugins") {
+      startGallery({
+        url: PLUGINS_INDEX, repo: PLUGINS, listKey: "plugins", noun: "plugins",
+        order: ["AI", "Panels", "Dev", "Productivity", "Utility", "Fun"],
+        blurbs: { AI: "Chat and agents, in a panel", Panels: "Dock your own side panel", Dev: "Developer tools inside ircuitry", Productivity: "Move faster across your bots", Utility: "Handy extras for the app", Fun: "Just for the joy of it" },
+        facets: function (p) { return [p.category || "Utility"]; },
+        haystack: function (p) { return p.name + " " + p.description + " " + (p.category || "") + " " + (p.tags || []).join(" ") + " " + (p.permissions || []).join(" "); },
+        sortKey: function (p) { return p.name || ""; },
+        card: pluginCard,
+        copyData: function (p) { return JSON.stringify(p.plugin, null, 2); },
+        copyMsg: function (p) { return "Copied " + p.name + " · drop the file on ircuitry"; },
+        dlName: function (p) { return p.name.replace(/[^a-zA-Z0-9 ._-]/g, "") + ".ircplugin"; }
       });
     }
   });

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Community nodes - ircuitry</title>
-  <meta name="description" content="Browse drop-in community nodes for ircuitry. Copy one and paste it straight into the app.">
+  <title>Plugins - ircuitry</title>
+  <meta name="description" content="Plugins that extend ircuitry itself: side panels, menus, dialogs and settings. Install one in a click.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,14 +12,14 @@
   <link rel="stylesheet" href="assets/phosphor.css">
   <link rel="stylesheet" href="assets/style.css?v=21">
 </head>
-<body data-gallery="nodes">
+<body data-gallery="plugins">
   <nav class="nav">
     <div class="wrap">
       <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
       <div class="links">
-        
         <a href="docs.html">Docs</a><a href="nodes.html">Nodes</a>
-        <a href="workflows.html">Workflows</a><a href="plugins.html">Plugins</a><a href="convert.html">Convert</a><a href="themes.html">Themes</a>
+        <a href="workflows.html">Workflows</a><a href="plugins.html">Plugins</a>
+        <a href="convert.html">Convert</a><a href="themes.html">Themes</a>
         <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
       </div>
     </div>
@@ -27,25 +27,30 @@
 
   <header class="gallery-head">
     <div class="wrap">
-      <h1 class="section-title" style="text-align:left;">Community nodes</h1>
+      <h1 class="section-title" style="text-align:left;">Plugins</h1>
       <p class="section-sub" style="text-align:left;margin-left:0;">
-        Ready-made blocks for ircuitry. Hit <b>Copy</b>, then paste the node straight into the app.
-        Want to add your own? <a href="https://github.com/ircuitry/community-nodes">Open a PR.</a>
+        A plugin extends ircuitry <b>itself</b> - it adds menus, toolbar buttons, right-click actions, Cmd+K
+        commands, <b>its own docked side panel</b>, dialogs and a settings screen - and works across every tab.
+        Hit <b>Install</b> and ircuitry shows you exactly what it can do first. Built one?
+        <a href="https://github.com/ircuitry/community-plugins">Open a PR.</a>
       </p>
 
       <div class="note">
-        <b>Two ways to install:</b>
+        <b>How install works:</b>
         <ol>
-          <li><b>Install in app</b> (one click): opens ircuitry and stages the node behind a confirm dialog. Needs ircuitry installed (Windows, macOS or Linux). On macOS, move ircuitry.app to Applications and open it once first.</li>
-          <li><b>Copy</b>, then in ircuitry open the <b>Node Library</b> and click <b>Install from clipboard</b> (or press <code>Ctrl+Shift+V</code>) and confirm. Works on every platform.</li>
+          <li><b>One-click install</b>: opens ircuitry and shows a <b>trust card</b> listing the plugin's
+            permissions (side panel, runs commands, edits workflows...). Approve it and it installs + enables,
+            on every tab. Needs ircuitry installed (Windows, macOS or Linux). On macOS, move ircuitry.app to
+            Applications and open it once first.</li>
+          <li><b>Download</b> the <code>.ircplugin</code> and double-click it (or drop it on ircuitry) - same trust card.</li>
         </ol>
-        Prefer files? Use <b>Download</b> and drag the <code>.ircnode</code> onto the canvas, or drop it into <code>~/ircuitry/nodes/</code>.
-        To remove a node later, hover it in the Node Library and click the <b><i class="ph ph-x"></i></b>.
-        Scripted nodes run code on your machine, so review one before installing.
+        A plugin you didn't approve never runs; disabling one sticks across restarts. Manage them in ircuitry
+        under <b>More -> Plugins...</b>. Plugins can run sandboxed commands, use the network, or edit your
+        workflows - the chips on each card (and the trust card) spell out exactly which.
       </div>
 
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="Search nodes by name, id or category...">
+        <input class="search" id="search" type="search" placeholder="Search plugins by name, tag or what they can do...">
         <span class="count" id="count"></span>
       </div>
     </div>
@@ -58,7 +63,7 @@
         <nav class="chips" id="chips"></nav>
       </aside>
       <div class="gallery-main">
-        <div class="state" id="state">Loading nodes...</div>
+        <div class="state" id="state">Loading plugins...</div>
         <div id="grid"></div>
         <div class="empty" id="empty" hidden>No matches - try a different search.</div>
       </div>
@@ -70,7 +75,7 @@
       <span>© ircuitry contributors</span>
       <span>
         <a href="index.html">Home</a> ·
-        <a href="https://github.com/ircuitry/community-nodes">Submit a node</a> ·
+        <a href="https://github.com/ircuitry/community-plugins">Submit a plugin</a> ·
         <a href="https://github.com/ircuitry/ircuitry">App</a>
       </span>
     </div>
