@@ -3,23 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plugins - ircuitry</title>
-  <meta name="description" content="Plugins that extend ircuitry itself: side panels, menus, dialogs and settings. Install one in a click.">
+  <title data-zh="插件 - ircuitry">Plugins - ircuitry</title>
+  <meta name="description" data-zh="扩展 ircuitry 本身的插件：侧边面板、菜单、对话框和设置。一键安装。" content="Plugins that extend ircuitry itself: side panels, menus, dialogs and settings. Install one in a click.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/phosphor.css">
-  <link rel="stylesheet" href="assets/style.css?v=21">
+  <link rel="stylesheet" href="assets/style.css?v=22">
+  <script src="assets/i18n.js"></script>
 </head>
 <body data-gallery="plugins">
   <nav class="nav">
     <div class="wrap">
       <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
       <div class="links">
-        <a href="docs.html">Docs</a><a href="nodes.html">Nodes</a>
-        <a href="workflows.html">Workflows</a><a href="plugins.html">Plugins</a>
-        <a href="convert.html">Convert</a><a href="themes.html">Themes</a>
+        <a href="docs.html" data-zh="文档">Docs</a><a href="nodes.html" data-zh="节点">Nodes</a>
+        <a href="workflows.html" data-zh="工作流">Workflows</a><a href="plugins.html" data-zh="插件">Plugins</a>
+        <a href="convert.html" data-zh="转换">Convert</a><a href="themes.html" data-zh="主题">Themes</a>
         <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
       </div>
     </div>
@@ -27,15 +28,15 @@
 
   <header class="gallery-head">
     <div class="wrap">
-      <h1 class="section-title" style="text-align:left;">Plugins</h1>
-      <p class="section-sub" style="text-align:left;margin-left:0;">
+      <h1 class="section-title" style="text-align:left;" data-zh="插件">Plugins</h1>
+      <p class="section-sub" style="text-align:left;margin-left:0;" data-zh="插件扩展的是 ircuitry <b>本身</b> - 它会添加菜单、工具栏按钮、右键动作、Cmd+K 命令、<b>专属的停靠侧边面板</b>、对话框和设置界面 - 并在每个标签页中生效。点击<b>安装</b>，ircuitry 会先告诉你它具体能做什么。做了一个？<a href='https://github.com/ircuitry/community-plugins'>提交 PR。</a>">
         A plugin extends ircuitry <b>itself</b> - it adds menus, toolbar buttons, right-click actions, Cmd+K
         commands, <b>its own docked side panel</b>, dialogs and a settings screen - and works across every tab.
         Hit <b>Install</b> and ircuitry shows you exactly what it can do first. Built one?
         <a href="https://github.com/ircuitry/community-plugins">Open a PR.</a>
       </p>
 
-      <div class="note">
+      <div class="note" data-zh="<b>安装方式：</b><ol><li><b>一键安装</b>：打开 ircuitry 并显示一张<b>信任卡片</b>，列出插件的权限（侧边面板、运行命令、编辑工作流……）。批准后即安装并启用，在每个标签页生效。需要已安装 ircuitry（Windows、macOS 或 Linux）。在 macOS 上，先把 ircuitry.app 移到「应用程序」并打开一次。</li><li><b>下载</b> <code>.ircplugin</code> 并双击（或拖到 ircuitry 上）- 同样会显示信任卡片。</li></ol>你没批准的插件永远不会运行；禁用某个插件会在重启后保持。在 ircuitry 的<b>更多 -> 插件…</b>中管理它们。插件可以运行沙盒命令、使用网络或编辑你的工作流 - 每张卡片上的标签（以及信任卡片）会清楚标明具体哪些。">
         <b>How install works:</b>
         <ol>
           <li><b>One-click install</b>: opens ircuitry and shows a <b>trust card</b> listing the plugin's
@@ -50,7 +51,7 @@
       </div>
 
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="Search plugins by name, tag or what they can do...">
+        <input class="search" id="search" type="search" data-zh-ph="按名称、标签或功能搜索插件..." placeholder="Search plugins by name, tag or what they can do...">
         <span class="count" id="count"></span>
       </div>
     </div>
@@ -59,13 +60,13 @@
   <section class="gallery-body">
     <div class="wrap gallery-layout">
       <aside class="cat-rail">
-        <div class="rail-title">Browse</div>
+        <div class="rail-title" data-zh="浏览">Browse</div>
         <nav class="chips" id="chips"></nav>
       </aside>
       <div class="gallery-main">
-        <div class="state" id="state">Loading plugins...</div>
+        <div class="state" id="state" data-zh="正在加载插件...">Loading plugins...</div>
         <div id="grid"></div>
-        <div class="empty" id="empty" hidden>No matches - try a different search.</div>
+        <div class="empty" id="empty" hidden data-zh="没有匹配项，换个搜索词试试。">No matches - try a different search.</div>
       </div>
     </div>
   </section>
@@ -74,9 +75,9 @@
     <div class="wrap">
       <span>© ircuitry contributors</span>
       <span>
-        <a href="index.html">Home</a> ·
-        <a href="https://github.com/ircuitry/community-plugins">Submit a plugin</a> ·
-        <a href="https://github.com/ircuitry/ircuitry">App</a>
+        <a href="index.html" data-zh="主页">Home</a> ·
+        <a href="https://github.com/ircuitry/community-plugins" data-zh="提交插件">Submit a plugin</a> ·
+        <a href="https://github.com/ircuitry/ircuitry" data-zh="应用">App</a>
       </span>
     </div>
   </footer>

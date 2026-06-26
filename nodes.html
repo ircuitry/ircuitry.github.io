@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Community nodes - ircuitry</title>
-  <meta name="description" content="Browse drop-in community nodes for ircuitry. Copy one and paste it straight into the app.">
+  <title data-zh="社区节点 - ircuitry">Community nodes - ircuitry</title>
+  <meta name="description" data-zh="浏览 ircuitry 的即插即用社区节点。复制一个，直接粘贴进应用。" content="Browse drop-in community nodes for ircuitry. Copy one and paste it straight into the app.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/phosphor.css">
-  <link rel="stylesheet" href="assets/style.css?v=21">
+  <link rel="stylesheet" href="assets/style.css?v=22">
+  <script src="assets/i18n.js"></script>
 </head>
 <body data-gallery="nodes">
   <nav class="nav">
@@ -18,8 +19,8 @@
       <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
       <div class="links">
         
-        <a href="docs.html">Docs</a><a href="nodes.html">Nodes</a>
-        <a href="workflows.html">Workflows</a><a href="plugins.html">Plugins</a><a href="convert.html">Convert</a><a href="themes.html">Themes</a>
+        <a href="docs.html" data-zh="文档">Docs</a><a href="nodes.html" data-zh="节点">Nodes</a>
+        <a href="workflows.html" data-zh="工作流">Workflows</a><a href="plugins.html" data-zh="插件">Plugins</a><a href="convert.html" data-zh="转换">Convert</a><a href="themes.html" data-zh="主题">Themes</a>
         <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
       </div>
     </div>
@@ -27,13 +28,13 @@
 
   <header class="gallery-head">
     <div class="wrap">
-      <h1 class="section-title" style="text-align:left;">Community nodes</h1>
-      <p class="section-sub" style="text-align:left;margin-left:0;">
+      <h1 class="section-title" style="text-align:left;" data-zh="社区节点">Community nodes</h1>
+      <p class="section-sub" style="text-align:left;margin-left:0;" data-zh="ircuitry 的现成积木。点击<b>复制</b>，再把节点直接粘贴进应用。想添加自己的？<a href='https://github.com/ircuitry/community-nodes'>提交 PR。</a>">
         Ready-made blocks for ircuitry. Hit <b>Copy</b>, then paste the node straight into the app.
         Want to add your own? <a href="https://github.com/ircuitry/community-nodes">Open a PR.</a>
       </p>
 
-      <div class="note">
+      <div class="note" data-zh="<b>两种安装方式：</b><ol><li><b>在应用中安装</b>（一键）：打开 ircuitry 并在确认对话框后暂存该节点。需要已安装 ircuitry（Windows、macOS 或 Linux）。在 macOS 上，先把 ircuitry.app 移到「应用程序」并打开一次。</li><li><b>复制</b>，然后在 ircuitry 中打开<b>节点库</b>，点击<b>从剪贴板安装</b>（或按 <code>Ctrl+Shift+V</code>）并确认。在所有平台上都可用。</li></ol>更喜欢文件？使用<b>下载</b>并把 <code>.ircnode</code> 拖到画布上，或放进 <code>~/ircuitry/nodes/</code>。之后要移除节点，在节点库中悬停并点击 <b><i class='ph ph-x'></i></b>。脚本节点会在你的设备上运行代码，安装前请先检查。">
         <b>Two ways to install:</b>
         <ol>
           <li><b>Install in app</b> (one click): opens ircuitry and stages the node behind a confirm dialog. Needs ircuitry installed (Windows, macOS or Linux). On macOS, move ircuitry.app to Applications and open it once first.</li>
@@ -45,7 +46,7 @@
       </div>
 
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="Search nodes by name, id or category...">
+        <input class="search" id="search" type="search" data-zh-ph="按名称、id 或类别搜索节点..." placeholder="Search nodes by name, id or category...">
         <span class="count" id="count"></span>
       </div>
     </div>
@@ -54,13 +55,13 @@
   <section class="gallery-body">
     <div class="wrap gallery-layout">
       <aside class="cat-rail">
-        <div class="rail-title">Browse</div>
+        <div class="rail-title" data-zh="浏览">Browse</div>
         <nav class="chips" id="chips"></nav>
       </aside>
       <div class="gallery-main">
-        <div class="state" id="state">Loading nodes...</div>
+        <div class="state" id="state" data-zh="正在加载节点...">Loading nodes...</div>
         <div id="grid"></div>
-        <div class="empty" id="empty" hidden>No matches - try a different search.</div>
+        <div class="empty" id="empty" hidden data-zh="没有匹配项，换个搜索词试试。">No matches - try a different search.</div>
       </div>
     </div>
   </section>
@@ -69,9 +70,9 @@
     <div class="wrap">
       <span>© ircuitry contributors</span>
       <span>
-        <a href="index.html">Home</a> ·
-        <a href="https://github.com/ircuitry/community-nodes">Submit a node</a> ·
-        <a href="https://github.com/ircuitry/ircuitry">App</a>
+        <a href="index.html" data-zh="主页">Home</a> ·
+        <a href="https://github.com/ircuitry/community-nodes" data-zh="提交节点">Submit a node</a> ·
+        <a href="https://github.com/ircuitry/ircuitry" data-zh="应用">App</a>
       </span>
     </div>
   </footer>

@@ -10,16 +10,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/phosphor.css">
-  <link rel="stylesheet" href="assets/style.css?v=21">
+  <link rel="stylesheet" href="assets/style.css?v=22">
+  <script src="assets/i18n.js"></script>
 </head>
 <body data-page="docs">
   <nav class="nav">
     <div class="wrap">
       <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
       <div class="links">
-        <a href="docs.html">Docs</a>
-        <a href="nodes.html">Nodes</a>
-        <a href="workflows.html">Workflows</a><a href="plugins.html">Plugins</a><a href="convert.html">Convert</a><a href="themes.html">Themes</a>
+        <a href="docs.html" data-zh="文档">Docs</a>
+        <a href="nodes.html" data-zh="节点">Nodes</a>
+        <a href="workflows.html" data-zh="工作流">Workflows</a><a href="plugins.html" data-zh="插件">Plugins</a><a href="convert.html" data-zh="转换">Convert</a><a href="themes.html" data-zh="主题">Themes</a>
         <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
       </div>
     </div>
@@ -27,7 +28,7 @@
 
   <div class="docs-layout wrap">
     <aside class="docs-side">
-      <input class="docs-search" id="tocSearch" type="search" placeholder="Search the docs..." aria-label="Search docs">
+      <input class="docs-search" id="tocSearch" type="search" placeholder="Search the docs..." data-zh-ph="搜索文档..." aria-label="Search docs">
       <nav class="docs-toc" id="toc">
         <a href="#overview">Overview</a>
         <a href="#install">Install &amp; first run</a>
@@ -54,75 +55,86 @@
 
     <main class="docs-main" id="docsMain">
       <header class="docs-hero">
-        <h1>ircuitry documentation</h1>
-        <p class="lead">Everything in the app, in one page. ircuitry is a cozy node-graph builder for IRC bots
+        <h1 data-zh="ircuitry 文档">ircuitry documentation</h1>
+        <p class="lead" data-zh="应用的所有内容，尽在一页。ircuitry 是一款专为 IRC 机器人打造的轻松节点图构建工具，原生支持 IRCv3：你只需将小节点连接在一起，无需编写代码，机器人便随之而生。">Everything in the app, in one page. ircuitry is a cozy node-graph builder for IRC bots
           with first-class IRCv3 support: you wire little nodes together instead of writing code, and a bot
           falls out the other end.</p>
-        <p class="docs-ver" id="docsVer">app reference loaded from the current release</p>
+        <p class="docs-ver" id="docsVer" data-zh="应用参考文档加载自当前版本">app reference loaded from the current release</p>
       </header>
 
       <section id="overview">
-        <h2><i class="ph ph-book-open"></i> Overview</h2>
-        <p>An ircuitry <b>workspace</b> holds one or more <b>bots</b>. Each bot has a node <b>graph</b> (its
+        <h2 data-zh="<i class=&quot;ph ph-book-open&quot;></i> 概览"><i class="ph ph-book-open"></i> Overview</h2>
+        <p data-zh="ircuitry 的<b>工作区</b>可包含一个或多个<b>机器人</b>。每个机器人拥有一个节点<b>图</b>（即其行为逻辑）以及一个或多个<b>服务器</b>连接。图通过<b>触发器</b>节点响应传入的 IRC 事件，运行逻辑/数据节点，并通过<b>动作</b>节点执行操作。同一张图会对机器人所在每台服务器上的事件作出响应。">An ircuitry <b>workspace</b> holds one or more <b>bots</b>. Each bot has a node <b>graph</b> (its
           behaviour) and one or more <b>server</b> connections. A graph reacts to incoming IRC events through
           <b>trigger</b> nodes, runs logic/data nodes, and performs effects through <b>action</b> nodes. The
           same graph fires for events from every server the bot is on.</p>
         <ul class="docs-bul">
-          <li><b>No code required.</b> Drag nodes, wire them, set a few fields. (There is still a Code node if you want it.)</li>
-          <li><b>IRCv3 native.</b> Capabilities, message tags, account-tag, labeled-response, typing, reactions, redaction and more are nodes.</li>
-          <li><b>Local &amp; private.</b> Everything lives in your workspace folder on disk; secrets are kept out of exports.</li>
-          <li><b>Extensible.</b> Bake your own nodes from existing ones, install community nodes/workflows, or drive the app over MCP.</li>
+          <li data-zh="<b>无需编写代码。</b> 拖拽节点、连线，填写几个字段即可。（如果需要，仍然提供代码节点。）"><b>No code required.</b> Drag nodes, wire them, set a few fields. (There is still a Code node if you want it.)</li>
+          <li data-zh="<b>原生 IRCv3。</b> 能力协商、消息标签、account-tag、labeled-response、正在输入、表情回应、消息撤回等均以节点形式提供。"><b>IRCv3 native.</b> Capabilities, message tags, account-tag, labeled-response, typing, reactions, redaction and more are nodes.</li>
+          <li data-zh="<b>本地 &amp;amp; 私密。</b>所有内容都保存在你磁盘上的工作区文件夹中；敏感信息不会包含在导出文件中。"><b>Local &amp; private.</b> Everything lives in your workspace folder on disk; secrets are kept out of exports.</li>
+          <li data-zh="<b>可扩展。</b> 将现有节点烘焙成自定义节点，安装社区节点/工作流，或通过 MCP 驱动应用。"><b>Extensible.</b> Bake your own nodes from existing ones, install community nodes/workflows, or drive the app over MCP.</li>
         </ul>
       </section>
 
       <section id="install">
-        <h2><i class="ph ph-download-simple"></i> Install &amp; first run</h2>
+        <h2 data-zh="<i class=&quot;ph ph-download-simple&quot;></i> 安装 &amp;amp; 首次运行"><i class="ph ph-download-simple"></i> Install &amp; first run</h2>
         <ol class="docs-steps">
-          <li>Grab a build from the <a href="https://github.com/ircuitry/ircuitry/releases/latest">latest release</a>
+          <li data-zh="从<a href=&quot;https://github.com/ircuitry/ircuitry/releases/latest&quot;>最新版本</a>下载构建包（Windows <code>.exe</code>/<code>.zip</code>、Linux <code>.deb</code>/<code>.AppImage</code>/<code>.zip</code>、macOS <code>.zip</code>）。构建包完全独立，无需安装运行时环境。">Grab a build from the <a href="https://github.com/ircuitry/ircuitry/releases/latest">latest release</a>
             (Windows <code>.exe</code>/<code>.zip</code>, Linux <code>.deb</code>/<code>.AppImage</code>/<code>.zip</code>, macOS <code>.zip</code>). The builds are self-contained, no runtime to install.</li>
-          <li>Launch it. Your workspace is created at <code>~/ircuitry</code> (override with the <code>IRCUITRY_HOME</code> environment variable).</li>
-          <li>A starter bot tab is waiting. Open the <b>Connection inspector</b>, set a <b>server</b>
+          <li data-zh="启动应用。您的工作区将创建在 <code>~/ircuitry</code>（可通过 <code>IRCUITRY_HOME</code> 环境变量覆盖）。">Launch it. Your workspace is created at <code>~/ircuitry</code> (override with the <code>IRCUITRY_HOME</code> environment variable).</li>
+          <li data-zh="一个入门机器人标签页已就绪。打开 <b>连接检查器</b>，设置 <b>服务器</b>
+            （例如 <code>irc.libera.chat</code> : <code>6697</code>，启用 TLS）、<b>昵称</b>以及要加入的 <b>频道</b>。">A starter bot tab is waiting. Open the <b>Connection inspector</b>, set a <b>server</b>
             (e.g. <code>irc.libera.chat</code> : <code>6697</code>, TLS on), a <b>nick</b> and the <b>channels</b> to join.</li>
-          <li>Press <b>Play</b> in the title bar to connect. The <b>Event Console</b> shows the handshake and everything coming in.</li>
+          <li data-zh="点击标题栏中的<b>播放</b>按钮即可连接。<b>事件控制台</b>会显示握手过程及所有传入内容。">Press <b>Play</b> in the title bar to connect. The <b>Event Console</b> shows the handshake and everything coming in.</li>
         </ol>
-        <p class="docs-note"><i class="ph ph-info"></i> The first run also registers the <code>ircuitry://</code>
+        <p class="docs-note" data-zh="<i class=&quot;ph ph-info&quot;></i> 首次运行时还会注册 <code>ircuitry://</code>
+          链接处理程序，使本站的一键安装功能正常工作。"><i class="ph ph-info"></i> The first run also registers the <code>ircuitry://</code>
           link handler so one-click installs from this site work.</p>
       </section>
 
       <section id="interface">
-        <h2><i class="ph ph-layout"></i> The interface</h2>
-        <h3>Title bar</h3>
-        <p>A single glossy bar holds the app icon, your bots as scrollable <b>cartridge tabs</b>, and a tool cluster on the right:</p>
+        <h2 data-zh="<i class=&quot;ph ph-layout&quot;></i> 界面介绍"><i class="ph ph-layout"></i> The interface</h2>
+        <h3 data-zh="标题栏">Title bar</h3>
+        <p data-zh="顶部单条亮面栏包含应用图标、可滚动的<b>卡带标签页</b>（您的机器人），以及右侧的工具组：">A single glossy bar holds the app icon, your bots as scrollable <b>cartridge tabs</b>, and a tool cluster on the right:</p>
         <ul class="docs-icons">
-          <li><i class="ph ph-play"></i> <b>Play / Stop</b> - connect or disconnect the active bot.</li>
-          <li><i class="ph ph-test-tube"></i> <b>Test</b> - dry-run a command against your graph without touching IRC.</li>
-          <li><i class="ph ph-scroll"></i> <b>History</b> - a timeline of every run, with the exact node path and pin values.</li>
-          <li><i class="ph ph-bell"></i> <b>Notifications</b> - achievements and important events.</li>
-          <li><i class="ph ph-map-trifold"></i> <b>Network map</b> - a live graph of every bot, server and channel (see below).</li>
-          <li><i class="ph ph-folder"></i> <b>File</b> - new/import/export bots, workspace actions.</li>
-          <li><i class="ph ph-list"></i> <b>More</b> - the rest: secrets, node library, tutorial, settings.</li>
+          <li data-zh="<i class=&quot;ph ph-play&quot;></i> <b>播放 / 停止</b> - 连接或断开当前活跃的机器人。"><i class="ph ph-play"></i> <b>Play / Stop</b> - connect or disconnect the active bot.</li>
+          <li data-zh="<i class=&quot;ph ph-test-tube&quot;></i> <b>测试</b> - 在不触及 IRC 的情况下，对你的图进行命令模拟运行。"><i class="ph ph-test-tube"></i> <b>Test</b> - dry-run a command against your graph without touching IRC.</li>
+          <li data-zh="<i class=&quot;ph ph-scroll&quot;></i> <b>历史记录</b> - 每次运行的时间轴，包含精确的节点路径和引脚值。"><i class="ph ph-scroll"></i> <b>History</b> - a timeline of every run, with the exact node path and pin values.</li>
+          <li data-zh="<i class=&quot;ph ph-bell&quot;></i> <b>通知</b> - 成就解锁及重要事件提醒。"><i class="ph ph-bell"></i> <b>Notifications</b> - achievements and important events.</li>
+          <li data-zh="<i class=&quot;ph ph-map-trifold&quot;></i> <b>网络地图</b> - 显示每个机器人、服务器和频道的实时图（见下方）。"><i class="ph ph-map-trifold"></i> <b>Network map</b> - a live graph of every bot, server and channel (see below).</li>
+          <li data-zh="<i class=&quot;ph ph-folder&quot;></i> <b>文件</b> - 新建/导入/导出机器人，工作区操作。"><i class="ph ph-folder"></i> <b>File</b> - new/import/export bots, workspace actions.</li>
+          <li data-zh="<i class=&quot;ph ph-list&quot;></i> <b>更多</b> - 其他功能：密钥、节点库、教程、设置。"><i class="ph ph-list"></i> <b>More</b> - the rest: secrets, node library, tutorial, settings.</li>
         </ul>
-        <h3>Canvas</h3>
-        <p>The main area is the node graph. <b>Drag</b> empty space to pan, <b>scroll</b> to zoom, and a
+        <h3 data-zh="画布">Canvas</h3>
+        <p data-zh="主区域是节点图。<b>拖拽</b>空白区域可平移，<b>滚动</b>可缩放，角落有<b>小地图</b>。双击空白区域（或按 <code>Ctrl+K</code>）打开<b>快速添加</b>，按名称添加节点。右键单击可打开上下文菜单（剪切/复制/粘贴/复制副本、静音、烘焙、整理、删除）。">The main area is the node graph. <b>Drag</b> empty space to pan, <b>scroll</b> to zoom, and a
           <b>minimap</b> sits in the corner. Double-click empty space (or <code>Ctrl+K</code>) for <b>Quick Add</b>
           to drop a node by name. Right-click for the context menu (cut/copy/paste/duplicate, mute, bake, tidy, delete).</p>
-        <h3>Node palette &amp; Node Library</h3>
-        <p>The palette lists every built-in node by category. The <b>Node Library</b> (in the More menu) manages your
+        <h3 data-zh="节点面板 &amp;amp; 节点库">Node palette &amp; Node Library</h3>
+        <p data-zh="面板列出了按类别分组的所有内置节点。<b>节点库</b>（位于更多菜单中）用于管理已安装的社区节点——可从剪贴板安装、更新或卸载。">The palette lists every built-in node by category. The <b>Node Library</b> (in the More menu) manages your
           installed community nodes - install from clipboard, update, or uninstall.</p>
-        <h3>Inspector</h3>
-        <p>Select a node to edit its <b>parameters</b> in the right panel. Select nothing (or the bot itself) to get the
+        <h3 data-zh="检查器">Inspector</h3>
+        <p data-zh="选中一个节点，可在右侧面板编辑其 <b>参数</b>。若未选中任何内容（或选中机器人本身），则显示
+          <b>连接检查器</b>：机器人名称、可复用的 <b>服务器</b> 列表，以及各服务器的详细设置（主机/端口、TLS、
+          SASL 账号/密码、昵称/用户名/真实姓名、频道、自动重连、启动时自动连接）。">Select a node to edit its <b>parameters</b> in the right panel. Select nothing (or the bot itself) to get the
           <b>Connection inspector</b>: bot name, the reusable <b>Servers</b> list, and per-server settings (host/port, TLS,
           SASL account/password, nick/ident/real-name, channels, auto-reconnect, connect-on-startup).</p>
       </section>
 
       <section id="nodes-pins">
-        <h2><i class="ph ph-graph"></i> Nodes, pins &amp; wires</h2>
-        <p>Every node has <b>input pins</b> on the left and <b>output pins</b> on the right. Pins come in three flavours:</p>
+        <h2 data-zh="<i class=&quot;ph ph-graph&quot;></i> 节点、引脚 &amp;amp; 连线"><i class="ph ph-graph"></i> Nodes, pins &amp; wires</h2>
+        <p data-zh="每个节点左侧为<b>输入引脚</b>，右侧为<b>输出引脚</b>。引脚分为三种类型：">Every node has <b>input pins</b> on the left and <b>output pins</b> on the right. Pins come in three flavours:</p>
         <ul class="docs-bul">
-          <li><b>Exec pins</b> (square, <span class="kindchip" data-k="Exec">Exec</span>) carry <b>control flow</b>. A trigger
+          <li data-zh="<b>执行引脚</b>（方形，<span class=&quot;kindchip&quot; data-k=&quot;Exec&quot;>Exec</span>）承载 <b>控制流</b>。触发器
+            脉冲其执行输出，从而运行下一个节点，以此类推 - 这决定了事情发生的顺序。执行引脚只能连接到执行引脚。"><b>Exec pins</b> (square, <span class="kindchip" data-k="Exec">Exec</span>) carry <b>control flow</b>. A trigger
             pulses its exec output, which runs the next node, and so on - this is the order things happen in. Exec only
             connects to Exec.</li>
-          <li><b>Data pins</b> (round) carry <b>values</b>, pulled on demand. There are five data kinds, and the kind just
+          <li data-zh="<b>数据引脚</b>（圆形）按需传递<b>值</b>。数据共有五种类型，类型仅通过颜色区分引脚及其连线（作为提示，例如 <span class=&quot;kindchip&quot; data-k=&quot;User&quot;>User</span> = 昵称）：
+            <span class=&quot;kindchip&quot; data-k=&quot;Text&quot;>Text</span>
+            <span class=&quot;kindchip&quot; data-k=&quot;User&quot;>User</span>
+            <span class=&quot;kindchip&quot; data-k=&quot;Channel&quot;>Channel</span>
+            <span class=&quot;kindchip&quot; data-k=&quot;Number&quot;>Number</span>
+            <span class=&quot;kindchip&quot; data-k=&quot;Bool&quot;>Bool</span>。
+            这五种类型均可连接到任意数据输入引脚。"><b>Data pins</b> (round) carry <b>values</b>, pulled on demand. There are five data kinds, and the kind just
             colours the pin and any wire from it (a hint, e.g. <span class="kindchip" data-k="User">User</span> = a nick):
             <span class="kindchip" data-k="Text">Text</span>
             <span class="kindchip" data-k="User">User</span>
@@ -130,20 +142,22 @@
             <span class="kindchip" data-k="Number">Number</span>
             <span class="kindchip" data-k="Bool">Bool</span>.
             Any of these five can wire into any data input.</li>
-          <li><b>Tool pins</b> (round, <span class="kindchip" data-k="Tool">Tool</span>) are special: they carry an AI tool
+          <li data-zh="<b>工具引脚</b>（圆形，<span class=&quot;kindchip&quot; data-k=&quot;Tool&quot;>Tool</span>）较为特殊：它们携带 AI 工具定义，只能<b>工具对工具</b>连接（AI 工具节点连接到 Ask AI）。"><b>Tool pins</b> (round, <span class="kindchip" data-k="Tool">Tool</span>) are special: they carry an AI tool
             definition and only connect <b>Tool to Tool</b> (an AI Tool node into Ask AI).</li>
         </ul>
-        <p>A node can mix them. <b>On Command</b> has a square <code>then</code> (Exec) plus round <code>args</code> (Text),
+        <p data-zh="节点可以混合使用两者。<b>On Command</b> 拥有方形的 <code>then</code>（Exec）输出，以及圆形的 <code>args</code>（文本）、
+          <code>nick</code>（用户）和 <code>channel</code>（频道）输出。<b>只有</b>圆形引脚的节点——例如
+          <b>文本变换</b>（输入 <code>text</code> &amp;rarr; 输出 <code>result</code>，无执行引脚）——是纯数据节点：没有任何东西&quot;运行&quot;它；当下游有节点需要时，其输出会按需计算。">A node can mix them. <b>On Command</b> has a square <code>then</code> (Exec) plus round <code>args</code> (Text),
           <code>nick</code> (User) and <code>channel</code> (Channel) outputs. A node with <b>only</b> round pins - like
           <b>Text Transform</b> (<code>text</code> in &rarr; <code>result</code> out, no exec) - is a pure data node: nothing
           "runs" it; its output is computed on demand when something downstream pulls it.</p>
-        <p>Drag from one pin to another to <b>wire</b> them. A node with no incoming exec runs as a pure data node when
+        <p data-zh="从一个引脚拖动到另一个引脚即可<b>连线</b>。没有传入执行流的节点，在其他节点拉取其输出时，将作为纯数据节点运行。<b>静音</b>节点（按 <code>M</code>）可在不删除的情况下跳过该节点。">Drag from one pin to another to <b>wire</b> them. A node with no incoming exec runs as a pure data node when
           something pulls its output. <b>Mute</b> a node (press <code>M</code>) to skip it without deleting it.</p>
       </section>
 
       <section id="tokens">
-        <h2><i class="ph ph-brackets-curly"></i> Tokens &amp; variables</h2>
-        <p>Most text fields accept <code>{tokens}</code> that expand at run time:</p>
+        <h2 data-zh="<i class=&quot;ph ph-brackets-curly&quot;></i> 令牌 &amp;amp; 变量"><i class="ph ph-brackets-curly"></i> Tokens &amp; variables</h2>
+        <p data-zh="大多数文本字段支持在运行时展开的 <code>{tokens}</code>：">Most text fields accept <code>{tokens}</code> that expand at run time:</p>
         <table class="docs-table">
           <tr><td><code>{nick}</code> <code>{user}</code> <code>{channel}</code></td><td>who/where the trigger came from</td></tr>
           <tr><td><code>{message}</code> <code>{args}</code> <code>{command}</code></td><td>the raw line, the args after a command, the command word</td></tr>
@@ -152,130 +166,134 @@
           <tr><td><code>{item.field}</code></td><td>the current element inside a For-Each loop</td></tr>
           <tr><td><code>{{secret.NAME}}</code></td><td>a stored secret (never written to exports)</td></tr>
         </table>
-        <p>Use <b>Set Variable</b> to stash a value and read it later anywhere with <code>{name}</code>. JSON values can be
+        <p data-zh="使用<b>设置变量</b>暂存一个值，之后可在任意位置通过 <code>{name}</code> 读取。JSON 值可通过点路径进行访问，并可使用<b>逐项遍历</b>进行迭代。">Use <b>Set Variable</b> to stash a value and read it later anywhere with <code>{name}</code>. JSON values can be
           walked with dot paths and iterated with <b>For Each</b>.</p>
       </section>
 
       <section id="commands">
-        <h2><i class="ph ph-terminal-window"></i> Bot commands &amp; replies</h2>
-        <p>The classic shape is <b>On Command</b> -&gt; do something -&gt; <b>Reply</b>.</p>
+        <h2 data-zh="<i class=&quot;ph ph-terminal-window&quot;></i> 机器人命令 &amp;amp; 回复"><i class="ph ph-terminal-window"></i> Bot commands &amp; replies</h2>
+        <p data-zh="经典流程结构为 <b>On Command</b> -&amp;gt; 执行某操作 -&amp;gt; <b>回复</b>。">The classic shape is <b>On Command</b> -&gt; do something -&gt; <b>Reply</b>.</p>
         <ul class="docs-bul">
-          <li><b>On Command</b> has a <b>prefix</b> (default <code>!</code>), a <b>command</b> word, and the <b>contexts</b>
+          <li data-zh="<b>收到命令时</b>包含一个<b>前缀</b>（默认为 <code>!</code>）、一个<b>命令</b>词，以及它响应的<b>上下文</b>：<code>public</code>（在频道中）、<code>private</code>（带频道上下文的私信）和 <code>pm</code>（直接查询）。它输出 <code>args</code>、<code>nick</code> 和 <code>channel</code>。"><b>On Command</b> has a <b>prefix</b> (default <code>!</code>), a <b>command</b> word, and the <b>contexts</b>
             it answers in: <code>public</code> (in a channel), <code>private</code> (a private message that has channel
             context), and <code>pm</code> (a direct query). It outputs the <code>args</code>, the <code>nick</code> and the
             <code>channel</code>.</li>
-          <li><b>Reply</b> sends a line back to wherever the command came from. <b>Threaded Reply</b> correlates the reply to
+          <li data-zh="<b>回复</b>将一行内容发送回命令来源处。<b>线程回复</b>将回复关联到触发消息（IRCv3 <code>+reply</code>），使客户端可以进行线程显示，并在适当位置附加 <code>+draft/invoked-by</code> / 频道上下文。"><b>Reply</b> sends a line back to wherever the command came from. <b>Threaded Reply</b> correlates the reply to
             the triggering message (IRCv3 <code>+reply</code>) so clients can thread it, and attaches
             <code>+draft/invoked-by</code> / channel-context where appropriate.</li>
-          <li>Owner controls: build admin commands behind a <b>Filter: from account</b> node so only allow-listed
+          <li data-zh="所有者控制：在 <b>账号过滤器</b> 节点后构建管理命令，确保只有白名单中的
+            <i>账号</i>（不可伪造的昵称）才能执行这些命令。">Owner controls: build admin commands behind a <b>Filter: from account</b> node so only allow-listed
             <i>accounts</i> (not spoofable nicks) can run them.</li>
         </ul>
-        <p>The dedicated <b>Test</b> panel lets you type a command and watch it run with no live connection - perfect for
+        <p data-zh="专用的<b>测试</b>面板让你无需实时连接即可输入命令并观察执行过程——非常适合构建阶段以及下方的测试工作流。">The dedicated <b>Test</b> panel lets you type a command and watch it run with no live connection - perfect for
           building and for the test workflows below.</p>
       </section>
 
       <section id="ircv3">
-        <h2><i class="ph ph-broadcast"></i> IRCv3</h2>
-        <p>ircuitry speaks modern IRCv3. The <b>Ircv3</b> category (22 nodes) exposes capabilities, message tags and the
+        <h2 data-zh="<i class=&quot;ph ph-broadcast&quot;></i> IRCv3"><i class="ph ph-broadcast"></i> IRCv3</h2>
+        <p data-zh="ircuitry 支持现代 IRCv3。<b>Ircv3</b> 分类（22 个节点）以普通节点的形式暴露能力协商、消息标签及草案功能，
+          使客户端/服务端/机器人开发者可以通过命令驱动并验证每项特性：">ircuitry speaks modern IRCv3. The <b>Ircv3</b> category (22 nodes) exposes capabilities, message tags and the
           drafts as plain nodes, so a client/server/bot developer can drive and verify each feature from a command:</p>
         <ul class="docs-bul">
-          <li><b>Capabilities &amp; tags</b> - read negotiated caps, read/attach arbitrary message tags, see the
+          <li data-zh="<b>能力 &amp;amp; 标签</b> - 读取已协商的能力（cap），读取/附加任意消息标签，查看 <code>account</code> 标签、<code>msgid</code>、<code>time</code>（服务器时间）以及用于标签响应关联的 <code>label</code>。"><b>Capabilities &amp; tags</b> - read negotiated caps, read/attach arbitrary message tags, see the
             <code>account</code> tag, <code>msgid</code>, <code>time</code> (server-time), and the <code>label</code> for
             labeled-response correlation.</li>
-          <li><b>Typing</b> - send <code>+typing=active/paused/done</code> (<code>!typing start</code> / <code>!typing stop</code>).</li>
-          <li><b>Reactions</b> - <code>+draft/react</code> via TAGMSG.</li>
-          <li><b>Redaction</b> - request message <b>REDACT</b> on a target msgid.</li>
-          <li><b>Multiline, chathistory, account-notify, away-notify, setname, metadata</b> and friends, where supported.</li>
+          <li data-zh="<b>正在输入</b> - 发送 <code>+typing=active/paused/done</code>（<code>!typing start</code> / <code>!typing stop</code>）。"><b>Typing</b> - send <code>+typing=active/paused/done</code> (<code>!typing start</code> / <code>!typing stop</code>).</li>
+          <li data-zh="<b>表情回应</b> - 通过 TAGMSG 发送 <code>+draft/react</code>。"><b>Reactions</b> - <code>+draft/react</code> via TAGMSG.</li>
+          <li data-zh="<b>撤回</b> - 对目标 msgid 请求消息 <b>REDACT</b>。"><b>Redaction</b> - request message <b>REDACT</b> on a target msgid.</li>
+          <li data-zh="<b>多行、chathistory、account-notify、away-notify、setname、metadata</b> 等扩展，视服务器支持情况而定。"><b>Multiline, chathistory, account-notify, away-notify, setname, metadata</b> and friends, where supported.</li>
         </ul>
-        <p class="docs-note"><i class="ph ph-flask"></i> There is a growing set of <a href="workflows.html">IRCv3 testing
+        <p class="docs-note" data-zh="<i class=&quot;ph ph-flask&quot;></i> 有一套持续增长的 <a href=&quot;workflows.html&quot;>IRCv3 测试
+          工作流</a> - 安装后，通过机器人命令驱动，即可验证您的客户端或服务端对各项特性的支持情况。"><i class="ph ph-flask"></i> There is a growing set of <a href="workflows.html">IRCv3 testing
           workflows</a> - install one, then drive it with bot commands to verify your client or server handles each feature.</p>
       </section>
 
       <section id="dcc">
-        <h2><i class="ph ph-files"></i> DCC file transfer</h2>
-        <p>ircuitry implements CTCP DCC SEND, including <b>passive/reverse</b> transfers and acknowledgements.</p>
+        <h2 data-zh="<i class=&quot;ph ph-files&quot;></i> DCC 文件传输"><i class="ph ph-files"></i> DCC file transfer</h2>
+        <p data-zh="ircuitry 实现了 CTCP DCC SEND，包括<b>被动/反向</b>传输和确认应答。">ircuitry implements CTCP DCC SEND, including <b>passive/reverse</b> transfers and acknowledgements.</p>
         <ul class="docs-bul">
-          <li><b>On DCC Offer</b> fires when someone offers you a file - it outputs the filename, size, sender nick, and the
+          <li data-zh="<b>On DCC Offer</b> 在有人向您发送文件时触发 - 输出文件名、大小、发送方昵称，以及发送方已认证的 <b>账号</b>。"><b>On DCC Offer</b> fires when someone offers you a file - it outputs the filename, size, sender nick, and the
             sender's authenticated <b>account</b>.</li>
-          <li><b>Accept</b> downloads to a path you choose (wire in <code>{filename}</code>), <b>Reject</b> declines, and
+          <li data-zh="<b>接受</b>会将文件下载到你指定的路径（通过连线传入 <code>{filename}</code>），<b>拒绝</b>会拒绝请求，<b>发送</b>会向某个昵称提供文件。"><b>Accept</b> downloads to a path you choose (wire in <code>{filename}</code>), <b>Reject</b> declines, and
             <b>Send</b> offers a file to a nick.</li>
-          <li>Good practice: gate <b>Accept</b> behind a <b>from-account</b> allow-list so only people you trust can send you files.</li>
+          <li data-zh="最佳实践：在<b>接受</b>操作前加上<b>账户来源</b>白名单校验，确保只有您信任的人才能向您发送文件。">Good practice: gate <b>Accept</b> behind a <b>from-account</b> allow-list so only people you trust can send you files.</li>
         </ul>
       </section>
 
       <section id="ai">
-        <h2><i class="ph ph-sparkle"></i> AI: Ask, tools &amp; memory</h2>
-        <p>ircuitry is provider-agnostic - point the AI nodes at any OpenAI-compatible endpoint (base URL + key + model).</p>
+        <h2 data-zh="<i class=&quot;ph ph-sparkle&quot;></i> AI：提问、工具 &amp;amp; 记忆"><i class="ph ph-sparkle"></i> AI: Ask, tools &amp; memory</h2>
+        <p data-zh="ircuitry 与提供商无关——将 AI 节点指向任何兼容 OpenAI 的端点（基础 URL + 密钥 + 模型）即可。">ircuitry is provider-agnostic - point the AI nodes at any OpenAI-compatible endpoint (base URL + key + model).</p>
         <ul class="docs-bul">
-          <li><b>Ask AI</b> takes a prompt and a system message and returns a reply. Wire nodes into its <b>tools</b> input and
+          <li data-zh="<b>Ask AI</b> 接受提示词和系统消息，并返回回复。将节点连接到其<b>工具</b>输入端，模型即可调用这些工具。"><b>Ask AI</b> takes a prompt and a system message and returns a reply. Wire nodes into its <b>tools</b> input and
             the model can call them.</li>
-          <li><b>AI Tool</b> defines a callable tool (name, description, any number of arguments). Wire its <b>tool</b> output
+          <li data-zh="<b>AI 工具</b>定义一个可调用的工具（名称、描述及若干参数）。将其 <b>tool</b> 输出连接到 Ask AI；将其 <b>call</b> 输出连接到以 <b>Tool Reply</b> 结尾的子流程（您传给 Tool Reply 的内容即为模型收到的返回值）。可在任意位置通过 <code>{arg.NAME}</code> 读取参数。"><b>AI Tool</b> defines a callable tool (name, description, any number of arguments). Wire its <b>tool</b> output
             into Ask AI; wire its <b>call</b> output to a sub-flow that ends in <b>Tool Reply</b> (whatever you feed Tool Reply
             is what the model gets back). Read arguments anywhere with <code>{arg.NAME}</code>.</li>
-          <li><b>AI Memory</b> remembers context across turns; <b>Workflow Editor</b> gives the model inward MCP tools to read
+          <li data-zh="<b>AI 记忆</b>可在多轮对话中记住上下文；<b>工作流编辑器</b>为模型提供内置 MCP 工具以读取和编辑机器人图；<b>程序员 AI</b> 是一个沙箱化的编程代理，限定在某个代码库中运行。"><b>AI Memory</b> remembers context across turns; <b>Workflow Editor</b> gives the model inward MCP tools to read
             and edit bot graphs; <b>Programmer AI</b> is a sandboxed coding agent confined to a codebase.</li>
-          <li><b>Bake a node into a tool.</b> A baked composite can be used as an AI tool two ways: (1) it contains an AI Tool
+          <li data-zh="<b>将节点烘焙为工具。</b> 烘焙后的组合节点可以两种方式作为 AI 工具使用：(1) 节点内包含 AI 工具子流程 - Ask AI 会自动识别并使用；或 (2) 在烘焙对话框中勾选<b>可用作 AI 工具</b>，节点的输入引脚将成为模型的参数，第一个输出作为结果返回。"><b>Bake a node into a tool.</b> A baked composite can be used as an AI tool two ways: (1) it contains an AI Tool
             sub-flow - Ask AI looks inside and uses it; or (2) tick <b>Usable as an AI tool</b> in the Bake dialog and the
             node's input pins become the model's arguments and its first output the result.</li>
         </ul>
       </section>
 
       <section id="baking">
-        <h2><i class="ph ph-cake"></i> Baking your own nodes</h2>
-        <p>Select a few wired nodes, right-click -&gt; <b>Bake into a node</b>, and ircuitry bundles them into one reusable
+        <h2 data-zh="<i class=&quot;ph ph-cake&quot;></i> 烘焙您自己的节点"><i class="ph ph-cake"></i> Baking your own nodes</h2>
+        <p data-zh="选中几个已连线的节点，右键单击 -&amp;gt; <b>烘焙为节点</b>，ircuitry 便会将它们打包成一个可复用节点——引脚根据跨越你所选区域的连线自动确定。你也可以打开完整的<b>烘焙</b>对话框，在内嵌编辑器中从头构建一个节点。">Select a few wired nodes, right-click -&gt; <b>Bake into a node</b>, and ircuitry bundles them into one reusable
           node - the pins are worked out from the wires crossing your selection. Or open the full <b>Bake</b> dialog to build a
           node from scratch in a little embedded editor.</p>
         <ul class="docs-bul">
-          <li><b>Expose</b> an inner setting as a node parameter so whoever uses the node fills it in; <b>hard-code</b> the rest.</li>
-          <li>Tick <b>Usable as an AI tool</b> to give the node a tool output.</li>
-          <li><b>Submit</b> sends it as a PR to the community-nodes repo, or <b>Export</b> writes a <code>.ircnode</code> file.</li>
+          <li data-zh="<b>公开</b>内部设置作为节点参数，供使用者填写；其余设置<b>硬编码</b>。"><b>Expose</b> an inner setting as a node parameter so whoever uses the node fills it in; <b>hard-code</b> the rest.</li>
+          <li data-zh="勾选 <b>可作为 AI 工具使用</b>，为节点添加工具输出引脚。">Tick <b>Usable as an AI tool</b> to give the node a tool output.</li>
+          <li data-zh="<b>提交</b>会将其作为 PR 发送到社区节点仓库，或通过<b>导出</b>生成一个 <code>.ircnode</code> 文件。"><b>Submit</b> sends it as a PR to the community-nodes repo, or <b>Export</b> writes a <code>.ircnode</code> file.</li>
         </ul>
-        <p class="docs-note"><i class="ph ph-info"></i> Community nodes are <b>composites</b> of built-in nodes (no opaque code
+        <p class="docs-note" data-zh="<i class=&quot;ph ph-info&quot;></i> 社区节点均为内置节点的<b>组合体</b>（不含不透明代码块），任何人都可以打开查看其工作原理。"><i class="ph ph-info"></i> Community nodes are <b>composites</b> of built-in nodes (no opaque code
           blobs), so anyone can open one up and see exactly how it works.</p>
       </section>
 
       <section id="bakery">
-        <h2><i class="ph ph-cooking-pot"></i> Bot Bakery (merging)</h2>
-        <p>The <b>Bot Bakery</b> merges two or more bots into one. It walks you through conflicts (e.g. two bots that both
+        <h2 data-zh="<i class=&quot;ph ph-cooking-pot&quot;></i> 机器人烘焙坊（合并）"><i class="ph ph-cooking-pot"></i> Bot Bakery (merging)</h2>
+        <p data-zh="<b>机器人烘焙坊</b>可将两个或多个机器人合并为一个。它会引导你处理冲突（例如两个机器人都响应 <code>!help</code>），并让你逐一解决。本站还有一个对应的<a href=&quot;factory.html&quot;>机器人工厂</a>，可在浏览器中完成同样的合并操作。">The <b>Bot Bakery</b> merges two or more bots into one. It walks you through conflicts (e.g. two bots that both
           answer <code>!help</code>) and lets you resolve each. There is a matching <a href="factory.html">Bot Factory</a> on
           this site that does the same merge in the browser.</p>
       </section>
 
       <section id="network">
-        <h2><i class="ph ph-graph"></i> Network map</h2>
-        <p>The <i class="ph ph-map-trifold"></i> button in the title bar opens a live node-link graph of your whole setup:
+        <h2 data-zh="<i class=&quot;ph ph-graph&quot;></i> 网络地图"><i class="ph ph-graph"></i> Network map</h2>
+        <p data-zh="标题栏中的 <i class=&quot;ph ph-map-trifold&quot;></i> 按钮可打开整个配置的实时节点连接图：
+          左侧为 <b>机器人</b>节点，中间为唯一的 <b>服务器</b>枢纽，右侧为 <b>频道</b>节点，按成员关系连线。每条机器人到服务器的连线颜色反映该机器人当前的连接状态。">The <i class="ph ph-map-trifold"></i> button in the title bar opens a live node-link graph of your whole setup:
           <b>bot</b> nodes on the left, unique <b>server</b> hubs in the middle, and <b>channel</b> nodes on the right, wired by
           membership. Each bot-to-server wire is coloured by that bot's live connection status.</p>
       </section>
 
       <section id="community">
-        <h2><i class="ph ph-users-three"></i> Community nodes &amp; workflows</h2>
-        <p>Browse <a href="nodes.html">community nodes</a> and <a href="workflows.html">workflows</a> right here. Two ways to install:</p>
+        <h2 data-zh="<i class=&quot;ph ph-users-three&quot;></i> 社区节点 &amp;amp; 工作流"><i class="ph ph-users-three"></i> Community nodes &amp; workflows</h2>
+        <p data-zh="直接在此浏览<a href=&quot;nodes.html&quot;>社区节点</a>和<a href=&quot;workflows.html&quot;>工作流</a>。安装方式有两种：">Browse <a href="nodes.html">community nodes</a> and <a href="workflows.html">workflows</a> right here. Two ways to install:</p>
         <ol class="docs-steps">
-          <li><b>One-click install</b> opens ircuitry and stages the item behind a confirm dialog (needs the app installed).</li>
-          <li><b>Copy</b>, then in ircuitry open the <b>Node Library</b> and <b>Install from clipboard</b> (<code>Ctrl+Shift+V</code>).</li>
+          <li data-zh="<b>一键安装</b>会打开 ircuitry 并在确认对话框后暂存该项目（需已安装应用）。"><b>One-click install</b> opens ircuitry and stages the item behind a confirm dialog (needs the app installed).</li>
+          <li data-zh="<b>复制</b>，然后在 ircuitry 中打开<b>节点库</b>，选择<b>从剪贴板安装</b>（<code>Ctrl+Shift+V</code>）。"><b>Copy</b>, then in ircuitry open the <b>Node Library</b> and <b>Install from clipboard</b> (<code>Ctrl+Shift+V</code>).</li>
         </ol>
-        <p>After your first install, the gallery quietly checks your running app and tailors each card: <b>Inspect</b> shows the
+        <p data-zh="完成首次安装后，节点库会悄悄检测您正在运行的应用，并为每张卡片提供定制信息：<b>检查</b>可查看底层图结构，若某卡片所需节点在您的版本中缺失，则会显示<b>升级</b>提示；依赖其他社区节点的工作流会优先提示安装前置节点。已安装节点会自动更新。">After your first install, the gallery quietly checks your running app and tailors each card: <b>Inspect</b> shows the
           underlying graph, an <b>Upgrade</b> hint appears if a card needs a node your build is missing, and prerequisite
           community nodes are offered before a workflow that depends on them. Installed nodes auto-update.</p>
       </section>
 
       <section id="secrets">
-        <h2><i class="ph ph-key"></i> Secrets &amp; KEYS</h2>
-        <p>Store API keys, passwords and tokens under <b>KEYS</b> and reference them as <code>{{secret.NAME}}</code>. Secrets are
+        <h2 data-zh="<i class=&quot;ph ph-key&quot;></i> 密钥 &amp;amp; KEYS"><i class="ph ph-key"></i> Secrets &amp; KEYS</h2>
+        <p data-zh="在 <b>KEYS</b> 下存储 API 密钥、密码和令牌，并以 <code>{{secret.NAME}}</code> 的形式引用。敏感信息不会保存在工作区文件、任何导出或提交的节点中，因此你可以安全地共享图。">Store API keys, passwords and tokens under <b>KEYS</b> and reference them as <code>{{secret.NAME}}</code>. Secrets are
           kept out of the workspace file and out of any export or submitted node, so you can share a graph safely.</p>
       </section>
 
       <section id="testing">
-        <h2><i class="ph ph-test-tube"></i> Testing &amp; the console</h2>
-        <p>The <b>Event Console</b> renders every incoming line with friendly badges (the <code>account</code> tag, a bot
+        <h2 data-zh="<i class=&quot;ph ph-test-tube&quot;></i> 测试 &amp;amp; 控制台"><i class="ph ph-test-tube"></i> Testing &amp; the console</h2>
+        <p data-zh="<b>事件控制台</b>以友好徽章（<code>account</code> 标签、机器人标记）而非原始标签堆叠的形式渲染每一条传入行，并将每个标签暴露给图。<b>测试</b>面板可对命令进行空运行；<b>历史</b>面板记录每次运行的精确节点路径及每个引脚上的值，让您清楚了解发生了什么。">The <b>Event Console</b> renders every incoming line with friendly badges (the <code>account</code> tag, a bot
           marker) instead of raw tag soup, and exposes every tag to the graph. The <b>Test</b> panel dry-runs a command; the
           <b>History</b> panel records each run with the exact node path and the value on every pin, so you can see precisely
           what happened.</p>
       </section>
 
       <section id="shortcuts">
-        <h2><i class="ph ph-keyboard"></i> Keyboard shortcuts</h2>
+        <h2 data-zh="<i class=&quot;ph ph-keyboard&quot;></i> 键盘快捷键"><i class="ph ph-keyboard"></i> Keyboard shortcuts</h2>
         <table class="docs-table kbd">
           <tr><td><code>2x click</code> / <code>Ctrl+K</code></td><td>Quick Add a node</td></tr>
           <tr><td><code>Ctrl+Z</code> / <code>Ctrl+Y</code></td><td>Undo / Redo</td></tr>
@@ -292,32 +310,35 @@
       </section>
 
       <section id="reference">
-        <h2><i class="ph ph-stack"></i> Node reference</h2>
-        <p>Every built-in node, generated from the app itself. Filter by name, then expand one for its pins and parameters.</p>
+        <h2 data-zh="<i class=&quot;ph ph-stack&quot;></i> 节点参考"><i class="ph ph-stack"></i> Node reference</h2>
+        <p data-zh="所有内置节点均直接从应用本身生成。按名称筛选，展开即可查看其引脚和参数。">Every built-in node, generated from the app itself. Filter by name, then expand one for its pins and parameters.</p>
         <input class="docs-search" id="nodeSearch" type="search" placeholder="Filter nodes by name, id or category..." aria-label="Filter nodes">
-        <div id="nodeRef" class="node-ref"><p class="docs-loading">Loading the node reference...</p></div>
+        <div id="nodeRef" class="node-ref"><p class="docs-loading" data-zh="正在加载节点参考...">Loading the node reference...</p></div>
       </section>
 
       <section id="formats">
-        <h2><i class="ph ph-file-code"></i> File formats</h2>
-        <h3><code>.ircnode</code> - a community node</h3>
-        <p>JSON declaring one node: <code>typeId</code>, <code>title</code>, <code>subtitle</code>, <code>icon</code> (a
+        <h2 data-zh="<i class=&quot;ph ph-file-code&quot;></i> 文件格式"><i class="ph ph-file-code"></i> File formats</h2>
+        <h3 data-zh="<code>.ircnode</code> - 社区节点"><code>.ircnode</code> - a community node</h3>
+        <p data-zh="声明一个节点的 JSON：<code>typeId</code>、<code>title</code>、<code>subtitle</code>、<code>icon</code>（Phosphor 图标名称）、<code>category</code>、<code>description</code>、<code>inputs</code>/<code>outputs</code>（<code>{name,kind}</code>）、<code>params</code>，以及 <code>subgraph</code>（由其他节点组合而成）或 <code>code</code>+<code>language</code> 二选一。">JSON declaring one node: <code>typeId</code>, <code>title</code>, <code>subtitle</code>, <code>icon</code> (a
           Phosphor name), <code>category</code>, <code>description</code>, <code>inputs</code>/<code>outputs</code>
           (<code>{name,kind}</code>), <code>params</code>, and either a <code>subgraph</code> (a composite of other nodes) or
           <code>code</code>+<code>language</code>.</p>
-        <h3><code>.ircbot</code> - a workflow</h3>
-        <p>JSON with <code>format: "ircuitry.workflow.v1"</code>, <code>name</code>, <code>description</code>,
+        <h3 data-zh="<code>.ircbot</code> - 一个工作流"><code>.ircbot</code> - a workflow</h3>
+        <p data-zh="JSON 格式，包含 <code>format: &quot;ircuitry.workflow.v1&quot;</code>、<code>name</code>、<code>description</code>、
+          <code>author</code>、<code>category</code>、<code>tags</code>，以及 <code>nodes</code> 数组
+          （<code>{id,type,x,y,params,...}</code>）和 <code>connections</code> 数组
+          （<code>{from,fromPin,to,toPin}</code>）。安装后将添加一个新的机器人标签页。">JSON with <code>format: "ircuitry.workflow.v1"</code>, <code>name</code>, <code>description</code>,
           <code>author</code>, <code>category</code>, <code>tags</code>, a <code>nodes</code> array
           (<code>{id,type,x,y,params,...}</code>) and a <code>connections</code> array
           (<code>{from,fromPin,to,toPin}</code>). Installing one adds a new bot tab.</p>
-        <h3>Workspace</h3>
-        <p>Lives at <code>~/ircuitry</code> (or <code>$IRCUITRY_HOME</code>): your bots, the saved servers, installed
+        <h3 data-zh="工作区">Workspace</h3>
+        <p data-zh="存储位置为 <code>~/ircuitry</code>（或 <code>$IRCUITRY_HOME</code>）：包含您的机器人、已保存的服务器、已安装的社区节点（<code>.ircnode</code> 文件）、密钥和成就。">Lives at <code>~/ircuitry</code> (or <code>$IRCUITRY_HOME</code>): your bots, the saved servers, installed
           community nodes (<code>.ircnode</code> files), secrets and achievements.</p>
       </section>
 
       <section id="cli">
-        <h2><i class="ph ph-terminal"></i> Command line &amp; MCP</h2>
-        <p>The same binary doubles as a CLI:</p>
+        <h2 data-zh="<i class=&quot;ph ph-terminal&quot;></i> 命令行 &amp;amp; MCP"><i class="ph ph-terminal"></i> Command line &amp; MCP</h2>
+        <p data-zh="同一个二进制文件也可作为 CLI 使用：">The same binary doubles as a CLI:</p>
         <table class="docs-table">
           <tr><td><code>--run</code> / <code>--headless</code></td><td>run bots headlessly, no window</td></tr>
           <tr><td><code>--mcp</code></td><td>expose the editor as an MCP server over stdio (drive ircuitry from an AI agent)</td></tr>
@@ -328,23 +349,23 @@
           <tr><td><code>--register-scheme</code></td><td>(re)register the <code>ircuitry://</code> link handler</td></tr>
           <tr><td><code>--updatecheck</code></td><td>check the latest release</td></tr>
         </table>
-        <p>The app also serves a tiny read-only loopback endpoint (locked to this website's origin) so the gallery can detect
+        <p data-zh="应用还提供一个小型只读本地回环端点（锁定到本站来源），供节点库检测您的版本包含哪些节点，不会自行执行任何操作。">The app also serves a tiny read-only loopback endpoint (locked to this website's origin) so the gallery can detect
           which nodes your build has - it never takes any action on its own.</p>
       </section>
 
       <section id="faq">
-        <h2><i class="ph ph-question"></i> FAQ</h2>
-        <p><b>Where are my files?</b> <code>~/ircuitry</code> (or wherever <code>$IRCUITRY_HOME</code> points).</p>
-        <p><b>Does it support TLS / SASL?</b> Yes - per server, in the Connection inspector.</p>
-        <p><b>Can one bot be on several servers?</b> Yes - a bot's graph reacts to events from all of its servers and routes
+        <h2 data-zh="<i class=&quot;ph ph-question&quot;></i> 常见问题"><i class="ph ph-question"></i> FAQ</h2>
+        <p data-zh="<b>我的文件在哪里？</b> <code>~/ircuitry</code>（或 <code>$IRCUITRY_HOME</code> 所指向的位置）。"><b>Where are my files?</b> <code>~/ircuitry</code> (or wherever <code>$IRCUITRY_HOME</code> points).</p>
+        <p data-zh="<b>是否支持 TLS / SASL？</b> 支持 - 在连接检查器中按服务器设置。"><b>Does it support TLS / SASL?</b> Yes - per server, in the Connection inspector.</p>
+        <p data-zh="<b>一个机器人能同时连接多个服务器吗？</b> 可以 - 机器人的图会响应来自其所有服务器的事件，并将回复路由回正确的服务器。"><b>Can one bot be on several servers?</b> Yes - a bot's graph reacts to events from all of its servers and routes
           replies back to the right one.</p>
-        <p><b>Is my data sent anywhere?</b> No. Everything is local; AI nodes only call the endpoint you configure.</p>
-        <p><b>Found a bug or want a node?</b> <a href="https://github.com/ircuitry/ircuitry">Open an issue</a>, or
+        <p data-zh="<b>我的数据会被发送到任何地方吗？</b>不会。所有内容均在本地处理；AI 节点仅调用你所配置的端点。"><b>Is my data sent anywhere?</b> No. Everything is local; AI nodes only call the endpoint you configure.</p>
+        <p data-zh="<b>发现 Bug 或希望新增节点？</b> <a href=&quot;https://github.com/ircuitry/ircuitry&quot;>提交 Issue</a>，或<a href=&quot;https://github.com/ircuitry/community-nodes&quot;>提交节点 PR</a>。"><b>Found a bug or want a node?</b> <a href="https://github.com/ircuitry/ircuitry">Open an issue</a>, or
           <a href="https://github.com/ircuitry/community-nodes">PR a node</a>.</p>
       </section>
 
       <footer class="docs-foot">
-        <p>ircuitry is free software (GPLv3). Built for the IRC that should have been.</p>
+        <p data-zh="ircuitry 是自由软件（GPLv3）。为本应存在的 IRC 而生。">ircuitry is free software (GPLv3). Built for the IRC that should have been.</p>
       </footer>
     </main>
   </div>

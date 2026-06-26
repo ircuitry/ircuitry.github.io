@@ -1,6 +1,14 @@
 /* ircuitry site - live download buttons + community node/workflow galleries, all client-side from GitHub. */
 (function () {
   "use strict";
+  var ZH = /^zh/i.test(navigator.language || navigator.userLanguage || "");
+  var I18N = {
+    "Copied to clipboard":"已复制到剪贴板","Press Ctrl+C to copy":"按 Ctrl+C 复制","Copied - press Ctrl+V in ircuitry":"已复制 - 在 ircuitry 中按 Ctrl+V",
+    "Install":"安装","node":"个节点","nodes":"个节点","wires":"条连线","workflows":"个工作流","plugins":"个插件","themes":"个主题",
+    "Update to latest":"更新到最新","Download from GitHub":"从 GitHub 下载","View on GitHub":"在 GitHub 查看","is ready!":"已就绪！",
+    "Pick 2+ to merge":"选择 2 个以上来合并","Merge":"合并","bots":"个机器人"
+  };
+  function T(s){ return (ZH && I18N[s]) || s; }
   var REPO = "ircuitry/ircuitry";
   var NODES = "ircuitry/community-nodes";
   var WORKFLOWS = "ircuitry/community-workflows";
@@ -54,7 +62,7 @@
     var ta = document.createElement("textarea");
     ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
     document.body.appendChild(ta); ta.select();
-    try { document.execCommand("copy"); toast("Copied to clipboard"); } catch (e) { toast("Press Ctrl+C to copy"); }
+    try { document.execCommand("copy"); toast(T("Copied to clipboard")); } catch (e) { toast(T("Press Ctrl+C to copy")); }
     ta.remove();
   }
   function downloadFile(text, name) {
@@ -168,9 +176,9 @@
     if (st.state === "upgrade")
       main = '<a class="btn upgrade" href="' + RELEASES_URL + '" target="_blank" rel="noopener" data-tip="Your ircuitry is missing a node this needs - update to the latest">' + phi("arrow-circle-up") + " Upgrade to use this</a>";
     else if (st.state === "prereq")
-      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" data-tip="Needs community node(s) you don\'t have yet">' + phi("package") + " Install + " + st.prereqs.length + " node" + (st.prereqs.length > 1 ? "s" : "") + "</button>";
+      main = '<button class="btn primary prereq" data-prereq="' + i + '" data-kind="' + kind + '" data-tip="Needs community node(s) you don\'t have yet">' + phi("package") + " " + T("Install") + " + " + st.prereqs.length + " " + T("node") + "</button>";
     else if (st.state === "update")
-      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '" data-tip="Update to the latest version">' + phi("arrows-clockwise") + " Update to latest</a>";
+      main = '<a class="btn update install-link" href="' + installHref(action, raw) + '" data-tip="Update to the latest version">' + phi("arrows-clockwise") + " " + T("Update to latest") + "</a>";
     else
       main = '<a class="btn primary install-link" href="' + installHref(action, raw) + '" data-tip="Hands the file straight to your running ircuitry">' + phi("package") + " One-click install</a>";
     return '<div class="actions">' + main +
@@ -257,7 +265,7 @@
 
     var html = "";
     if (primaryUrl) html += '<a class="btn primary" href="' + primaryUrl + '">' + phi("download-simple") + "<span>&nbsp;Download for " + esc(OS_LABEL[os]) + "</span>" + (primarySub ? '<span class="sub">' + esc(primarySub) + "</span>" : "") + "</a>";
-    html += '<a class="btn ghost" href="https://github.com/' + REPO + '">View on GitHub</a>';
+    html += '<a class="btn ghost" href="https://github.com/' + REPO + '">' + T("View on GitHub") + '</a>';
     var ex = el("dl-extra");
     if (ex) ex.innerHTML = (ver ? "Latest: <b>" + esc(ver) + "</b> &nbsp;·&nbsp; " : "") + "Other platforms: " + others.filter(Boolean).join(" &nbsp;·&nbsp; ") + ' &nbsp;·&nbsp; <a href="https://github.com/' + REPO + '/releases/latest">all downloads</a>';
     host.innerHTML = html;
@@ -267,7 +275,7 @@
     if (!host) return;
     fetch(RELEASE_API).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (rel) { renderDownloads(host, rel); })
       .catch(function () {
-        host.innerHTML = '<a class="btn primary" href="https://github.com/' + REPO + '/releases/latest">Download from GitHub</a><a class="btn ghost" href="https://github.com/' + REPO + '">View on GitHub</a>';
+        host.innerHTML = '<a class="btn primary" href="https://github.com/' + REPO + '/releases/latest">' + T("Download from GitHub") + '</a><a class="btn ghost" href="https://github.com/' + REPO + '">View on GitHub</a>';
         var ex = el("dl-extra"); if (ex) ex.innerHTML = 'Pick the build for your OS on the <a href="https://github.com/' + REPO + '/releases/latest">releases page</a>.';
       });
   }
@@ -591,7 +599,7 @@
       '<button class="btn primary" id="mtrayMerge" type="button" disabled>' + phi("cake") + ' Merge</button></div></div>' +
       '<div class="scrim" id="mwiz"><div class="wizard"><h2>' + phi("cake") + ' Bake a merged bot</h2>' +
       '<p class="section-sub" style="text-align:left;margin:0 0 6px;">Resolve any command clashes, name it, then bake.</p>' +
-      '<div id="mclashes"></div><label class="lbl">New bot name</label><input class="field" id="mname" placeholder="Merged Bot">' +
+      '<div id="mclashes"></div><label class="lbl">New bot name</label><input class="field" id="mname" placeholder="Merged Bot" data-zh-ph="合并的机器人">' +
       '<label class="mhelp"><input type="checkbox" id="mhelpchk" checked><span><span class="t">Auto-generate a combined !help</span><br>' +
       '<span class="s">Bundles one !help that lists every command from the merged bots</span></span></label>' +
       '<div class="row-end"><button class="btn" id="mcancel" type="button">Cancel</button>' +
@@ -632,7 +640,7 @@
     if (MSEL.length > MAX_CHIPS) shown.push('<span class="mtray-chip more">+' + (MSEL.length - MAX_CHIPS) + " more</span>");
     el("mtrayChips").innerHTML = shown.join("");
     var btn = el("mtrayMerge"); btn.disabled = MSEL.length < 2;
-    btn.innerHTML = phi("cake") + (MSEL.length < 2 ? " Pick 2+ to merge" : " Merge " + MSEL.length + " bots");
+    btn.innerHTML = phi("cake") + (MSEL.length < 2 ? " " + T("Pick 2+ to merge") : " " + T("Merge") + " " + MSEL.length + " " + T("bots"));
   }
   function mOpenWizard() {
     if (MSEL.length < 2) return;
@@ -689,11 +697,11 @@
       el("bakeActions").innerHTML = install +
         '<button class="btn icon" id="bakeCopy" data-tip="Copy JSON">' + phi("copy") + "</button>" +
         '<button class="btn icon" id="bakeDl" data-tip="Download .ircbot">' + phi("download-simple") + "</button>";
-      el("bakeTitle").textContent = MERGED.name + " is ready!";
+      el("bakeTitle").textContent = MERGED.name + " " + T("is ready!");
       el("bakeDone").innerHTML = '<span style="color:#7a6a52;font-size:13.5px;">' + esc(MERGED.name) + " · " + MERGED.nodes.length + " nodes · " + MERGED.connections.length + ' wires</span><br><a id="bakeClose">Done</a>';
       fx.classList.add("done"); el("bakeResult").classList.add("show");   // hides the baking caption/bar, reveals buttons -> title -> subtitle
       var inst = el("bakeActions").querySelector(".install-link"); if (inst) inst.addEventListener("click", function () { setTimeout(probeApp, 1500); });
-      el("bakeCopy").addEventListener("click", function () { copyText(json, "Copied - press Ctrl+V in ircuitry"); });
+      el("bakeCopy").addEventListener("click", function () { copyText(json, T("Copied - press Ctrl+V in ircuitry")); });
       el("bakeDl").addEventListener("click", function () { downloadFile(json, safe + ".ircbot"); });
       el("bakeClose").addEventListener("click", function () { fx.classList.remove("show"); mClear(); });
     }, 2900);
@@ -720,7 +728,7 @@
     return '<div class="node' + (sel ? " msel" : "") + '">' +
       '<button class="mpick" data-mpick="' + i + '" data-tip="Pick to merge" type="button">' + phi("check") + "</button>" +
       '<div class="top"><div class="badge">' + phi("robot") + '</div><div>' +
-      '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " nodes · " + esc(w.connectionCount) + " wires · " + author + "</div></div></div>" +
+      '<div class="name">' + esc(w.name) + '</div><div class="meta">' + esc(w.nodeCount) + " " + T("nodes") + " · " + esc(w.connectionCount) + " " + T("wires") + " · " + author + "</div></div></div>" +
       '<div class="desc">' + esc(w.description || "") + "</div>" +
       '<div class="cat">' + tags + "</div>" +
       actionsHtml(w, i, "workflows", "install-bot", rawUrl(WF_RAW, w.file)) + "</div>";
@@ -766,7 +774,7 @@
     var author = "by " + esc(p.author || "community");
     return '<div class="node">' +
       '<div class="top"><div class="badge">' + phi(p.icon || "puzzle-piece") + '</div><div>' +
-      '<div class="name">' + esc(p.name) + '</div><div class="meta">v' + esc(p.version || "1.0.0") + " · " + esc(p.nodeCount) + " nodes · " + author + "</div></div></div>" +
+      '<div class="name">' + esc(p.name) + '</div><div class="meta">v' + esc(p.version || "1.0.0") + " · " + esc(p.nodeCount) + " " + T("nodes") + " · " + author + "</div></div></div>" +
       '<div class="desc">' + esc(p.description || "") + "</div>" +
       '<div class="cat perms">' + permChips(p) + "</div>" +
       pluginActions(p, i, rawUrl(PLUGINS_RAW, p.file)) + "</div>";
@@ -790,7 +798,7 @@
     function render() {
       var q = query.trim().toLowerCase();
       var list = all.filter(function (it) { return !q || opts.haystack(it).toLowerCase().indexOf(q) >= 0; });
-      el("count").textContent = q ? (list.length + " of " + all.length + " " + opts.noun) : (all.length + " " + opts.noun);
+      el("count").textContent = (q ? (list.length + " / " + all.length) : all.length) + " " + T(opts.noun);
       var b = {}; list.forEach(function (it) { var k = primary(it); (b[k] = b[k] || []).push(it); });
       var cats = ordered(b);
       var emptyEl = el("empty"); if (emptyEl) emptyEl.hidden = list.length > 0;
