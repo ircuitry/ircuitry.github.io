@@ -6,7 +6,12 @@
     "Copied to clipboard":"已复制到剪贴板","Press Ctrl+C to copy":"按 Ctrl+C 复制","Copied - press Ctrl+V in ircuitry":"已复制 - 在 ircuitry 中按 Ctrl+V",
     "Install":"安装","node":"个节点","nodes":"个节点","wires":"条连线","workflows":"个工作流","plugins":"个插件","themes":"个主题",
     "Update to latest":"更新到最新","Download from GitHub":"从 GitHub 下载","View on GitHub":"在 GitHub 查看","is ready!":"已就绪！",
-    "Pick 2+ to merge":"选择 2 个以上来合并","Merge":"合并","bots":"个机器人"
+    "Pick 2+ to merge":"选择 2 个以上来合并","Merge":"合并","bots":"个机器人",
+    "Download for":"下载","your device":"你的设备","your computer":"你的电脑",
+    ".exe · just run it":".exe · 直接运行",".zip · unzip and run Ircuitry.exe":".zip · 解压并运行 Ircuitry.exe",
+    "AppImage · runs on any distro":"AppImage · 适用于任何发行版","Apple Silicon · unzip and open":"Apple Silicon · 解压并打开",
+    "portable zip":"便携 zip","AppImage (any distro)":"AppImage（任何发行版）",
+    "Latest:":"最新：","Other platforms:":"其他平台：","all downloads":"全部下载","releases page":"发布页面"
   };
   function T(s){ return (ZH && I18N[s]) || s; }
   var REPO = "ircuitry/ircuitry";
@@ -238,7 +243,7 @@
   var OS_LABEL = { windows: "Windows", linux: "Linux", mac: "macOS", android: "your device", unknown: "your computer" };
   function byName(rel, name) { var a = (rel.assets || []).filter(function (x) { return x.name === name; })[0]; return a ? a.browser_download_url : null; }
   function bySuffix(rel, suf) { var a = (rel.assets || []).filter(function (x) { return x.name.slice(-suf.length) === suf; })[0]; return a ? a.browser_download_url : null; }
-  function link(url, label) { return url ? '<a href="' + url + '">' + esc(label) + "</a>" : ""; }
+  function link(url, label) { return url ? '<a href="' + url + '">' + esc(T(label)) + "</a>" : ""; }
 
   function renderDownloads(host, rel) {
     var os = detectOS(), ver = rel.tag_name || "";
@@ -264,10 +269,10 @@
     else { primaryUrl = null; others = [link(win1, "Windows"), link(appimg, "Linux AppImage"), link(deb, "Linux .deb"), link(marm, "macOS Apple Silicon"), link(mint, "macOS Intel")]; }
 
     var html = "";
-    if (primaryUrl) html += '<a class="btn primary" href="' + primaryUrl + '">' + phi("download-simple") + "<span>&nbsp;Download for " + esc(OS_LABEL[os]) + "</span>" + (primarySub ? '<span class="sub">' + esc(primarySub) + "</span>" : "") + "</a>";
+    if (primaryUrl) html += '<a class="btn primary" href="' + primaryUrl + '">' + phi("download-simple") + "<span>&nbsp;" + T("Download for") + " " + esc(T(OS_LABEL[os])) + "</span>" + (primarySub ? '<span class="sub">' + esc(T(primarySub)) + "</span>" : "") + "</a>";
     html += '<a class="btn ghost" href="https://github.com/' + REPO + '">' + T("View on GitHub") + '</a>';
     var ex = el("dl-extra");
-    if (ex) ex.innerHTML = (ver ? "Latest: <b>" + esc(ver) + "</b> &nbsp;·&nbsp; " : "") + "Other platforms: " + others.filter(Boolean).join(" &nbsp;·&nbsp; ") + ' &nbsp;·&nbsp; <a href="https://github.com/' + REPO + '/releases/latest">all downloads</a>';
+    if (ex) ex.innerHTML = (ver ? T("Latest:") + " <b>" + esc(ver) + "</b> &nbsp;·&nbsp; " : "") + T("Other platforms:") + " " + others.filter(Boolean).join(" &nbsp;·&nbsp; ") + ' &nbsp;·&nbsp; <a href="https://github.com/' + REPO + '/releases/latest">' + T("all downloads") + '</a>';
     host.innerHTML = html;
   }
   function loadDownloads() {
@@ -276,7 +281,7 @@
     fetch(RELEASE_API).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (rel) { renderDownloads(host, rel); })
       .catch(function () {
         host.innerHTML = '<a class="btn primary" href="https://github.com/' + REPO + '/releases/latest">' + T("Download from GitHub") + '</a><a class="btn ghost" href="https://github.com/' + REPO + '">View on GitHub</a>';
-        var ex = el("dl-extra"); if (ex) ex.innerHTML = 'Pick the build for your OS on the <a href="https://github.com/' + REPO + '/releases/latest">releases page</a>.';
+        var ex = el("dl-extra"); if (ex) ex.innerHTML = (ZH ? '在 <a href="https://github.com/' + REPO + '/releases/latest">' + T("releases page") + '</a> 选择适合你系统的版本。' : 'Pick the build for your OS on the <a href="https://github.com/' + REPO + '/releases/latest">releases page</a>.');
       });
   }
 
