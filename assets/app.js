@@ -881,11 +881,14 @@
   }
 
   // ---------- theme showcase (front page) ----------
+  // Each slide shows a different thing ircuitry can build (a website, an AI agent, an automation, an IRC
+  // bot) in a different theme, so cycling the carousel cycles both. Chinese visitors get Chinese captures.
+  var tvImg = function (base) { return "assets/" + base + (ZH ? "-zh" : "") + ".png"; };
   var THEME_SHOW = [
-    { img: "assets/theme-cozy.png", name: "Cozy", a: "#56C0D2", b: "#F08A9E", bg: "#F4ECD8" },
-    { img: "assets/theme-grape.png", name: "Grape Soda", a: "#9B7CE0", b: "#E884BC", bg: "#F2EDFA" },
-    { img: "assets/theme-cocoa.png", name: "Cocoa Noir", a: "#6FC8BC", b: "#EE9080", bg: "#241C18" },
-    { img: "assets/theme-contrast.png", name: "High Contrast Dark", a: "#3CC8F0", b: "#FF5CA8", bg: "#000000" }
+    { img: tvImg("theme-cozy"), name: "Cozy", a: "#56C0D2", b: "#F08A9E", bg: "#F4ECD8" },
+    { img: tvImg("theme-grape"), name: "Grape Soda", a: "#9B7CE0", b: "#E884BC", bg: "#F2EDFA" },
+    { img: tvImg("theme-cocoa"), name: "Cocoa Noir", a: "#6FC8BC", b: "#EE9080", bg: "#241C18" },
+    { img: tvImg("theme-contrast"), name: "High Contrast Dark", a: "#3CC8F0", b: "#FF5CA8", bg: "#000000" }
   ];
   function initShowcase() {
     var stage = el("tvStage"); if (!stage) return;
