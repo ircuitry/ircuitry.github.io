@@ -1,7 +1,7 @@
 /* ircuitry site - live download buttons + community node/workflow galleries, all client-side from GitHub. */
 (function () {
   "use strict";
-  var ZH = /^zh/i.test(navigator.language || navigator.userLanguage || "");
+  var ZH = (function () { var f = new URLSearchParams(location.search).get("lang"); return f ? /^zh/i.test(f) : /^zh/i.test(navigator.language || navigator.userLanguage || ""); })();
   var I18N = {
     "Copied to clipboard":"已复制到剪贴板","Press Ctrl+C to copy":"按 Ctrl+C 复制","Copied - press Ctrl+V in ircuitry":"已复制 - 在 ircuitry 中按 Ctrl+V",
     "Install":"安装","node":"个节点","nodes":"个节点","wires":"条连线","workflows":"个工作流","plugins":"个插件","themes":"个主题",
