@@ -3,46 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ircuitry - build IRC bots by dragging blocks</title>
-  <meta name="description" content="ircuitry is a cozy desktop app for building IRCv3 bots on a visual node-graph canvas. Free, open source, self-contained. Download for Windows, macOS and Linux.">
+  <title data-zh="ircuitry - 用积木连接机器人、网站、AI 与自动化">ircuitry - wire up bots, sites, agents and automations</title>
+  <meta name="description" data-zh="ircuitry 是一个温馨的本地优先可视化工作室。用积木连接出 IRC 机器人、真正的网站（可导出为 React）、AI 智能体与日常自动化，n8n 能做的它都能做，而且更多，全部在你的设备上运行。免费开源。" content="ircuitry is a cozy, local-first visual studio. Wire blocks into IRC bots, real websites you eject as React, AI agents and everyday automations - everything n8n does and more, all on your machine. Free and open source.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <meta property="og:title" content="ircuitry - build IRC bots by dragging blocks">
-  <meta property="og:description" content="A cozy desktop app for building IRCv3 bots on a visual node-graph canvas. Free and open source.">
+  <meta property="og:title" content="ircuitry - wire up bots, sites, agents and automations">
+  <meta property="og:description" content="A cozy, local-first visual studio. Wire blocks into bots, websites, AI agents and automations. Everything n8n does and more. Free and open source.">
   <meta property="og:image" content="assets/theme-cozy.png">
   <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/phosphor.css">
-  <link rel="stylesheet" href="assets/style.css?v=21">
+  <link rel="stylesheet" href="assets/style.css?v=22">
+  <script src="assets/i18n.js"></script>
 </head>
 <body>
   <nav class="nav">
     <div class="wrap">
       <a class="brand" href="./"><img src="assets/icon-256.png" alt=""> ircuitry</a>
       <div class="links">
-        
-        <a href="docs.html">Docs</a><a href="nodes.html">Nodes</a>
-        <a href="workflows.html">Workflows</a><a href="plugins.html">Plugins</a><a href="convert.html">Convert</a><a href="themes.html">Themes</a>
+        <a href="docs.html" data-zh="文档">Docs</a><a href="nodes.html" data-zh="节点">Nodes</a>
+        <a href="workflows.html" data-zh="工作流">Workflows</a><a href="plugins.html" data-zh="插件">Plugins</a><a href="convert.html" data-zh="转换">Convert</a><a href="themes.html" data-zh="主题">Themes</a>
         <a class="hide-sm" href="https://github.com/ircuitry/ircuitry">GitHub</a>
-        <a class="hide-sm" href="https://github.com/ircuitry/ircuitry/releases/latest">Download</a>
+        <a class="hide-sm" href="https://github.com/ircuitry/ircuitry/releases/latest" data-zh="下载">Download</a>
       </div>
     </div>
   </nav>
 
   <header class="hero">
     <div class="wrap">
-      <h1>Build IRC bots by <span class="leaf">dragging blocks</span>.</h1>
-      <p class="lead">
-        ircuitry is a cozy desktop app for building real <b>IRCv3</b> bots on a visual node-graph
-        canvas. Wire up triggers, filters and actions, point it at a server, and press RUN. No code
-        required, but there is a Code node for when you want it.
+      <h1 data-zh="拖拽积木，构建<span class='leaf'>一切</span>。">Drag blocks. Build <span class="leaf">anything</span>.</h1>
+      <p class="lead" data-zh="ircuitry 是一个温馨的本地优先工作室，你用可视化积木连接出真实的东西：<b>IRC 机器人</b>、可导出为干净 <b>React</b> 项目的网站、<b>AI 智能体</b>、桌面工具与日常自动化。n8n 能做的它都能做，它做不到的也能做，而且全部在你的设备上运行。无需写代码（需要时也有代码节点）。">
+        ircuitry is a cozy, local-first studio where you wire visual blocks into real things:
+        <b>IRC bots</b>, websites you eject as a clean <b>React</b> project, <b>AI agents</b>, desktop
+        tools and everyday automations. Everything n8n does, plus everything it can't - and it all runs
+        on your machine. No code required (but there's a Code node for when you want it).
       </p>
       <div class="btn-row" id="download">
-        <a class="btn primary" href="https://github.com/ircuitry/ircuitry/releases/latest">Download</a>
-        <a class="btn ghost" href="https://github.com/ircuitry/ircuitry">View on GitHub</a>
+        <a class="btn primary" href="https://github.com/ircuitry/ircuitry/releases/latest" data-zh="下载">Download</a>
+        <a class="btn ghost" href="https://github.com/ircuitry/ircuitry" data-zh="在 GitHub 查看">View on GitHub</a>
       </div>
-      <p class="altlinks" id="dl-extra">Free and open source (GPLv3). Self-contained, no install needed.</p>
+      <p class="altlinks" id="dl-extra" data-zh="免费开源（GPLv3）。自包含，无需云端，无锁定。">Free and open source (GPLv3). Self-contained, no cloud, no lock-in.</p>
 
       <div class="tv" id="tv">
         <div class="tv-stage" id="tvStage">
@@ -52,40 +53,53 @@
             <div class="tv-sheen" aria-hidden="true"></div>
             <div class="tv-spark s1"></div><div class="tv-spark s2"></div><div class="tv-spark s3"></div>
           </div>
-          <div class="tv-badge"><span class="star">&#9733;</span> now showing <b id="tvName">Cozy</b></div>
+          <div class="tv-badge"><span class="star">&#9733;</span> <span data-zh="正在展示">now showing</span> <b id="tvName">Cozy</b></div>
           <div class="tv-bar"><i id="tvBar"></i></div>
         </div>
         <div class="tv-chips" id="tvChips"></div>
-        <p class="tv-cap">Reskin every pixel - <b>25 community themes</b>, installed in one click. Tap one to hold it. <a href="themes.html">Browse all themes &rarr;</a></p>
+        <p class="tv-cap" data-zh="重塑每一个像素 - <b>25 款社区主题</b>，一键安装。点一下即可定住。<a href='themes.html'>浏览全部主题 &rarr;</a>">Reskin every pixel - <b>25 community themes</b>, installed in one click. Tap one to hold it. <a href="themes.html">Browse all themes &rarr;</a></p>
       </div>
     </div>
   </header>
 
   <section>
     <div class="wrap">
-      <h2 class="section-title">Everything in one little app</h2>
-      <p class="section-sub">A from-scratch IRCv3 client, a visual editor, and a runtime, drawn entirely by hand.</p>
+      <h2 class="section-title" data-zh="一块画布，远不止机器人">One canvas, so much more than bots</h2>
+      <p class="section-sub" data-zh="可视化编辑器、从零写就的 IRCv3 客户端、网页编译器、AI、沙盒代码和运行时 - 全部手工打造，集于一个温馨的应用。">A visual editor, a from-scratch IRCv3 client, a web compiler, AI, sandboxed code and a runtime - drawn by hand, all in one cozy app.</p>
       <div class="features">
-        <div class="feature"><div class="ic c-leaf"><i class="ph ph-puzzle-piece"></i></div><h3>Visual node graph</h3><p>Drag trigger, filter and action nodes onto the canvas and wire them together. Exec flow plus typed data pins.</p></div>
-        <div class="feature"><div class="ic c-blue"><i class="ph ph-chat-circle"></i></div><h3>Real IRCv3</h3><p>TLS, CAP negotiation, SASL, message tags, reactions and threaded replies. A genuine client, not a wrapper.</p></div>
-        <div class="feature"><div class="ic c-pink"><i class="ph ph-robot"></i></div><h3>AI &amp; code nodes</h3><p>Ask AI, tools and memory over the OpenAI-compatible protocol, plus a sandboxed Programmer AI that reads, edits and delivers a whole codebase.</p></div>
-        <div class="feature"><div class="ic c-yellow"><i class="ph ph-lightning"></i></div><h3>Run many bots</h3><p>Each tab is its own bot, connection and runtime. Auto-reconnect, rate limiting and a full run history.</p></div>
-        <div class="feature"><div class="ic c-lilac"><i class="ph ph-package"></i></div><h3>Community nodes</h3><p>Deconstructible recipes of built-in nodes - drop one in and right-click Edit to see exactly how it works.</p></div>
-        <div class="feature"><div class="ic c-leaf"><i class="ph ph-plug"></i></div><h3>MCP built in</h3><p>An AI assistant can introspect, build, validate and dry-run your bots through a standard MCP server.</p></div>
+        <div class="feature"><div class="ic c-leaf"><i class="ph ph-puzzle-piece"></i></div><h3 data-zh="可视化节点图">Visual node graph</h3><p data-zh="把触发器、过滤器、动作和数据节点拖到一块画布上连起来。执行流加上带类型的数据引脚 - 你搭建的东西，自己就能读懂。">Drag triggers, filters, actions and data nodes onto one canvas and wire them up. Exec flow plus typed data pins - what you build, you can read.</p></div>
+        <div class="feature"><div class="ic c-blue"><i class="ph ph-browser"></i></div><h3 data-zh="构建真实网站">Build real websites</h3><p data-zh="用节点设计页面，实时预览，再导出为干净的 React + Vite 项目。前端、后端和数据，都在同一块画布上。">Design a page in nodes, preview it live, then eject a clean React + Vite project. Frontend, backend and data on a single canvas.</p></div>
+        <div class="feature"><div class="ic c-pink"><i class="ph ph-robot"></i></div><h3 data-zh="AI 智能体与代码">AI agents &amp; code</h3><p data-zh="带工具和记忆的 Ask AI、能读写整个代码库的沙盒程序员 AI，以及可接入任何东西的 MCP。">Ask AI with tools and memory, a sandboxed Programmer AI that reads and edits whole codebases, and MCP to plug into anything.</p></div>
+        <div class="feature"><div class="ic c-yellow"><i class="ph ph-lightning"></i></div><h3 data-zh="自动化一切">Automate everything</h3><p data-zh="HTTP、webhook、套接字、数据库、容器、定时任务和日历。连接你在用的应用 - 也能触及云端工具够不到的地方。">HTTP, webhooks, sockets, databases, containers, schedules and calendars. Connect the apps you use - and reach what cloud tools can't.</p></div>
+        <div class="feature"><div class="ic c-leaf"><i class="ph ph-chat-circle"></i></div><h3 data-zh="真正的 IRCv3 机器人">Real IRCv3 bots</h3><p data-zh="TLS、SASL、消息标签、表情反应和线程回复。一个从零写就的真正客户端，不是套壳。可同时运行多个机器人。">TLS, SASL, message tags, reactions and threads. A genuine from-scratch client, not a wrapper. Run many bots at once.</p></div>
+        <div class="feature"><div class="ic c-lilac"><i class="ph ph-package"></i></div><h3 data-zh="本地优先，归你所有">Local-first &amp; yours</h3><p data-zh="自包含、可离线、无需账户。插件能扩展应用本身，你也能随时导出自己的成果。零锁定。">Self-contained, offline-capable, no accounts. Plugins extend the app itself, and you can eject your work anytime. Zero lock-in.</p></div>
       </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap" style="text-align:center; max-width:760px;">
+      <h2 class="section-title" data-zh="不只是工作流工具">Beyond a workflow tool</h2>
+      <p class="section-sub" data-zh="云端自动化工具在别人的服务器上把各种 SaaS API 连接起来。ircuitry 也能做到，然后更进一步：它能构建机器人、网站和桌面工具，运行 AI 和沙盒代码，而且就在你自己的设备上运行 - 无需账户、无需订阅、无需照看服务器。一个真正属于你的温馨应用。">
+        Cloud automation tools wire SaaS APIs together on someone else's servers. ircuitry does that too,
+        then keeps going: it builds the bot, the website and the desktop tool, runs the AI and the
+        sandboxed code, and lives on your own machine - no accounts, no subscriptions, no servers to
+        babysit. One cozy app you actually own.
+      </p>
     </div>
   </section>
 
   <section>
     <div class="wrap" style="text-align:center;">
-      <h2 class="section-title">Add powers from the community</h2>
-      <p class="section-sub" style="margin-bottom:26px;">
-        Ready-made <b>nodes</b> (weather, dice, hashes, web lookups) and whole <b>workflows</b> (games,
-        reminders, quizzes). Copy one and paste it straight into ircuitry.
+      <h2 class="section-title" data-zh="从社区获得更多能力">Add powers from the community</h2>
+      <p class="section-sub" style="margin-bottom:26px;" data-zh="现成的<b>节点</b>（天气、骰子、哈希、网络 API）、整套<b>工作流</b>（游戏、提醒，甚至一个网站生成器）、<b>插件</b>（终端、AI 助手）和<b>主题</b>。复制一个，直接粘贴进 ircuitry。">
+        Ready-made <b>nodes</b> (weather, dice, hashes, web APIs), whole <b>workflows</b> (games,
+        reminders, even a website builder), <b>plugins</b> (a terminal, an AI assistant) and <b>themes</b>.
+        Copy one and paste it straight into ircuitry.
       </p>
       <div class="btn-row" style="justify-content:center;">
-        <a class="btn primary" href="nodes.html">Browse nodes</a>
-        <a class="btn" href="workflows.html">Browse workflows</a>
+        <a class="btn primary" href="nodes.html" data-zh="浏览节点">Browse nodes</a>
+        <a class="btn" href="workflows.html" data-zh="浏览工作流">Browse workflows</a>
       </div>
     </div>
   </section>
@@ -94,9 +108,9 @@
     <div class="wrap">
       <span>© ircuitry contributors · <a href="https://github.com/ircuitry/ircuitry/blob/main/LICENSE">GPL-3.0</a></span>
       <span>
-        <a href="https://github.com/ircuitry/ircuitry">App</a> ·
-        <a href="https://github.com/ircuitry/community-nodes">Community nodes</a> ·
-        <a href="nodes.html">Gallery</a>
+        <a href="https://github.com/ircuitry/ircuitry" data-zh="应用">App</a> ·
+        <a href="https://github.com/ircuitry/community-nodes" data-zh="社区节点">Community nodes</a> ·
+        <a href="nodes.html" data-zh="作品集">Gallery</a>
       </span>
     </div>
   </footer>

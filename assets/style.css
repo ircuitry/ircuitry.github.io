@@ -581,3 +581,6 @@ footer a { color: var(--ink-soft); font-weight: 700; }
   opacity: 0; transition: opacity .15s ease; }
 .section-head:hover .cat-hash, .cat-hash:focus-visible { opacity: 1; }
 .section-head h3 .cat-hash:hover { color: var(--leaf-deep); }
+
+/* the "beyond a workflow tool" contrast band */
+.band { background: var(--leaf-bg); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
