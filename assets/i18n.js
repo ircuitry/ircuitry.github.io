@@ -1,7 +1,9 @@
 // Auto-detect Chinese from the browser and swap any element carrying a data-zh translation.
 // English is the default (and the SEO/source language); zh* browsers see Simplified Chinese. No switcher.
 (function () {
-  var zh = /^zh/i.test(navigator.language || navigator.userLanguage || "");
+  // ?lang=zh / ?lang=en forces a language (handy for previewing); otherwise auto-detect from the browser.
+  var forced = new URLSearchParams(location.search).get("lang");
+  var zh = forced ? /^zh/i.test(forced) : /^zh/i.test(navigator.language || navigator.userLanguage || "");
   if (!zh) return;
   function apply() {
     document.documentElement.lang = "zh";
